@@ -106,10 +106,13 @@ if ($Scope -eq 'Repo') {
     if (Test-Path $targetAgents) {
         Write-Host ''
         Write-Host "$targetAgents already exists - not overwritten."
-        Write-Host "Merge Akinator's contract into it by hand: $(Join-Path $packRoot 'AGENTS.md')"
+        Write-Host "Merge Akinator's contract into it by hand:"
+        Write-Host "  $(Join-Path $packRoot '.agents\AGENTS.md')"
         Write-Host 'Adopt, never impose: keep the repo''s own content and add the loop.'
     } else {
-        Copy-Item (Join-Path $packRoot 'AGENTS.md') $targetAgents
+        # The portable contract - NOT Akinator's own router, which names paths
+        # that exist only in Akinator's repository.
+        Copy-Item (Join-Path $packRoot '.agents\AGENTS.md') $targetAgents
         Write-Host 'install AGENTS.md'
     }
 }

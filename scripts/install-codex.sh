@@ -108,10 +108,13 @@ if [ "$MODE" = "repo" ]; then
   if [ -e "$TARGET_REPO/AGENTS.md" ]; then
     echo
     echo "$TARGET_REPO/AGENTS.md already exists - not overwritten."
-    echo "Merge Akinator's contract into it by hand: $PACK_ROOT/AGENTS.md"
+    echo "Merge Akinator's contract into it by hand:"
+    echo "  $PACK_ROOT/.agents/AGENTS.md"
     echo "Adopt, never impose: keep the repo's own content and add the loop."
   else
-    cp "$PACK_ROOT/AGENTS.md" "$TARGET_REPO/AGENTS.md"
+    # The portable contract - NOT Akinator's own router, which names paths
+    # that exist only in Akinator's repository.
+    cp "$PACK_ROOT/.agents/AGENTS.md" "$TARGET_REPO/AGENTS.md"
     echo "install AGENTS.md"
   fi
 fi

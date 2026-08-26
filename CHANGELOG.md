@@ -41,7 +41,16 @@ Three defects found by a validation run against the packaged plugin:
 
 ### Components
 
-- **20 skills.** The loop's stations (`akinator-intake`, `-audit`, `-plan`,
+- **`/akinator` runs everything.** With no arguments, or with free text, the
+  command loads `akinator-everything` and runs the complete pass - every station,
+  every applicable boardroom lens, every mechanical check, looping until the
+  Definition of Done is proven with evidence. Mode words narrow the target, never
+  the depth. See `docs/adr/0005-single-command-surface.md`.
+- **21 skills.** `akinator-everything` is the all-in-one pass; `akinator` remains
+  the always-on router that scales the loop to the size of the change. The two
+  are deliberately different settings - running the full pass on a typo is how a
+  team learns to stop running any of it.
+- **20 station skills.** The loop's stations (`akinator-intake`, `-audit`, `-plan`,
   `-document-change`, `-skillify`, `-rule-forge`, `-contextify`, `-memoize`,
   `-adr`, `-index-sync`, `-router-sync`); business, product and operational
   mapping (`-business-map`, `-product-map`, `-ops-map`); discipline
@@ -86,16 +95,37 @@ Three defects found by a validation run against the packaged plugin:
   Akinator's own repository, a guard that the rotten fixture still fails, and a
   check that every eval suite is parseable and runnable.
 
-### Known gap
+### Behavioral eval results
 
-The behavioral evals are runnable and graded but have **not been run** for this
-release - doing so needs an agent CLI and fresh contexts, and grading them from
-the session that wrote them would be worthless. `evals/results/` is empty by
-design rather than by omission. Run them with:
+Four runs, recorded in `evals/results/`, including a **paired baseline** - the
+same task, same fixture, same model, with and without the pack installed.
 
-```bash
-python scripts/run_evals.py --all --grade --stamp YYYY-MM-DD
-```
+| Eval | Result |
+|---|---|
+| 01 silent-change (with Akinator) | **pass** - code, tests, and a README documenting the `billable` semantic that lived only in a docstring, plus a when-not-to and a stale-when line |
+| 01 silent-change (baseline, no pack) | **fail, expected** - code and tests; documentation explicitly declined |
+| 03 business-void | **pass** - refused to implement, filed seven dated open decisions in the fixture's own `docs/standards/`, asked the blocking question in business terms |
+| 04 newcomer | **pass** - identified the undocumented refund/quota void and refused to infer an answer from the implementation |
+
+The 01 pair is the product claim, measured: same model, one variable, and the
+knowledge artifact appears only with the contract installed. One paired run is a
+data point, not a study - the value is the trend across releases.
+
+Two defects were found by running them, neither visible from writing them:
+
+- **The installer shipped Akinator's own router into target repos**, giving them
+  five dead links and an instruction to run Akinator's test suite. Fixed: the
+  pack now generates a separate portable contract at `.agents/AGENTS.md` that
+  names no repo-relative paths, and the installers copy that.
+- **The fixtures announced that they were fixtures**, naming their planted gaps
+  in their own READMEs and contaminating any run against them. Fixed: those notes
+  moved to `evals/fixtures/README.md` and each fixture now reads as an ordinary
+  repository. Eval 04 should be re-run against the cleaned fixtures.
+
+Still unrun: 02 repeated-question, 05 gate-economy, 06 anti-gaming. The Claude
+Code plugin path - SessionStart hook, auto-triggered skills, boardroom subagents
+- was not exercised; the runs reached the agent through the Codex `AGENTS.md`
+delivery path and the plugin path remains verified structurally only.
 
 ### Platform contracts
 

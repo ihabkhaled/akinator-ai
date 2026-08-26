@@ -15,8 +15,12 @@ The Claude skills are canonical. `.agents/skills/` is a build output.
 
 ## Applies to
 
-- **In scope:** `.agents/skills/**` and `AGENTS.md` in this repository - both
-  generated from `skills/**` by `scripts/build_codex_pack.py`.
+- **In scope:** `.agents/skills/**`, `.agents/AGENTS.md` and the root
+  `AGENTS.md` in this repository - all generated from `skills/**` by
+  `scripts/build_codex_pack.py`. Note that the two AGENTS.md files are
+  different documents on purpose: the root one is Akinator's own router, and
+  `.agents/AGENTS.md` is the **portable contract** the installer copies into
+  target repositories, which therefore names no repo-relative paths.
 - **Out of scope:** `skills/**` (canonical, hand-written), `.codex-plugin/plugin.json`
   (a hand-maintained manifest, not derived from the skills), and target
   repositories' own files.

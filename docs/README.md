@@ -12,6 +12,7 @@ Facts that can be extracted from the tree live in `context/`, not here.
 | [Architecture](architecture.md) | What each component is, when it runs, and how the five surfaces compose into a behavior that persists across sessions |
 | [Business case](business-case.md) | Why this exists, what it is worth, how to tell whether it is working, and what would make it fail |
 | [Compatibility](compatibility.md) | The Claude Code and Codex contracts relied on, how they were verified, and what breaks when they move |
+| [Listing](listing.md) | The directory-submission copy - name, description, example use cases - kept in the repo so it cannot drift from what ships |
 | [Deviations](deviations.md) | Where the implementation departs from the build brief, and why |
 
 ## Decisions

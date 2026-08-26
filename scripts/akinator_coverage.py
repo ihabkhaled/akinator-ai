@@ -635,9 +635,14 @@ def check_generated(repo: Repo) -> list[Finding]:
         if re.search(r"`[^`]*<[^`>]+>[^`]*`", banner_region):
             continue
 
+        # A generator may be named by path (`scripts/gen.py`) or by bare
+        # filename. The bare form matters: the portable Codex contract is copied
+        # into other repositories, where a repo-relative path would be a false
+        # claim, so it names its generator by filename only.
         generators = [
             t for t in BACKTICK_PATH.findall(banner_region)
             if repo.exists_rel(t.replace("\\", "/"))
+            or ("/" not in t and any(p.name == t for p in repo.files))
         ]
         if generators:
             continue

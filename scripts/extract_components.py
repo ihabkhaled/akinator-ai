@@ -34,6 +34,7 @@ TARGET = "context/components.md"
 # docstring. A skill absent from this map is an error, not a default.
 STATIONS: dict[str, str] = {
     "akinator": "master",
+    "akinator-everything": "all-in-one",
     "akinator-intake": "1 ASK",
     "akinator-audit": "3 AUDIT",
     "akinator-plan": "4 PLAN",

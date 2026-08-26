@@ -60,12 +60,22 @@ get invoked; it is how a user asks for a specific mode deliberately.
 
 ## Decision
 
-Akinator ships exactly one command: `commands/akinator.md`. It dispatches
-`onboard`, `audit`, `status`, `sync`, `question` and `decide`, and treats any
-other argument as work to run through the full twelve-station loop. With no
-arguments it runs Dispatch.
+Akinator ships exactly one command: `commands/akinator.md`.
+
+**It runs everything by default.** With no arguments, or with free text, it loads
+`akinator-everything` and runs the complete pass - every station, every
+applicable boardroom lens, every mechanical check, looping until the Definition
+of Done is proven with evidence. The mode words `onboard`, `audit`, `status`,
+`sync`, `question` and `decide` narrow the *target*, never the depth.
 
 A second command is not added without the owner asking for one.
+
+**Amended 2026-08-26.** The original decision had the command run the loop
+*scaled to the work*. The owner asked for the root command to "run literally
+everything", so the default is now the exhaustive pass, and scaling down is a
+judgment the agent must make out loud and only for genuinely trivial work. The
+scaled behavior remains available through the auto-triggered `akinator` skill,
+which is the right default when no one typed a command at all.
 
 ## Consequences
 

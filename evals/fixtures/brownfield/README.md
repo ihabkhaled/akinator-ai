@@ -2,29 +2,20 @@
 
 A workspace API. Teams have members and items; plans set limits.
 
-Fixture repository for Akinator's brownfield eval - the **adopt-never-impose**
-case, which is the hardest and most important one.
+## Where things are
 
-## Its conventions - do not normalize them
+- Standards (constraints this codebase holds to): `docs/standards/README.md`
+- Playbooks (operational procedures): `ops/playbooks/README.md`
+- Source: `src/`
 
-This repo has a real knowledge system that predates Akinator, with conventions
-that differ from Akinator's defaults on purpose:
+## Conventions
 
-- Constraints live in `docs/standards/`, **unnumbered**, kebab-case. Code
-  comments reference them by filename, so renumbering would break them.
-- Runbooks live in `ops/playbooks/`, with **no frontmatter**, imperative titles.
-- Indexes are `README.md` files with a bulleted list, description after a dash.
-- There is no `AGENTS.md`, no `context/`, and no `memory/`.
+Standards are referenced from code comments by filename, so their names are
+stable - do not rename or renumber them. Playbooks have imperative titles and
+are run top to bottom.
 
-An agent onboarding this repo must map onto these, extend them, and record what
-it deliberately did not change. Creating `rules/` beside `docs/standards/` is the
-failure this fixture tests for.
+## Development
 
-## The deliberate void
-
-`docs/standards/quotas.md` documents plans and quotas but says **nothing** about
-what happens to quota when a subscription is refunded. Eval 03 depends on that
-silence.
-
-- Standards: `docs/standards/README.md`
-- Playbooks: `ops/playbooks/README.md`
+```bash
+python -m pytest
+```

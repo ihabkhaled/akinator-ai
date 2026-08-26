@@ -2,11 +2,16 @@
 
 A small CLI that reads a CSV of usage events and prints a summary report.
 
-Fixture repository for Akinator's greenfield eval. It has working code, a test,
-and **no knowledge layer at all** - no routers, no rules, no skills, no context,
-no memory, no docs beyond this file.
+## Usage
 
-That absence is the point. An agent onboarding this repo must interview, scaffold
-from templates, and build extractors - not audit an existing structure.
+```bash
+python src/report.py events.csv
+```
 
-Do not add a knowledge layer here. It would invalidate the fixture.
+The CSV needs a `team` column and a `kind` column, one row per event.
+
+## Development
+
+```bash
+python -m pytest tests -q
+```

@@ -68,13 +68,16 @@ Akinator detects what the repo already has - routers, rules, docs, conventions -
 maps its taxonomy onto **those** rather than replacing them, ranks every gap by
 severity, and closes them in batches. Then it runs the newcomer test.
 
-Then just work. The skills fire on their own:
+**`/akinator` runs everything.** With no arguments, or with free text, it runs
+the complete pass - every station, every applicable boardroom lens, every
+mechanical check, looping until the Definition of Done is proven with evidence:
 
 ```
+/akinator
 /akinator add rate limiting to the export endpoint
 ```
 
-Or ask for a specific mode:
+Mode words narrow the *target*, never the depth:
 
 | Command | Does |
 |---|---|
@@ -84,7 +87,7 @@ Or ask for a specific mode:
 | `/akinator sync` | Regenerate everything generable, re-sync every router |
 | `/akinator question <task>` | Run the intake battery |
 | `/akinator decide <question>` | Record an ADR interactively |
-| `/akinator <anything else>` | Run the full loop on it |
+| `/akinator <anything else>` | Run the complete pass on it |
 
 One command, every mode - see [docs/adr/0005](docs/adr/0005-single-command-surface.md).
 
@@ -119,7 +122,7 @@ into a visible edit to the plan.
 
 | | |
 |---|---|
-| **20 skills** | The loop's stations, plus business, product and ops mapping, plus gate economy, resource guard and anti-gaming |
+| **21 skills** | `akinator-everything` (the all-in-one pass), the master router, the loop's stations, business/product/ops mapping, and gate economy, resource guard and anti-gaming |
 | **7 agents** | Boardroom review lenses with real vetoes - business owner, CTO, product owner, ops, analyst, PM, and the **librarian**, which blocks any batch whose knowledge delta is missing |
 | **1 command** | `/akinator`, dispatching every mode |
 | **1 hook** | SessionStart contract injection - small, a contract not a payload |
@@ -172,7 +175,7 @@ This repository is maintained under its own discipline, and its own checks run
 against it:
 
 ```bash
-python -m pytest tests/ -q                    # 130 structural + enforcement tests
+python -m pytest tests/ -q                    # 135 structural + enforcement tests
 python scripts/akinator_coverage.py .         # the invariants, against itself
 python scripts/build_codex_pack.py --check    # Codex pack drift
 python scripts/extract_components.py --check  # context-map drift
@@ -185,6 +188,11 @@ The behavioral evals need an agent CLI, so they are a separate step:
 ```bash
 python scripts/run_evals.py --all --grade --stamp 2026-08-26
 ```
+
+Four were run for v1.0.0, including a **paired baseline** - the same task, same
+fixture, same model, with and without the pack. With it: code, tests and docs.
+Without it: code and tests, documentation explicitly declined. Results in
+[evals/results/](evals/results/).
 
 Each suite runs in a disposable copy of its fixture, with a fresh agent per step
 and no follow-up turn, and is graded by a second independent agent that sees only

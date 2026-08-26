@@ -54,6 +54,26 @@ def banner(source_rel: str) -> str:
     )
 
 
+def contract_banner() -> str:
+    """Banner for the portable contract.
+
+    Names **no repo-relative paths**. This file is generated inside an Akinator
+    checkout and then copied into other repositories, where a path like
+    `rules/07-...md` does not exist - and a doc asserting things that are not
+    there is exactly what this plugin rates critical.
+    """
+    return "\n".join([
+        "<!--",
+        "Akinator behavioral contract - GENERATED, DO NOT EDIT BY HAND.",
+        "",
+        "Inside an Akinator checkout: regenerate with `build_codex_pack.py`.",
+        "Installed in another repository: reinstall to update. Local edits here",
+        "are replaced - keep this repository's own content in its own router.",
+        "-->",
+        "",
+    ])
+
+
 def frontmatter_and_body(text: str) -> tuple[str, str]:
     """Split a SKILL.md into its frontmatter block and the rest."""
     if not text.startswith("---"):
@@ -234,6 +254,132 @@ def render_agents_md(repo: Path, skills: list[tuple[str, Path]]) -> str:
     return "\n".join(lines)
 
 
+def render_contract_md(skills: list[tuple[str, Path]]) -> str:
+    """The **portable** contract, installed into a target repository.
+
+    This is not the same file as Akinator's own root `AGENTS.md`, and confusing
+    the two was a real bug: the installer copied Akinator's router into target
+    repos, giving them five dead links to `rules/README.md`, `docs/skills.md` and
+    friends, plus an instruction to run Akinator's test suite. A doc asserting
+    things that are not there is the failure this plugin rates critical, and it
+    was being installed by the plugin itself.
+
+    So this file names **no repository-specific paths**. It carries the creed,
+    the loop and the non-negotiables - which are true everywhere - and tells the
+    agent to discover the knowledge layer that this particular repo actually has.
+    """
+    lines: list[str] = []
+    lines.append(contract_banner())
+    lines.append("# Akinator")
+    lines.append("")
+    lines.append(
+        "Ask everything. Document everything. Skillify everything. "
+        "Rule everything."
+    )
+    lines.append("")
+    lines.append(
+        "A change is never the code alone. A change is the code plus the "
+        "knowledge that lets"
+    )
+    lines.append("the next agent act on it in seconds. Half a change is no change.")
+    lines.append("")
+    lines.append("## The loop")
+    lines.append("")
+    lines.append("Run every codebase touch through twelve stations:")
+    lines.append("")
+    lines.append("```")
+    lines.append("ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT ->")
+    lines.append("SKILLIFY -> RULE -> CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY")
+    lines.append("```")
+    lines.append("")
+    lines.append("Non-negotiable:")
+    lines.append("")
+    lines.append(
+        "- Stations 6-11 happen in the same batch as station 5. "
+        '"I\'ll document in a'
+    )
+    lines.append('  follow-up" is a prohibited sentence.')
+    lines.append(
+        "- The knowledge delta is declared at PLAN time, **by path**, per batch. "
+        "A batch"
+    )
+    lines.append("  with no knowledge delta states why, explicitly.")
+    lines.append(
+        "- Gate once, at the end, scoped to what was touched. Never per edit, "
+        "never per"
+    )
+    lines.append("  commit, never all-workspace.")
+    lines.append(
+        "- Never add knowledge or documentation checks to git hooks. "
+        "Hooks gate code."
+    )
+    lines.append(
+        "- **Adopt, never impose.** Match this repository's existing conventions "
+        "before"
+    )
+    lines.append(
+        "  creating anything. A parallel structure beside an existing one is "
+        "worse than"
+    )
+    lines.append("  no structure - the agent picks the wrong one half the time.")
+    lines.append(
+        "- Never guess on money, permissions, deletion or public contracts. "
+        "Stop, ask,"
+    )
+    lines.append("  and write the answer down before coding past it.")
+    lines.append("")
+    lines.append("## Station 2 - RESOLVE, before anything")
+    lines.append("")
+    lines.append(
+        "Discover what this repository actually has, then read it in this order,"
+    )
+    lines.append("stopping when your question is answered:")
+    lines.append("")
+    lines.append("```")
+    lines.append("routers   CLAUDE.md, AGENTS.md, CODEX.md, and any per-module ones")
+    lines.append("rules     constraints you may not break")
+    lines.append("skills    runbooks - follow one rather than improvising")
+    lines.append("context   structural facts: ownership, routes, events, permissions")
+    lines.append("memory    durable decisions, preferences, surprises")
+    lines.append("docs      architecture, business, product, ops, decision records")
+    lines.append("```")
+    lines.append("")
+    lines.append(
+        "Those are the conventional homes, not a promise about this repo. Look "
+        "first;"
+    )
+    lines.append(
+        "this repository may use different names, and if it does, **its** names "
+        "win."
+    )
+    lines.append("")
+    lines.append(
+        "If none of them exist, say so rather than inventing a structure, and "
+        "offer to"
+    )
+    lines.append("onboard the repository properly.")
+    lines.append("")
+    lines.append("## Skills")
+    lines.append("")
+    lines.append(
+        "Installed under `.agents/skills/`. Invoke one explicitly with "
+        "`$<name>`, or"
+    )
+    lines.append("describe the task and let the skill be selected by its trigger.")
+    lines.append("")
+    lines.append("| Skill | Use when |")
+    lines.append("|---|---|")
+    for name, path in skills:
+        lines.append(f"| `{name}` | {_description_of(path)} |")
+    lines.append("")
+    lines.append(
+        "Start with `$akinator` - it carries the full creed, the loop and the"
+    )
+    lines.append("knowledge taxonomy, and routes to the rest.")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def _description_of(skill_md: Path) -> str:
     """The skill's trigger description, flattened to one table cell."""
     front, _ = frontmatter_and_body(
@@ -271,6 +417,9 @@ def plan(repo: Path) -> dict[str, str]:
             source_rel, path.read_text(encoding="utf-8", errors="replace")
         )
     out["AGENTS.md"] = render_agents_md(repo, skills)
+    # The portable contract the installer copies into target repositories.
+    # Distinct from the router above, deliberately - see render_contract_md.
+    out[".agents/AGENTS.md"] = render_contract_md(skills)
     return out
 
 
@@ -282,8 +431,9 @@ def existing_pack(repo: Path) -> set[str]:
         for path in agents_skills.rglob("*"):
             if path.is_file():
                 found.add(path.relative_to(repo).as_posix())
-    if (repo / "AGENTS.md").is_file():
-        found.add("AGENTS.md")
+    for rel in ("AGENTS.md", ".agents/AGENTS.md"):
+        if (repo / rel).is_file():
+            found.add(rel)
     return found
 
 

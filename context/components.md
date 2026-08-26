@@ -17,7 +17,7 @@ reads it.
   `docs/skills.md`, `docs/architecture.md`, and the components
   themselves.
 
-## Skills - 20
+## Skills - 21
 
 Read by Claude Code from `skills/`, and by Codex from the generated
 `.agents/skills/`. `skills/` is canonical.
@@ -32,6 +32,7 @@ Read by Claude Code from `skills/`, and by Codex from the generated
 | `akinator-contextify` | 9 CONTEXTIFY | Use when a change alters a structural fact about the system - ownership, module boundaries, routes, ports, events, permissions,... |
 | `akinator-coverage` | 12 VERIFY | Use to audit whether a repository's knowledge layer is complete, reachable and true - before claiming onboarding is done, when docs are... |
 | `akinator-document-change` | 6 DOCUMENT | Use in the same batch as any code change, before the batch is called done. |
+| `akinator-everything` | all-in-one | Use when the user explicitly asks for everything - "run the full akinator", "do all of it", "maximum depth", "leave nothing out", "the... |
 | `akinator-gate-economy` | 12 VERIFY | Use before running any lint, typecheck, test or build, and before any commit or push during multi-step work. |
 | `akinator-index-sync` | 11 INDEX | Use whenever a knowledge artifact is created, renamed, moved or deleted - a rule, skill, doc, context map, ADR or memory entry. |
 | `akinator-intake` | 1 ASK | Use before planning any substantive work, and whenever a request has two readings that lead to materially different work, or when... |
@@ -66,7 +67,7 @@ Read by Claude Code from `commands/`.
 
 | Command | Arguments |
 |---|---|
-| `/akinator` | `[onboard / audit / status / sync / question / decide / <describe what you want done>]` |
+| `/akinator` | `[what you want done] / [onboard / audit / status / sync / question / decide]` |
 
 ## Hooks - 1
 

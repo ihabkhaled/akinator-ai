@@ -8,3 +8,9 @@
 # tests/test_coverage_checker.py asserts the checker detects.
 # See evals/fixtures/rotten/README.md for the full list of planted defects.
 evals/fixtures
+
+# Disposable per-run copies of the eval fixtures, created by
+# scripts/run_evals.py. They contain whatever an eval agent wrote, which is
+# evidence rather than knowledge - the graded results in evals/results/*.md are
+# what is kept.
+evals/results/workspaces

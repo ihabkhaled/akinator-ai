@@ -67,6 +67,16 @@ skill is the router.
 | 11 | INDEX+SYNC | Every artifact reachable; all routers updated in the same change | `akinator-index-sync`, `akinator-router-sync` |
 | 12 | VERIFY | Gate once, scoped; newcomer test; land | `akinator-gate-economy`, `akinator-coverage` |
 
+### The all-in-one pass
+
+When the work is worth maximum thoroughness - a release, a handover, an audit, a
+change too expensive to get wrong - or when the user asks for everything, load
+`akinator-everything`. It runs every station, every applicable boardroom lens and
+every mechanical check, and loops until the Definition of Done is proven rather
+than asserted. It is what the `/akinator` command runs by default.
+
+This skill scales the loop to the change; that one does not scale down.
+
 ### Non-negotiables
 
 - **Stations 6-11 are not optional and not deferrable.** They happen in the same
@@ -115,7 +125,7 @@ Read in this order, stopping when the question is answered:
 7. **Docs** - `docs/` for narrative: architecture, business, product, ops, ADRs.
 
 If the repo has none of these, you are on a greenfield target: say so and offer
-`/akinator:onboard` rather than silently inventing a structure.
+`/akinator onboard` rather than silently inventing a structure.
 
 ### Then run the stations
 

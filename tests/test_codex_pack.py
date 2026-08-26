@@ -206,3 +206,61 @@ def test_installers_exist_and_are_referenced(repo: Path) -> None:
     assert (repo / "scripts" / "install-codex.sh").is_file()
     assert (repo / "scripts" / "install-codex.ps1").is_file()
     assert "install-codex.sh" in pack.plan(repo)["AGENTS.md"]
+
+
+# --------------------------------------------------------------------------
+# The portable contract installed into target repositories
+# --------------------------------------------------------------------------
+
+CONTRACT = ".agents/AGENTS.md"
+
+
+def test_portable_contract_is_generated(repo: Path) -> None:
+    assert CONTRACT in pack.plan(repo)
+    assert (repo / CONTRACT).is_file()
+
+
+def test_portable_contract_names_no_repo_relative_paths(repo: Path) -> None:
+    """Regression: the installer used to copy Akinator's own router.
+
+    That gave every target repository five dead links - `rules/README.md`,
+    `docs/skills.md` and friends - plus an instruction to run Akinator's test
+    suite. A doc asserting things that are not there is the failure this plugin
+    rates critical, and it was being installed by the plugin itself.
+    """
+    import re
+
+    text = pack.plan(repo)[CONTRACT]
+    prose = re.sub(r"^[ \t]*```.*?^[ \t]*```[ \t]*$", "\n", text,
+                   flags=re.MULTILINE | re.DOTALL)
+    paths = [t for t in re.findall(r"`([A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,8})`", prose)
+             if "/" in t]
+    assert not paths, (
+        f"the portable contract names repo-relative paths: {paths}. "
+        "They will not exist in the repository it is installed into."
+    )
+
+
+def test_portable_contract_carries_the_non_negotiables(repo: Path) -> None:
+    text = pack.plan(repo)[CONTRACT]
+    for phrase in ("Stations 6-11", "prohibited sentence", "by path",
+                   "Gate once", "git hooks", "Adopt, never impose",
+                   "money, permissions"):
+        assert phrase in text, f"the portable contract omits: {phrase}"
+
+
+def test_portable_contract_is_not_akinators_own_router(repo: Path) -> None:
+    """The two files are deliberately different documents."""
+    plan = pack.plan(repo)
+    assert plan[CONTRACT] != plan["AGENTS.md"]
+    assert "python -m pytest tests/" not in plan[CONTRACT]
+    assert "Templates (what Akinator ships" not in plan[CONTRACT]
+
+
+def test_installers_copy_the_contract_not_the_router(repo: Path) -> None:
+    for name in ("install-codex.sh", "install-codex.ps1"):
+        text = (repo / "scripts" / name).read_text(encoding="utf-8")
+        assert ".agents" in text and "AGENTS.md" in text, name
+        # The bare router must never be the copy source.
+        assert '"$PACK_ROOT/AGENTS.md"' not in text, name
+        assert "(Join-Path $packRoot 'AGENTS.md')" not in text, name
