@@ -26,13 +26,15 @@ Every non-obvious choice, with its rejected alternatives and their costs.
 | [0003](adr/0003-enforcement-outside-git-hooks.md) | Knowledge enforcement lives in session behavior, CI and tests - never in a git hook |
 | [0004](adr/0004-gate-receipts-over-hook-bypass.md) | Tree-bound gate receipts rather than hook bypass, because a receipt is auditable |
 | [0005](adr/0005-single-command-surface.md) | One command dispatching every mode, not one command per mode |
+| [0006](adr/0006-index-completeness-as-its-own-invariant.md) | Index completeness is its own invariant, and CI runs at `--strict` |
 
 See [the ADR index](adr/README.md) for the full list and the conventions.
 
 ## Related
 
 - `rules/README.md` - the constraints this repository holds itself to
-- [Skills index](skills.md) - the twenty skills and what triggers each
+- [Skills index](skills.md) - the 21 skills and what triggers each
+- [Agents index](agents.md) - the seven boardroom lenses and what each vetoes
 - `context/README.md` - generated structural maps
 - `memory/index.md` - durable decisions and surprises
 - `evals/README.md` - the behavioral eval suites

@@ -77,7 +77,9 @@ Report from the tree, without guessing:
 1. **Coverage** - run
    `python ${CLAUDE_PLUGIN_ROOT}/scripts/akinator_coverage.py . --json` and
    summarize counts by severity.
-2. **Unindexed artifacts** - the `reachability` findings.
+2. **Unindexed artifacts** - the `reachability` and `index-completeness`
+   findings. The second is the more precise one: it names artifacts missing
+   from their own category index even when something else links them.
 3. **Stale-doc suspects** - `doc-truth` findings, plus the context maps with the
    oldest last-verified dates.
 4. **Router drift** - `router-sync` findings, and which routers exist at all.

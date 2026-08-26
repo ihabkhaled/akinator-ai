@@ -30,6 +30,7 @@ The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 |---|---|
 | Test | `python -m pytest tests/ -q` |
 | Coverage check | `python scripts/akinator_coverage.py .` |
+| Coverage check (strict) | `python scripts/akinator_coverage.py . --strict` - the tier CI uses |
 | Regenerate the Codex pack | `python scripts/build_codex_pack.py --write` |
 | Check the pack for drift | `python scripts/build_codex_pack.py --check` |
 | Install to Codex | `sh scripts/install-codex.sh --user` |
@@ -41,7 +42,7 @@ Gate once, at the end of the batch, scoped to what you touched. See
 
 | Directory | Holds | Generated? |
 |---|---|---|
-| `skills/` | The 20 canonical skills - the loop's stations | no, canonical |
+| `skills/` | The 21 canonical skills - the loop's stations | no, canonical |
 | `agents/` | The 7 boardroom review lenses | no |
 | `commands/` | The single `/akinator` command | no |
 | `templates/` | What Akinator writes into target repos, with filled examples | no |

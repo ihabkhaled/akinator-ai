@@ -41,14 +41,15 @@ session start by its own convention.
 
 ### 2. Skills - the stations
 
-Twenty skills in `skills/`, auto-triggered by their descriptions. This is the
+Twenty-one skills in `skills/`, auto-triggered by their descriptions. This is the
 main surface: the user never has to invoke anything, because the description of
 `akinator-ops-map` matches what someone is thinking when they add a migration.
 
 The master skill `akinator` carries the creed, the loop and the taxonomy, and
-routes to the other nineteen. Each station of the loop has a skill; three more
-cover business, product and operational knowledge; three cover discipline
-(gate economy, resource guard, anti-gaming); two cover installation and audit.
+routes to the loop's stations. `akinator-everything` is the all-in-one pass, described under
+surface 4. Each station of the loop has a skill; three more cover business,
+product and operational knowledge; three cover discipline (gate economy,
+resource guard, anti-gaming); two cover installation and audit.
 
 Skill quality is what makes this surface work, so it is enforced:
 `rules/02-skills-carry-all-six-parts.md`, checked by the coverage checker and by
@@ -70,13 +71,32 @@ which skill produces it.
 The other six - business owner, CTO, product owner, ops, analyst, PM - are
 invoked when the work touches their dimension.
 
-### 4. The command - the deliberate entry point
+### 4. The command - and it runs everything
 
-One command, `/akinator`, dispatching every mode. See
-`docs/adr/0005-single-command-surface.md` for why one rather than six.
+One command, `/akinator`. See `docs/adr/0005-single-command-surface.md` for why
+one rather than six, and for the amendment that made it exhaustive.
 
-Skills cover the automatic path ("I am about to change code"). The command
-covers the deliberate one ("show me this repo's knowledge health").
+**The command's default is the complete pass.** With no arguments, or with free
+text, it loads `akinator-everything`: every station, every applicable boardroom
+lens, every mechanical check, looping until the Definition of Done is proven with
+evidence rather than asserted. Mode words - `onboard`, `audit`, `status`, `sync`,
+`question`, `decide` - narrow the **target**, never the depth.
+
+That gives the plugin two deliberately different settings, and the distinction
+is load-bearing:
+
+| | `akinator` (skill) | `akinator-everything` (skill) |
+|---|---|---|
+| How it fires | auto-triggered, on any codebase touch | deliberately invoked, and by `/akinator` |
+| Depth | scales to the change - on trivial work most stations produce nothing, and the batch says so | does not scale down |
+| Right when | nobody typed a command; the work is ordinary | a release, a handover, an audit, or a change too expensive to get wrong |
+
+The scaling matters as much as the thoroughness. Ceremony applied to trivia is
+the fastest way to get the whole discipline abandoned, which is why the
+auto-triggered default scales and only the explicit invocation does not.
+`akinator-everything` states the one exception out loud: on genuinely trivial
+work, say so in a line, do it, record `knowledge delta: none, because ...`, and
+stop.
 
 ### 5. Scripts - the mechanical checks
 
@@ -86,6 +106,10 @@ covers the deliberate one ("show me this repo's knowledge health").
   skills, deterministically, with a drift check.
 - `scripts/extract_components.py` generates `context/components.md` from the
   tree.
+- `scripts/generate_assets.py` draws the brand assets Codex validation requires,
+  from a signed distance field, with a drift check.
+- `scripts/run_evals.py` runs the behavioral eval suites against the fixtures -
+  fresh agent per step, disposable workspace, optional independent grader.
 - `scripts/install-codex.sh` / `.ps1` install the pack where Codex reads it.
 
 ## The loop
@@ -121,8 +145,15 @@ Three, deliberately - and none of them is a git hook. See
 | Home | Catches | When |
 |---|---|---|
 | **Session behavior** - the librarian and the skills | a missing or misrouted knowledge delta | before a commit exists |
-| **CI** - the coverage checker | unreachable artifacts, dead links, rules naming absent mechanisms, router forks, stale generated files | on every push |
+| **CI** - the coverage checker, at `--strict` | unreachable artifacts, artifacts missing from their own category index, dead links, rules naming absent mechanisms, router forks, stale generated files | on every push |
 | **Test invariants** - the suite | each rule's own mechanism; the plugin's own structure | with the normal test run |
+
+The `--strict` tier is deliberate. `reachability` and `index-completeness` are
+MEDIUM findings, and the checker's default threshold is `high` - so on the
+default tier an unindexed artifact passes CI green. That is the right default
+for a repository onboarding gradually, where a wall of medium findings on day
+one would get the check switched off. It is the wrong bar for this repository,
+which ships the checker.
 
 Git hooks gate code and must stay fast. A hook loaded with knowledge checks
 makes commits slow, which trains `--no-verify`, which takes down the code checks
@@ -162,9 +193,11 @@ against it:
 
 ```bash
 python -m pytest tests/ -q                    # structural + enforcement tests
-python scripts/akinator_coverage.py .         # the invariants, against itself
+python scripts/akinator_coverage.py . --strict # the invariants, against itself
 python scripts/build_codex_pack.py --check    # pack drift
 python scripts/extract_components.py --check  # context-map drift
+python scripts/generate_assets.py --check     # brand-asset drift
+python scripts/run_evals.py --dry-run --all   # every eval suite is runnable
 ```
 
 The plugin must not ship a skill it would reject in a target repo, a rule whose

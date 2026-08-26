@@ -4,6 +4,55 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
+## [Unreleased]
+
+### Added
+
+- **An eleventh invariant: `index-completeness`.** Every artifact must appear in
+  its **own** category index, not merely somewhere in the tree. Twelve categories
+  are covered: rules, skills, context, memory, ADRs, docs, business, product,
+  ops, templates, agents and eval suites. A category with no index at all is left
+  to `reachability` rather than double-counted.
+
+  `reachability` proved an artifact was referenced from *some* markdown file,
+  which is weaker than the taxonomy's actual law. An artifact linked only from a
+  router, or only from a sibling doc, satisfied it while remaining invisible to a
+  reader who opens the category index and reads down the list - which is exactly
+  how a fresh agent looks for things.
+
+  Found by running `akinator-everything` against this repository, and its
+  matching rule was wrong **three times** before it was right - each fix
+  producing the next failure. A bare substring let `demo` be satisfied by a
+  listed `demo-extended`. Word-bounding closed that and let `docs/overview.md`
+  be satisfied by `adr/overview.md`. Path-bounding closed that and produced six
+  false positives on suites listed with a directory prefix. The rule that works
+  is not a pattern: it **resolves** each index reference to a repo-relative path
+  and compares. There is a regression test for each failure above, plus one for
+  the taxonomy homes that were silently exempt.
+
+- **CI moved from `--fail-on high` to `--strict`.** `reachability` and
+  `index-completeness` are MEDIUM findings, so on the default tier an unindexed
+  artifact passed CI green - true of `reachability` since it was written, and
+  never noticed until a review lens mutation-tested it by deleting a row from a
+  real index. MEDIUM remains right for a repository onboarding gradually; it is
+  not the right bar for the repository that ships the checker.
+
+- `docs/agents.md` - an index for the seven boardroom lenses, which had none.
+
+### Fixed
+
+- Stale skill counts. `docs/compatibility.md`, `docs/README.md`, `README.md`,
+  `docs/skills.md`, `CLAUDE.md` and `CODEX.md` all said 20; there are 21. The
+  index itself and two routers were the last to be corrected, which is the
+  instructive part: the first pass fixed every file that *pointed at* the index
+  and left the index wrong, and declared "Routers: none" for a batch whose whole
+  subject was a number the routers carried.
+- `docs/architecture.md` now records that `/akinator` runs the complete pass by
+  default, and the deliberate split between `akinator` (scales to the change) and
+  `akinator-everything` (does not scale down). It had described neither.
+- `docs/deviations.md` item 1 now carries the amendment as well as the original
+  six-to-one decision.
+
 ## [1.0.1] - 2026-08-26
 
 ### Verified installing and loading in Claude Code

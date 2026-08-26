@@ -17,6 +17,12 @@ described.
 - **Why:** the owner instructed it directly during the build: *"I don't want
   variety in plugin commands. I only want one command do everything, all skills
   everything in the plugin."*
+- **Amended 2026-08-26.** The owner then asked for the root command to "run
+  literally everything", so `/akinator` no longer scales the loop to the work -
+  it loads `akinator-everything` and runs the complete pass by default. Mode
+  words narrow the target, never the depth. The scaled behavior remains in the
+  auto-triggered `akinator` skill, which is the right default when nobody typed
+  a command at all.
 - **Recorded in:** `docs/adr/0005-single-command-surface.md`,
   `memory/2026-08-26-single-command-preference.md`.
 

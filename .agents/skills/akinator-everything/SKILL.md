@@ -13,9 +13,11 @@ See `rules/07-codex-pack-is-generated.md`.
 
 One skill that runs all of it.
 
-The `akinator` master skill scales the loop to the work: a typo gets three
-stations, a feature gets twelve. That is correct as a default, because ceremony
-applied to trivia gets the whole discipline abandoned.
+The `akinator` master skill scales the loop to the work. Every station still
+runs - stations 6-11 are never deferrable - but on trivial work most of them
+produce nothing, and the batch records `knowledge delta: none, because ...`
+in a line. That is correct as a default, because ceremony applied to trivia
+gets the whole discipline abandoned.
 
 This skill is the other setting. It is **deliberately invoked**, it assumes the
 work is worth maximum thoroughness, and it does not scale down. Every station
@@ -152,6 +154,18 @@ holds a veto.
     what is blocked and by whom, and stop.
 26. **Then stop.** Exhaustive does not mean endless. Once the DoD is proven,
     further polishing is scope you were not asked for.
+
+## The one exception
+
+If the work is genuinely trivial - a typo in a comment, a formatting-only change
+- say so **in one line, out loud**, do it, record `knowledge delta: none,
+because ...`, and stop. Performing the full pass on a typo is how a team learns
+to stop running any of it.
+
+That judgment is made once, explicitly, and it is not a licence to scale down by
+default. Everything above still applies the moment the change is more than
+trivial. Note that this is the *only* thing that scales here: the librarian still
+runs on every batch you do open, without exception.
 
 ## Failure modes and pitfalls
 

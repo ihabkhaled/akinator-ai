@@ -27,6 +27,7 @@ and on what grounds, is knowledge.
 | [0003](0003-enforcement-outside-git-hooks.md) | Knowledge enforcement lives outside git hooks | accepted | a pre-commit mechanism appears that is instant and unbypassable - never for "just one fast check" |
 | [0004](0004-gate-receipts-over-hook-bypass.md) | Tree-bound gate receipts, not hook bypass | accepted | git gains native content-addressed check results |
 | [0005](0005-single-command-surface.md) | One command, not one per mode | accepted | the owner asks for a second, or a mode needs a different tool allowlist |
+| [0006](0006-index-completeness-as-its-own-invariant.md) | Index completeness is a separate invariant, and CI runs at `--strict` | accepted | MEDIUM proves the wrong grade in practice, or the one-level nesting limit produces a real miss |
 
 ## Adding one
 

@@ -54,6 +54,7 @@ The checks, and what each one prevents:
 | Check | Invariant |
 |---|---|
 | `reachability` | Every rule, skill, context map, doc and memory entry is reachable from an index. Unindexed means nonexistent |
+| `index-completeness` | Every artifact appears in its **own** category index, not merely somewhere in the tree. Reachable from a router is not the same as findable by someone browsing the index. Covers rules, skills, context, memory, ADRs, docs, business, product, ops, templates, agents and eval suites - a category with no index is left to `reachability` rather than double-counted |
 | `dead-links` | No link points at a file that does not exist. Dead links teach readers to distrust indexes |
 | `rule-enforcement` | Every rule names an enforcement mechanism that exists in the tree - and it is not a git hook |
 | `router-sync` | No root router omits knowledge the others carry, unless marked tool-specific |
@@ -66,6 +67,22 @@ The checks, and what each one prevents:
 
 Exit code is 0 when nothing sits at or above the threshold (`--fail-on`,
 default `high`), 1 otherwise, 2 if the checker could not run.
+
+**Two invariants are MEDIUM** - `reachability` and `index-completeness` - so the
+default threshold lets an unindexed artifact pass. That is deliberate: a repo
+onboarding gradually would otherwise face a wall of medium findings on day one
+and switch the check off. Once the layer is healthy, move CI to `--strict`, as
+this repository does.
+
+**Two limits of `index-completeness`, stated rather than discovered:**
+
+```
+depth   it looks one level deep - rules/sub/deep.md is not checked
+case    path comparison is case-insensitive on Windows, so 01-A.md
+        satisfies 01-a.md there; Linux CI catches it via dead-links
+```
+
+Both are worth knowing before trusting a green run on a deep tree.
 
 ### 2. Read the failures as a specification
 

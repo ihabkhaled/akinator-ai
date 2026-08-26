@@ -1,6 +1,6 @@
 # Skills
 
-The twenty canonical skills. These are the source of truth: the Codex pack in
+The 21 canonical skills. These are the source of truth: the Codex pack in
 `.agents/skills/` is generated from them by `scripts/build_codex_pack.py`.
 
 Every skill carries all six parts - see `rules/02-skills-carry-all-six-parts.md`.
@@ -15,7 +15,8 @@ worked example.
 | [akinator](../skills/akinator/SKILL.md) | Touching a codebase in any way. The creed, the twelve-station loop, the knowledge taxonomy, and the routing table for every other skill. Scales the loop to the size of the change |
 
 The two are deliberately different settings. `akinator` is the always-on default
-and scales down for small work - a typo gets three stations. `akinator-everything`
+and scales down for small work, though stations 6-11 still run and simply
+produce nothing. `akinator-everything`
 is deliberately invoked, assumes the work is worth maximum thoroughness, and does
 not scale down.
 

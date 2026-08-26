@@ -408,3 +408,200 @@ def test_akinatorignore_excludes_paths(tmp_path: Path) -> None:
 
     paths = [f.path for f in findings(root)]
     assert not any(p.startswith("fixtures/") for p in paths), paths
+
+
+# --------------------------------------------------------------------------
+# Index completeness
+# --------------------------------------------------------------------------
+
+def test_flags_artifact_missing_from_its_category_index(tmp_path: Path) -> None:
+    """Reachable from somewhere is not the same as listed in its own index.
+
+    The rule below is linked from the router, so `reachability` is satisfied and
+    stays silent. A reader who opens rules/README.md and reads down the list
+    still never sees it.
+    """
+    root = tmp_path / "half-indexed"
+    root.mkdir()
+    write(root, "CLAUDE.md",
+          "# H\n\n- Rules: `rules/README.md`\n- Also see `rules/02-hidden.md`\n")
+    write(root, "rules/README.md", "# Rules\n\n- [01](01-listed.md) - the listed one\n")
+    for name in ("01-listed", "02-hidden"):
+        write(root, f"rules/{name}.md", (
+            f"# Rule {name}\n\n## Purpose\n\nX.\n\n## Applies to\n\nY.\n\n"
+            "## Mandatory rules\n\n1. Z.\n\n"
+            "## Enforcement\n\n- Mechanism: `tests/t.py`\n"
+        ))
+    write(root, "tests/t.py", "def test_x():\n    assert True\n")
+
+    assert not [f for f in by_check(root, "reachability") if "02-hidden" in f.path], (
+        "precondition: the hidden rule IS reachable, so reachability stays quiet"
+    )
+
+    hits = by_check(root, "index-completeness")
+    assert [f.path for f in hits] == ["rules/02-hidden.md"]
+    assert "rules/README.md" in hits[0].message
+
+
+def test_index_completeness_accepts_a_skill_listed_by_directory(
+    tmp_path: Path,
+) -> None:
+    """A skill may be indexed by its directory or its SKILL.md - both count."""
+    root = tmp_path / "skill-index"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# S\n\n- Skills: `docs/skills.md`\n")
+    write(root, "docs/skills.md",
+          "# Skills\n\n- [demo](../skills/demo/SKILL.md) - use when demonstrating\n")
+    write(root, "skills/demo/SKILL.md", (
+        "---\nname: demo\ndescription: Use when demonstrating.\n---\n\n"
+        "# Demo\n\n## When to use\n\nX.\n\n## When NOT to use\n\nY.\n\n"
+        "## Procedure\n\n1. Z.\n\n## Failure modes and pitfalls\n\nNone.\n\n"
+        "## Definition of done\n\n- [ ] Done.\n"
+    ))
+    assert not by_check(root, "index-completeness")
+
+
+def test_index_completeness_is_silent_when_a_category_has_no_index(
+    tmp_path: Path,
+) -> None:
+    """Missing index entirely is reachability's finding, not this check's -
+    reporting both would double-count one defect."""
+    root = tmp_path / "no-index"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# N\n\nSee `rules/01-lonely.md`\n")
+    write(root, "rules/01-lonely.md", (
+        "# Rule 01\n\n## Purpose\n\nX.\n\n## Applies to\n\nY.\n\n"
+        "## Mandatory rules\n\n1. Z.\n\n## Enforcement\n\n- Mechanism: `tests/t.py`\n"
+    ))
+    write(root, "tests/t.py", "def test_x():\n    assert True\n")
+    assert not by_check(root, "index-completeness")
+
+
+
+SKILL_BODY = (
+    "---\nname: {n}\ndescription: Use when x.\n---\n\n# D\n\n"
+    "## When to use\n\nX.\n\n## When NOT to use\n\nY.\n\n"
+    "## Procedure\n\n1. Z.\n\n## Failure modes and pitfalls\n\nNone.\n\n"
+    "## Definition of done\n\n- [ ] D.\n"
+)
+
+
+def test_index_completeness_is_not_fooled_by_a_substring_sibling(
+    tmp_path: Path,
+) -> None:
+    """Regression: matching was a bare substring test.
+
+    `demo` was satisfied by an index listing only `demo-extended`, and
+    `akinator` occurs inside every `akinator-*` entry, so the master skill could
+    never be flagged however the index changed.
+    """
+    root = tmp_path / "substring"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# S\n\n- Skills: `docs/skills.md`\n")
+    write(root, "docs/skills.md",
+          "# Skills\n\n- [demo-extended](../skills/demo-extended/SKILL.md) - x\n")
+    write(root, "skills/demo/SKILL.md", SKILL_BODY.format(n="demo"))
+    write(root, "skills/demo-extended/SKILL.md",
+          SKILL_BODY.format(n="demo-extended"))
+
+    assert [f.path for f in by_check(root, "index-completeness")] == [
+        "skills/demo/SKILL.md"
+    ]
+
+
+def test_index_completeness_distinguishes_same_name_at_another_path(
+    tmp_path: Path,
+) -> None:
+    """Regression: a basename match let a different artifact stand in.
+
+    `docs/overview.md` was satisfied by a link to `adr/overview.md`, and
+    `docs/notes.md` by a link to `notes.md.bak`. Matching resolves the reference
+    now, so neither counts.
+    """
+    root = tmp_path / "samename"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# A\n\n- Docs: `docs/README.md`\n")
+    write(root, "docs/README.md",
+          "# D\n\n- [adr overview](adr/overview.md)\n- [backup](notes.md.bak)\n")
+    write(root, "docs/overview.md", "# O\n")
+    write(root, "docs/notes.md", "# N\n")
+    write(root, "docs/adr/overview.md", "# AO\n")
+
+    flagged = sorted(f.path for f in by_check(root, "index-completeness"))
+    assert flagged == ["docs/notes.md", "docs/overview.md"]
+
+
+def test_index_completeness_accepts_an_entry_with_a_directory_prefix(
+    tmp_path: Path,
+) -> None:
+    """Regression: the fix for the above produced six false positives.
+
+    `evals/README.md` lists its suites as `suites/01-...md`. A boundary-matched
+    bare token rejected every one of them because of the prefix. A false
+    positive trains people to ignore the checker, which is the other way to make
+    it worthless.
+    """
+    root = tmp_path / "prefixed"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# A\n\n- Evals: `evals/README.md`\n")
+    write(root, "evals/README.md",
+          "# E\n\n- [01](suites/01-a.md) - x\n- [02](suites/02-b.md) - y\n")
+    write(root, "evals/suites/01-a.md", "# 1\n")
+    write(root, "evals/suites/02-b.md", "# 2\n")
+
+    assert not by_check(root, "index-completeness")
+
+
+def test_index_completeness_accepts_a_skill_listed_by_directory_alone(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "bydir"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# A\n\n- Skills: `docs/skills.md`\n")
+    write(root, "docs/skills.md", "# S\n\n- [demo](../skills/demo) - x\n")
+    write(root, "skills/demo/SKILL.md", SKILL_BODY.format(n="demo"))
+
+    assert not by_check(root, "index-completeness")
+
+
+def test_index_completeness_covers_the_docs_category(tmp_path: Path) -> None:
+    """The check table promises 'every artifact'; docs must not be exempt."""
+    root = tmp_path / "docs-cat"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# D\n\n- Docs: `docs/README.md`\n- See `docs/hidden.md`\n")
+    write(root, "docs/README.md", "# Docs\n\n- [shown](shown.md) - the listed one\n")
+    write(root, "docs/shown.md", "# Shown\n")
+    write(root, "docs/hidden.md", "# Hidden\n")
+
+    assert [f.path for f in by_check(root, "index-completeness")] == ["docs/hidden.md"]
+
+
+def test_index_completeness_covers_the_taxonomy_homes(tmp_path: Path) -> None:
+    """business, product, ops, templates, agents and eval suites are covered.
+
+    An earlier revision exempted all of them while the skill's check table
+    promised "every artifact" - the disclosure was in the CHANGELOG and not in
+    the artifact that ships to users.
+    """
+    root = tmp_path / "homes"
+    root.mkdir()
+    write(root, "CLAUDE.md", "# H\n\n- Docs: `docs/README.md`\n")
+    write(root, "docs/README.md", "# D\n")
+    for directory, index in (
+        ("docs/business", "docs/business/README.md"),
+        ("docs/product", "docs/product/README.md"),
+        ("docs/ops", "docs/ops/README.md"),
+        ("templates", "templates/README.md"),
+    ):
+        write(root, index, "# Index\n")
+        write(root, f"{directory}/ghost.md", "# Ghost\n")
+
+    flagged = {f.path for f in by_check(root, "index-completeness")}
+    for directory in ("docs/business", "docs/product", "docs/ops", "templates"):
+        assert f"{directory}/ghost.md" in flagged, f"{directory} is not covered"
+
+
+def test_this_repo_every_category_index_is_complete(repo: Path) -> None:
+    """Akinator must not ship a half-indexed layer it would flag elsewhere."""
+    hits = [f for f in findings(repo) if f.check == "index-completeness"]
+    assert not hits, [f"{f.path}: {f.message}" for f in hits]

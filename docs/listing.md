@@ -44,7 +44,7 @@ What you get:
   owner, ops, analyst, PM, and a librarian that blocks any batch whose knowledge
   delta is missing.
 - One command, /akinator, that runs everything.
-- A coverage checker with ten mechanically verifiable invariants: unreachable
+- A coverage checker with eleven mechanically verifiable invariants: unreachable
   artifacts, dead links, rules naming enforcement that does not exist, router
   forks, stale generated files, docs describing paths that are not there.
 - Gate economy - build the whole batch, gate once at the end, scoped to what you

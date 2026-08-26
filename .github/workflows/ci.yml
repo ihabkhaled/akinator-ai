@@ -51,8 +51,14 @@ jobs:
 
       # The knowledge invariants, against Akinator's own repository. The plugin
       # must not ship a layer it would reject in a target repo.
+      # --strict, not the default --fail-on high. `reachability` and
+      # `index-completeness` are MEDIUM, so the default tier would let an
+      # unindexed artifact pass CI green - which was true of reachability from
+      # the start and was never noticed until a review lens mutation-tested it.
+      # MEDIUM is the right severity for a target repo onboarding gradually; it
+      # is not the right bar for the plugin's own repo.
       - name: Coverage invariants
-        run: python scripts/akinator_coverage.py . --fail-on high
+        run: python scripts/akinator_coverage.py . --strict
 
       # The fixture repositories carry planted defects on purpose. Assert the
       # checker still detects them - a checker whose detection has silently

@@ -56,6 +56,7 @@ The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 |---|---|
 | Test | `python -m pytest tests/ -q` |
 | Coverage check | `python scripts/akinator_coverage.py .` |
+| Coverage check (strict) | `python scripts/akinator_coverage.py . --strict` - the tier CI uses |
 | Regenerate the Codex pack | `python scripts/build_codex_pack.py --write` |
 | Check the pack for drift | `python scripts/build_codex_pack.py --check` |
 | Install to Codex | `sh scripts/install-codex.sh --user` |

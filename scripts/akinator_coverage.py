@@ -331,6 +331,8 @@ def path_mentions(repo: Repo, path: Path, limit: int) -> list[str]:
 CHECKS: dict[str, str] = {
     "reachability": "Every rule, skill, context map, doc and memory entry is "
                     "reachable from an index or router.",
+    "index-completeness": "Every artifact appears in its own category index, "
+                          "not merely somewhere in the tree.",
     "dead-links": "No markdown link points at a file that does not exist.",
     "rule-enforcement": "Every rule names an enforcement mechanism that exists "
                         "in the tree, and it is not a git hook.",
@@ -380,6 +382,128 @@ def check_reachability(repo: Repo) -> list[Finding]:
             fix="Add it to its category index and link that index from the "
                 "routers (skill: akinator-index-sync).",
         ))
+    return findings
+
+
+# Where each kind of artifact is indexed, and the glob that finds its members.
+# The index is the file a reader actually browses; being linked from somewhere
+# else in the tree is not the same thing.
+CATEGORY_INDEXES = (
+    ("rules", "*.md", ("rules/README.md", "rules/index.md")),
+    ("skills", "*/SKILL.md", ("docs/skills.md", "skills/README.md")),
+    ("context", "*.md", ("context/README.md", "context/index.md")),
+    ("memory", "*.md", ("memory/index.md", "memory/README.md")),
+    ("docs/adr", "*.md", ("docs/adr/README.md", "docs/adr/index.md")),
+    ("docs", "*.md", ("docs/README.md", "docs/index.md")),
+    # The remaining taxonomy homes. These are where a target repo's business
+    # rules, product intent and runbooks live - the categories most likely to
+    # rot, and the ones an earlier revision silently exempted while the skill's
+    # check table promised "every artifact".
+    ("docs/business", "*.md", ("docs/business/README.md", "docs/business/index.md")),
+    ("docs/product", "*.md", ("docs/product/README.md", "docs/product/index.md")),
+    ("docs/ops", "*.md", ("docs/ops/README.md", "docs/ops/index.md")),
+    ("templates", "*.md", ("templates/README.md", "templates/index.md")),
+    ("agents", "*.md", ("docs/agents.md", "agents/README.md")),
+    ("evals/suites", "*.md", ("evals/README.md",)),
+)
+
+
+def _normalize_rel(target: str) -> str:
+    """Strip a leading `./` without eating a leading dot.
+
+    NOT lstrip("./"), which strips every leading '.' and '/' and would turn
+    `.claude-plugin/plugin.json` into `claude-plugin/plugin.json`. `exists_rel`
+    carries the same warning; it was written after being bitten by exactly this.
+    Here the consequence would be a silently widened accepted set - a false
+    negative in the check whose whole lesson is that false negatives are silent.
+    """
+    target = target.strip().replace("\\", "/")
+    while target.startswith("./"):
+        target = target[2:]
+    return target.lstrip("/")
+
+
+def _indexed_paths(repo: Repo, index: Path) -> set[str]:
+    """Every repo-relative path an index actually points at.
+
+    Resolved, not pattern-matched. Three silent false negatives were found in
+    review before this was rewritten to resolve paths:
+
+        `akinator`     matched inside every `akinator-*` entry
+        `demo`         matched inside a listed `demo-extended`
+        `overview.md`  matched a link to `adr/overview.md`
+
+    and the regex that closed the third produced six false *positives* on
+    `evals/suites/*` in the same run, because those are listed with a directory
+    prefix. Boundary-matching a bare token cannot separate "this artifact" from
+    "a different artifact whose name contains it" - resolving the reference can.
+    """
+    text = prose_of(repo, index)
+    out: set[str] = set()
+
+    for target in MD_LINK.findall(text) + BACKTICK_PATH.findall(text):
+        if _is_external(target):
+            continue
+        target = target.split("#", 1)[0].strip()
+        if not target:
+            continue
+        # An index may reference a sibling relatively, or spell the full
+        # repo-relative path. Both are legitimate; accept either reading.
+        out.add(_resolve(repo, index, target))
+        out.add(_normalize_rel(target))
+
+    return out
+
+
+def check_index_completeness(repo: Repo) -> list[Finding]:
+    """Every artifact appears in its **own** category index, not merely somewhere.
+
+    `reachability` proves an artifact is referenced from some markdown file. That
+    is weaker than the taxonomy's actual law. An artifact linked only from a
+    router, or only from a sibling doc, is invisible to a reader who opens the
+    index for that category and reads down the list - which is exactly how a
+    fresh agent looks for things.
+    """
+    findings: list[Finding] = []
+
+    for directory, pattern, index_candidates in CATEGORY_INDEXES:
+        base = repo.root / directory
+        if not base.is_dir():
+            continue
+
+        index = next(
+            (c for c in index_candidates if repo.exists_rel(c)), None
+        )
+        if index is None:
+            continue  # no index for this category; `reachability` covers that
+
+        listed = _indexed_paths(repo, repo.root / index)
+        members = [
+            p for p in sorted(base.glob(pattern))
+            if p.name.lower() not in ("readme.md", "index.md")
+            and not repo.is_ignored(repo.rel(p))
+        ]
+
+        for member in members:
+            rel = repo.rel(member)
+            # A skill may be listed by its directory or by its SKILL.md; both
+            # resolve to a real path, so accept either.
+            accepted = {rel}
+            if member.name == "SKILL.md":
+                accepted.add(repo.rel(member.parent))
+
+            if accepted & listed:
+                continue
+            findings.append(Finding(
+                check="index-completeness",
+                severity="medium",
+                path=rel,
+                message=f"not listed in its category index ({index}) - a reader "
+                        "browsing that index will not find it",
+                fix=f"Add an entry to {index} naming the situation this artifact "
+                    "serves, not just its title (skill: akinator-index-sync).",
+            ))
+
     return findings
 
 
@@ -835,6 +959,7 @@ def run_checks(repo: Repo, only: Sequence[str], skip: Sequence[str],
                sample: int) -> list[Finding]:
     registry = {
         "reachability": lambda: check_reachability(repo),
+        "index-completeness": lambda: check_index_completeness(repo),
         "dead-links": lambda: check_dead_links(repo),
         "rule-enforcement": lambda: check_rule_enforcement(repo),
         "router-sync": lambda: check_router_sync(repo),

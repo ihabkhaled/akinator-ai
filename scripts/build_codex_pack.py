@@ -210,6 +210,10 @@ def render_agents_md(repo: Path, skills: list[tuple[str, Path]]) -> str:
         "| Coverage check | `python scripts/akinator_coverage.py .` |"
     )
     lines.append(
+        "| Coverage check (strict) | "
+        "`python scripts/akinator_coverage.py . --strict` - the tier CI uses |"
+    )
+    lines.append(
         "| Regenerate the Codex pack | "
         "`python scripts/build_codex_pack.py --write` |"
     )

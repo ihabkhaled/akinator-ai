@@ -100,4 +100,5 @@ Run the coverage check (`akinator-coverage`) to confirm mechanically.
 - [ ] Deleted and renamed artifacts have no remaining references anywhere in the
       tree.
 - [ ] Generated indexes and `.ai/` manifests were regenerated, not hand-edited.
-- [ ] The coverage check reports no unreachable artifacts and no dead links.
+- [ ] The coverage check reports no unreachable artifacts, no dead links,
+      and no artifact missing from its own category index.

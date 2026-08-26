@@ -14,6 +14,8 @@ agent would otherwise rediscover.
 | 2026-08-26 | [Owner wants exactly one command, not a command per mode](2026-08-26-single-command-preference.md) | preference |
 | 2026-08-26 | [Illustrative paths in docs must live inside code fences](2026-08-26-fenced-examples-avoid-false-findings.md) | decision |
 | 2026-08-26 | [Codex requires interface assets, and rejects loose files under `skills/`](2026-08-26-codex-plugin-validation-surprises.md) | surprise |
+| 2026-08-26 | [A checker fails silently in both directions, and the false negative is the dangerous one](2026-08-26-checkers-fail-silently-in-both-directions.md) | surprise |
+| 2026-08-26 | [When correcting a fact, the index that states it is the easiest file to miss](2026-08-26-fix-the-index-not-only-its-pointers.md) | surprise |
 
 ## Pruning
 

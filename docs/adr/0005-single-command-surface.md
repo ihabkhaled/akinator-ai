@@ -18,7 +18,7 @@ This is a deviation from the brief. The brief itself says the platform contract
 and the owner's mandate win over the pack, and that deviations must be stated
 explicitly rather than applied silently - hence this record.
 
-Relevant context for evaluating it later: Akinator's twenty skills are
+Relevant context for evaluating it later: Akinator's skills are
 **auto-triggered** by their descriptions. The command surface is not how skills
 get invoked; it is how a user asks for a specific mode deliberately.
 

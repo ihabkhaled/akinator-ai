@@ -26,7 +26,7 @@ installed files made obvious.
 |---|---|---|
 | Manifest at `.claude-plugin/plugin.json`; `name` required | plugin identity, version, license | the manifest location or required fields change |
 | Component directories at **plugin root**, not nested inside `.claude-plugin/` | `skills/`, `commands/`, `agents/`, `hooks/` | auto-discovery moves |
-| `skills/<name>/SKILL.md`, frontmatter `name` + `description`, auto-discovered | all 20 skills; description is the trigger | frontmatter keys change, or auto-trigger stops keying off `description` |
+| `skills/<name>/SKILL.md`, frontmatter `name` + `description`, auto-discovered | all 21 skills; description is the trigger | frontmatter keys change, or auto-trigger stops keying off `description` |
 | `commands/*.md`, frontmatter `description`, `argument-hint`, `allowed-tools` | the single `/akinator` command | frontmatter keys change |
 | `agents/*.md`, frontmatter `name` + `description`, optional `tools` | the 7 boardroom lenses | subagent definition format changes |
 | `hooks/hooks.json` in the **plugin format** - events wrapped in a `hooks` key | the SessionStart contract injection | the wrapper is dropped or renamed |
