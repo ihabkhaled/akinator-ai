@@ -9,7 +9,7 @@
       "name": "akinator",
       "source": "./",
       "description": "Ask everything, document everything, skillify everything, rule everything. Makes every code change carry its knowledge delta.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "Productivity",
       "tags": [
         "documentation",

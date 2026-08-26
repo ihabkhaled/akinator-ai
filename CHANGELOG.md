@@ -4,6 +4,45 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
+## [1.0.1] - 2026-08-26
+
+### Verified installing and loading in Claude Code
+
+Previously this was asserted by the structural tests and never actually done.
+It has now been done, against Claude Code 2.1.154:
+
+```
+claude plugin validate .            -> Validation passed
+claude plugin marketplace add ./    -> added marketplace: akinator
+claude plugin install akinator@akinator -> installed (scope: user), enabled
+```
+
+`claude plugin details akinator` enumerates the whole surface: 21 skills, 7
+agents, 1 command, 1 SessionStart hook, 0 MCP servers, 0 LSP servers. Always-on
+cost ~3.0k tokens - the per-skill always-on figure is the trigger description
+only, which is what makes 21 skills affordable; the body is paid on invoke.
+
+Two observations from the real install, neither a defect:
+
+- The details output reports "Skills (22)" and lists `akinator` twice. There are
+  21 skill directories on disk. The 22nd entry is `commands/akinator.md`, which
+  shares the name - the inventory counts the command alongside the skills.
+- The install copies the whole repository into the plugin cache, so `.agents/`,
+  `evals/`, `tests/` and `scripts/` ship with it. Only `skills/`, `agents/`,
+  `commands/` and `hooks/` are loaded, and the generated `.agents/skills/` is
+  **not** double-registered as skills. The rest costs disk, not context.
+
+### Added
+
+- `docs/listing.md` gains the everything-pass use case - the flagship bare
+  `/akinator`, which the listing had no example for.
+
+### Changed
+
+- Version bumped across `.claude-plugin/plugin.json`,
+  `.claude-plugin/marketplace.json` and `.codex-plugin/plugin.json`. The suite
+  asserts all three agree.
+
 ## [1.0.0] - 2026-08-26
 
 First release.
