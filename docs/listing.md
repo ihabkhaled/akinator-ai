@@ -60,7 +60,44 @@ fast.
 ## Example use cases
 
 ```
-1. Onboard a repository nobody can navigate
+1. The everything pass, before something expensive
+
+   /akinator
+
+   You inherited a service that takes payments, the person who wrote it left in
+   March, and you ship a pricing change on Friday. You do not know what is
+   documented, what is true, or what will bite.
+
+   With no arguments, /akinator runs the complete pass:
+
+   - Reads whatever knowledge layer exists and cites it, so you can see what it
+     actually relied on rather than what it inferred.
+   - Audits claim against code. Marks what is done, what is partial, and what is
+     present-but-not-wired - code that exists, is tested in isolation, and that
+     nothing live ever calls. Every plan built on that code was wrong.
+   - Plans the fix in batches, each declaring by path the docs, rules, context
+     maps and memory entries it will produce.
+   - Runs the boardroom: the business owner vetoes an entitlement change with no
+     business doc, the CTO vetoes an undocumented architectural decision, ops
+     vetoes a migration with no runbook, the PM rejects any "done" without a
+     live call path behind it.
+   - Closes the batches, and the librarian blocks each one until its knowledge
+     delta is delivered, routed, reachable and true.
+   - Gates once at the end, scoped. Runs every check. Turns anti-gaming on its
+     own output - every doc must survive deleting the sentences you could have
+     derived from the code.
+   - Loops the unmet lines back in. When the Definition of Done is proven with
+     evidence, it stops.
+
+   What you get is not a report. It is a repository where the pricing change is
+   safe to make, and a written list of what is still unknown and who has to
+   decide it.
+
+   Also use it before a handover or a release, after a long session where you
+   cannot account for what got skipped, and on any change touching money,
+   permissions, deletion or a public contract.
+
+2. Onboard a repository nobody can navigate
 
    /akinator onboard
 
@@ -70,7 +107,7 @@ fast.
    knowledge layer, must answer where to go, what to do, what not to break and
    what to run, for your five most common change types.
 
-2. Ship a feature whose reasoning survives it
+3. Ship a feature whose reasoning survives it
 
    /akinator add per-team rate limiting to the export endpoint
 
@@ -79,7 +116,7 @@ fast.
    ops note if it changes how the service is deployed - all in the same batch,
    all indexed, all reflected in every AI entry-point file.
 
-3. Stop an agent guessing on money
+4. Stop an agent guessing on money
 
    /akinator implement refunds
 
@@ -89,7 +126,7 @@ fast.
    it. Money, permissions, deletion and public contracts are where guessing is
    prohibited.
 
-4. Find out whether your documentation is actually true
+5. Find out whether your documentation is actually true
 
    /akinator audit
 
@@ -98,7 +135,7 @@ fast.
    CLAUDE.md that says something your AGENTS.md does not - so your Codex users
    have been reading a different truth.
 
-5. Capture the procedure that cost you three hours
+6. Capture the procedure that cost you three hours
 
    Someone works out that a schema change needs the container dropped and
    rebuilt, not restarted, because the old image serves the old schema and the
@@ -106,7 +143,7 @@ fast.
    exact commands, what is parallel-safe, and the point of no return - and a
    skill so it fires the next time anyone touches a migration.
 
-6. Make a large refactor cheap to verify
+7. Make a large refactor cheap to verify
 
    /akinator rename the Item model to Record across the codebase
 
