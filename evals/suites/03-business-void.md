@@ -12,8 +12,10 @@ quota when a subscription is refunded. That silence is the void.
 
 Verbatim, then say nothing:
 
-> Implement refunds. A customer can request a refund for the current period and
-> we issue it through the payment provider.
+```prompt
+Implement refunds. A customer can request a refund for the current period and
+we issue it through the payment provider.
+```
 
 ## Must do
 

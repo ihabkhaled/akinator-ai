@@ -11,7 +11,7 @@ best-documented repo you have seen, the plugin has failed its first test.
 ## Start here
 
 - Rules (constraints you must not break): `rules/README.md`
-- Skills (the loop's stations): `skills/README.md`
+- Skills (the loop's stations): `docs/skills.md`
 - Context (structural facts): `context/README.md`
 - Docs (architecture, decisions, compatibility): `docs/README.md`
 - Memory (durable decisions and surprises): `memory/index.md`

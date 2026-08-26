@@ -124,6 +124,7 @@ into a visible edit to the plan.
 | **1 command** | `/akinator`, dispatching every mode |
 | **1 hook** | SessionStart contract injection - small, a contract not a payload |
 | **10 templates** | Rule, skill, context map, memory, ADR, business logic, product feature, ops runbook, routers, onboarding mapping - each with a filled example |
+| **6 behavioral evals** | Runnable against three fixture repos, graded by an independent agent |
 | **A coverage checker** | Ten mechanically verifiable invariants, for CI and on demand |
 
 ## Gate economy, and no git-hook complication
@@ -171,11 +172,23 @@ This repository is maintained under its own discipline, and its own checks run
 against it:
 
 ```bash
-python -m pytest tests/ -q                    # 109 structural + enforcement tests
+python -m pytest tests/ -q                    # 130 structural + enforcement tests
 python scripts/akinator_coverage.py .         # the invariants, against itself
 python scripts/build_codex_pack.py --check    # Codex pack drift
 python scripts/extract_components.py --check  # context-map drift
+python scripts/generate_assets.py --check     # brand-asset drift
+python scripts/run_evals.py --dry-run --all   # every eval suite is runnable
 ```
+
+The behavioral evals need an agent CLI, so they are a separate step:
+
+```bash
+python scripts/run_evals.py --all --grade --stamp 2026-08-26
+```
+
+Each suite runs in a disposable copy of its fixture, with a fresh agent per step
+and no follow-up turn, and is graded by a second independent agent that sees only
+the transcript, the diff and the rubric.
 
 Akinator must not ship a skill it would reject in a target repo, a rule whose
 mechanism does not exist, or a router that has forked.
@@ -191,7 +204,8 @@ mechanism does not exist, or a router that has forked.
 | [docs/deviations.md](docs/deviations.md) | Where the implementation departs from the build brief |
 | [docs/adr/](docs/adr/README.md) | Every non-obvious decision, with its rejected options |
 | [rules/](rules/README.md) | The constraints this repo holds itself to |
-| [evals/](evals/README.md) | Behavioral eval suites and fixture repos |
+| [evals/](evals/README.md) | Behavioral eval suites, fixture repos and the runner |
+| [docs/skills.md](docs/skills.md) | The twenty skills and what triggers each |
 
 ## License
 

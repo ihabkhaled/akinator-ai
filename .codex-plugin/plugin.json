@@ -36,6 +36,8 @@
       "Write"
     ],
     "websiteURL": "https://github.com/ihabkhaled/akinator",
+    "composerIcon": "./assets/akinator-icon.png",
+    "logo": "./assets/akinator-logo.png",
     "defaultPrompt": [
       "Onboard this repository with Akinator and report the knowledge gaps ranked by severity.",
       "Run the Akinator loop on this change and produce the knowledge delta with it.",

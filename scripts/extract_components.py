@@ -137,7 +137,7 @@ def render(repo: Path) -> str:
         "- **Does not cover:** what each component *does*. That is"
     )
     lines.append(
-        "  `skills/README.md`, `docs/architecture.md`, and the components"
+        "  `docs/skills.md`, `docs/architecture.md`, and the components"
     )
     lines.append("  themselves.")
     lines.append("")
@@ -271,7 +271,7 @@ def render(repo: Path) -> str:
         "- Docs: `docs/compatibility.md` - the platform contracts each surface"
     )
     lines.append("  relies on")
-    lines.append("- Skills: `skills/README.md` - the skills index")
+    lines.append("- Skills: `docs/skills.md` - the skills index")
     lines.append("")
     return "\n".join(lines)
 

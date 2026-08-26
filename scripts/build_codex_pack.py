@@ -152,7 +152,7 @@ def render_agents_md(repo: Path, skills: list[tuple[str, Path]]) -> str:
     lines.append("## Start here")
     lines.append("")
     lines.append("- Rules (constraints you must not break): `rules/README.md`")
-    lines.append("- Skills (the loop's stations): `skills/README.md`")
+    lines.append("- Skills (the loop's stations): `docs/skills.md`")
     lines.append("- Context (structural facts): `context/README.md`")
     lines.append("- Docs (architecture, decisions, compatibility): `docs/README.md`")
     lines.append("- Memory (durable decisions and surprises): `memory/index.md`")

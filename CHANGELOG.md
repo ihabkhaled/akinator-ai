@@ -8,6 +8,25 @@ repositories depend on it the way they depend on an API.
 
 First release.
 
+### Fixed before release - Codex plugin validation
+
+Three defects found by a validation run against the packaged plugin:
+
+- **`interface.composerIcon` and `interface.logo` are required**, not optional,
+  and must reference square images that exist in the plugin. `docs/compatibility.md`
+  had asserted the opposite and was corrected. Akinator now ships
+  `assets/akinator-icon.png` and `assets/akinator-logo.png`, both 512x512,
+  **generated** by `scripts/generate_assets.py` - the mark is drawn from a signed
+  distance field and the PNG encoded with the standard library, so it keeps its
+  provenance and can be drift-checked like every other generated artifact.
+- **Files directly under `skills/` are not imported** and fail validation. The
+  skills index moved from `skills/README.md` to `docs/skills.md`, and
+  `rules/08-skills-dir-holds-only-skill-directories.md` now prevents the class of
+  defect with a test as its enforcement.
+- Both surprises are recorded in
+  `memory/2026-08-26-codex-plugin-validation-surprises.md`, with the general
+  lesson: **the validator is the contract; the field list is a summary.**
+
 ### The contract
 
 - The **creed** and the twelve-station **loop**, carried in the master
@@ -48,16 +67,35 @@ First release.
   and `AGENTS.md` from the canonical Claude skills, with a drift check.
 - `scripts/extract_components.py` - generates `context/components.md` from the
   tree; fails if a skill has no declared loop station.
+- `scripts/generate_assets.py` - draws and encodes the brand assets Codex
+  validation requires, with a drift check.
+- `scripts/run_evals.py` - runs the behavioral evals against the fixtures. Fresh
+  agent per step, no follow-up turn, each run in a disposable copy of the fixture
+  so an eval can never mutate it, and optional grading by a second independent
+  agent that sees only the transcript, the diff and the rubric.
 - `scripts/install-codex.sh` and `install-codex.ps1`.
 
 ### Verification
 
-- 109 structural and enforcement tests. Every rule's named mechanism is asserted
+- 130 structural and enforcement tests. Every rule's named mechanism is asserted
   to actually work, so a rule cannot silently become decoration.
-- Six behavioral eval suites and three fixture repositories: bare, brownfield
+- Six behavioral eval suites, numbered without gaps, every one runnable by
+  `scripts/run_evals.py`, against three fixture repositories: bare, brownfield
   with its own conventions, and one with deliberate rot.
-- CI runs the tests, both drift checks, the coverage invariants against
-  Akinator's own repository, and a guard that the rotten fixture still fails.
+- CI runs the tests, all three drift checks, the coverage invariants against
+  Akinator's own repository, a guard that the rotten fixture still fails, and a
+  check that every eval suite is parseable and runnable.
+
+### Known gap
+
+The behavioral evals are runnable and graded but have **not been run** for this
+release - doing so needs an agent CLI and fresh contexts, and grading them from
+the session that wrote them would be worthless. `evals/results/` is empty by
+design rather than by omission. Run them with:
+
+```bash
+python scripts/run_evals.py --all --grade --stamp YYYY-MM-DD
+```
 
 ### Platform contracts
 

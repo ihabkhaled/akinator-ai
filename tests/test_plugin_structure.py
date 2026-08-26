@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import struct
 from pathlib import Path
 
 import pytest
@@ -390,3 +391,88 @@ def test_versions_agree_across_manifests(
     plugin_manifest: dict, codex_manifest: dict
 ) -> None:
     assert plugin_manifest["version"] == codex_manifest["version"]
+
+
+# --------------------------------------------------------------------------
+# Plugin packaging
+# --------------------------------------------------------------------------
+
+def test_skills_dir_holds_only_skill_directories(repo: Path) -> None:
+    """Enforcement for rules/08.
+
+    Both platforms import skills by scanning `skills/` for subdirectories
+    containing SKILL.md. A loose file there is not imported, and Codex
+    validation rejects the plugin for it. The usual offender is a README index,
+    which is the right instinct in a normal repo and the wrong one in a plugin.
+    """
+    loose = sorted(p.name for p in (repo / "skills").iterdir() if p.is_file())
+    assert not loose, (
+        f"files directly under skills/ are not imported as skills: {loose}. "
+        "Move an index to docs/skills.md, or a support file into its skill's "
+        "own directory (rules/08-skills-dir-holds-only-skill-directories.md)."
+    )
+
+    empty = sorted(
+        p.name for p in (repo / "skills").iterdir()
+        if p.is_dir() and not (p / "SKILL.md").is_file()
+    )
+    assert not empty, f"skill directories without a SKILL.md: {empty}"
+
+
+def test_skills_index_lives_outside_skills_dir(repo: Path) -> None:
+    assert (repo / "docs" / "skills.md").is_file()
+    assert not (repo / "skills" / "README.md").exists()
+
+
+# --------------------------------------------------------------------------
+# Brand assets - required by Codex validation
+# --------------------------------------------------------------------------
+
+def _png_dimensions(path: Path) -> tuple[int, int, int, int]:
+    """(width, height, bit_depth, colour_type) from a PNG's IHDR."""
+    raw = path.read_bytes()
+    assert raw[:8] == b"\x89PNG\r\n\x1a\n", f"{path} is not a PNG"
+    assert raw[12:16] == b"IHDR", f"{path} has no IHDR first"
+    width, height, depth, colour = struct.unpack(">IIBB", raw[16:26])
+    return width, height, depth, colour
+
+
+REQUIRED_ASSET_FIELDS = ("composerIcon", "logo")
+
+
+@pytest.mark.parametrize("field", REQUIRED_ASSET_FIELDS)
+def test_codex_manifest_declares_required_asset(
+    codex_manifest: dict, field: str
+) -> None:
+    """Codex validation requires both, and requires them to be square images."""
+    value = codex_manifest["interface"].get(field)
+    assert value, f"interface.{field} is required by Codex plugin validation"
+    assert value.startswith("./"), f"interface.{field} must be a plugin-relative path"
+    assert value.lower().endswith(".png")
+
+
+@pytest.mark.parametrize("field", REQUIRED_ASSET_FIELDS)
+def test_required_asset_is_a_square_png(
+    repo: Path, codex_manifest: dict, field: str
+) -> None:
+    value = codex_manifest["interface"][field]
+    path = repo / value[2:]
+    assert path.is_file(), f"interface.{field} points at a missing file: {value}"
+
+    width, height, depth, colour = _png_dimensions(path)
+    assert width == height, f"{value} must be square, got {width}x{height}"
+    assert width >= 256, f"{value} is {width}px - too small for a plugin icon"
+    assert depth == 8 and colour == 6, f"{value} must be 8-bit RGBA"
+
+
+def test_assets_are_generated_not_committed_by_hand(repo: Path) -> None:
+    """The assets must match their generator, so the mark has provenance."""
+    import generate_assets
+
+    for rel, content in generate_assets.plan(repo).items():
+        path = repo / rel
+        assert path.is_file(), f"{rel} is missing - run generate_assets.py --write"
+        assert path.read_bytes() == content, (
+            f"{rel} does not match scripts/generate_assets.py. "
+            "Edit the generator, then regenerate."
+        )

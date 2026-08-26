@@ -37,9 +37,13 @@ includes deletion - especially deletion.
 
 An artifact is usually reachable from more than one place:
 
-- Its **category index** - `rules/README.md`, `skills/README.md`,
-  `docs/README.md`, `docs/adr/README.md`, `memory/index.md`, or whatever the
-  repo uses.
+- Its **category index** - whatever this repo uses. Commonly:
+
+  ```
+  rules/README.md   skills/README.md   docs/README.md
+  docs/adr/README.md   memory/index.md
+  ```
+
 - Its **routers** - the root `CLAUDE.md`, `AGENTS.md`, `CODEX.md` and any
   per-module router in the directory it belongs to. Router updates are the job of
   `akinator-router-sync`, run in the same batch.

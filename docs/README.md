@@ -31,7 +31,7 @@ See [the ADR index](adr/README.md) for the full list and the conventions.
 ## Related
 
 - `rules/README.md` - the constraints this repository holds itself to
-- `skills/README.md` - the twenty skills
+- [Skills index](skills.md) - the twenty skills and what triggers each
 - `context/README.md` - generated structural maps
 - `memory/index.md` - durable decisions and surprises
 - `evals/README.md` - the behavioral eval suites

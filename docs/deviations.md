@@ -46,19 +46,29 @@ described.
   asserts the content is actually there rather than assumed.
 - **Recorded in:** `docs/compatibility.md`.
 
-## 4. No image assets in the Codex manifest
+## 4. Brand assets are generated, not drawn ~~No image assets in the Codex manifest~~
 
-- **Brief, Appendix / Part 18:** implies a distributable, listable plugin.
-- **Shipped:** `.codex-plugin/plugin.json` omits `composerIcon`, `logo`,
-  `privacyPolicyURL` and `termsOfServiceURL`.
-- **Why:** Codex validation requires asset paths to point at real files inside
-  the plugin archive, and URLs to be absolute `https://`. Akinator ships no image
-  assets and has no privacy or terms documents. Naming files that do not exist
-  would fail validation - and would be precisely the fake compliance the plugin
-  forbids (`skills/akinator-anti-gaming/SKILL.md`).
-- **To close:** add real assets, then add the fields. Asserted by
-  `tests/test_plugin_structure.py::test_codex_manifest_assets_exist`, which will
-  start checking them the moment they are declared.
+**Corrected 2026-08-26.** The original entry claimed `composerIcon` and `logo`
+were optional and omitted them. That was **wrong**: Codex validation requires
+both, and rejects the plugin without them. The entry is kept rather than deleted
+because the correction is the useful part - see
+`memory/2026-08-26-codex-plugin-validation-surprises.md`.
+
+- **Shipped:** `assets/akinator-icon.png` and `assets/akinator-logo.png`, both
+  512x512, both declared in `.codex-plugin/plugin.json`.
+- **The actual deviation:** the assets are **generated from code**
+  (`scripts/generate_assets.py`) rather than authored in a design tool. The mark
+  is drawn from a signed distance field and the PNG encoded with the standard
+  library - no dependencies, no binary blob without provenance.
+- **Why:** a committed binary nobody can regenerate is a fact with no history.
+  Generating it means the mark can be changed, reviewed as a diff, re-rendered at
+  any size, and drift-checked like every other generated artifact here.
+- **Cost:** it is a geometric mark, not the work of a designer. If Akinator ever
+  wants a crafted identity, replace the generator's output with real assets and
+  drop `test_assets_are_generated_not_committed_by_hand`.
+- **Still omitted, deliberately:** `logoDark`, `privacyPolicyURL` and
+  `termsOfServiceURL` - all genuinely optional, and the latter two would point at
+  documents that do not exist.
 
 ## 5. Templates directory holds 10 templates in 10 files, with a shared examples set
 

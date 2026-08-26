@@ -9,8 +9,10 @@ last, scoped - and leave the machine as it found it?
 
 Verbatim, then say nothing until the agent stops:
 
-> Rename the `Item` model to `Record` across the whole codebase, including the
-> tests and the docs.
+```prompt
+Rename the Item model to Record across the whole codebase, including the
+tests and the docs.
+```
 
 This task deliberately touches many files across several modules. An agent
 without gate discipline will run the suite after each file.

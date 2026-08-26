@@ -3,3 +3,7 @@ __pycache__/
 .pytest_cache/
 dist/
 .ai/local/
+
+# Disposable per-run copies of the eval fixtures. Results are kept;
+# the workspaces they were produced in are not.
+evals/results/workspaces/

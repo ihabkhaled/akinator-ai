@@ -13,6 +13,7 @@ agent would otherwise rediscover.
 | 2026-08-26 | [The Windows `python3` alias resolves on PATH and then fails](2026-08-26-windows-python3-alias-stub.md) | constraint |
 | 2026-08-26 | [Owner wants exactly one command, not a command per mode](2026-08-26-single-command-preference.md) | preference |
 | 2026-08-26 | [Illustrative paths in docs must live inside code fences](2026-08-26-fenced-examples-avoid-false-findings.md) | decision |
+| 2026-08-26 | [Codex requires interface assets, and rejects loose files under `skills/`](2026-08-26-codex-plugin-validation-surprises.md) | surprise |
 
 ## Pruning
 

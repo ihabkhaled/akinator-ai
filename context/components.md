@@ -14,7 +14,7 @@ reads it.
 - **Covers:** the plugin's own components - skills, agents, commands,
   hooks, scripts and templates - and which platform surface each serves.
 - **Does not cover:** what each component *does*. That is
-  `skills/README.md`, `docs/architecture.md`, and the components
+  `docs/skills.md`, `docs/architecture.md`, and the components
   themselves.
 
 ## Skills - 20
@@ -79,15 +79,17 @@ Claude-only; the same contract reaches Codex through the generated
 |---|---|
 | `SessionStart` | `sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"` |
 
-## Scripts - 5
+## Scripts - 7
 
 | Script | Purpose |
 |---|---|
 | `scripts/akinator_coverage.py` | Akinator coverage checker - the mechanically verifiable knowledge invariants. |
 | `scripts/build_codex_pack.py` | Generate the Codex pack from the canonical Claude skills. |
 | `scripts/extract_components.py` | Generate `context/components.md` from the tree. |
+| `scripts/generate_assets.py` | Generate Akinator's brand assets. |
 | `scripts/install-codex.ps1` | Install the Akinator Codex pack. |
 | `scripts/install-codex.sh` | Install the Akinator Codex pack. |
+| `scripts/run_evals.py` | Run Akinator's behavioral evals against the fixture repositories. |
 
 ## Templates - 10
 
@@ -122,4 +124,4 @@ filled example.
   interact
 - Docs: `docs/compatibility.md` - the platform contracts each surface
   relies on
-- Skills: `skills/README.md` - the skills index
+- Skills: `docs/skills.md` - the skills index

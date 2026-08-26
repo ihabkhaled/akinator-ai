@@ -71,19 +71,57 @@ It does **not** use: MCP servers, `.mcp.json`, prompt-type hooks, `PreToolUse` /
 | `.codex-plugin/plugin.json`: required `name`, `version`, `description`, `author.name`, `interface` | the Codex plugin manifest | required fields change |
 | Required `interface` fields: `displayName`, `shortDescription`, `longDescription`, `developerName`, `category`, `capabilities` | manifest validity | the interface schema changes |
 | Validation **rejects** unsupported manifest fields such as `hooks` | why Akinator has no Codex hook surface | validation loosens |
+| `interface.composerIcon` and `interface.logo` are **required**, and must reference **square** images that exist in the plugin | `assets/akinator-icon.png`, `assets/akinator-logo.png` - both 512x512 | the asset contract changes |
+| Files directly under `skills/` are **not imported**, and fail validation | the skills index lives at `docs/skills.md`, never as a README inside `skills/` | the import rule changes |
 | URLs must be absolute `https://`; asset paths must point at real files; no `[TODO: ...]` placeholders | manifest passes validation | tightened further |
+
+### The asset requirement
+
+`composerIcon` and `logo` are **required**, not optional - an earlier revision of
+this document said otherwise and was wrong. Both must reference square images
+that really exist inside the plugin.
+
+Akinator's are generated, not committed as opaque binaries:
+`scripts/generate_assets.py` draws the mark from a signed distance field and
+encodes the PNG with the standard library. That keeps their provenance - the mark
+is defined in code, reviewable as a diff, and re-renderable at any size - and it
+means `--check` can prove the committed bytes match the generator.
+
+Asserted by `tests/test_plugin_structure.py`:
+`test_codex_manifest_declares_required_asset`,
+`test_required_asset_is_a_square_png`, and
+`test_assets_are_generated_not_committed_by_hand`.
+
+### The skills-directory requirement
+
+Both platforms import skills by scanning `skills/` for subdirectories containing
+`SKILL.md`. A loose file directly under `skills/` is not imported, and Codex
+validation rejects the plugin for it.
+
+The trap is that the loose file is usually a README index - the right instinct in
+a normal repository, and the wrong one in a plugin. Akinator shipped exactly that
+defect in its first build:
+
+```
+skills/
+  README.md          <- linked from every router, and not imported
+  akinator/
+    SKILL.md
+```
+
+The index now lives at `docs/skills.md`. See
+`rules/08-skills-dir-holds-only-skill-directories.md`.
 
 ### Deliberate omissions in the Codex manifest
 
 - **No `hooks` field.** Validation rejects it. The SessionStart contract is a
   Claude-only surface; Codex gets the same content from `AGENTS.md`.
-- **No `composerIcon` / `logo`.** Asset paths must point at real files inside
-  the plugin archive, and Akinator ships no image assets. Naming one that does
-  not exist would fail validation - and would be exactly the fake compliance the
-  plugin forbids. Asserted by
-  `tests/test_plugin_structure.py::test_codex_manifest_assets_exist`.
-- **No `privacyPolicyURL` / `termsOfServiceURL`.** Same reasoning: they would
-  point at documents that do not exist.
+- **No `logoDark`.** Optional, and the mark already reads on both light and dark
+  grounds - the icon carries its own deep navy field rather than relying on the
+  host background.
+- **No `privacyPolicyURL` / `termsOfServiceURL`.** Optional, and they would point
+  at documents that do not exist. Adding the URL before the document would be
+  exactly the fake compliance the plugin forbids.
 
 ### Codex skills path: `.agents/skills`, not `.codex/skills`
 

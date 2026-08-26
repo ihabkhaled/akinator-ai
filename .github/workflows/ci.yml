@@ -38,6 +38,17 @@ jobs:
       - name: Context map drift
         run: python scripts/extract_components.py --check
 
+      # The brand assets Codex validation requires must match their generator,
+      # so the mark keeps its provenance instead of becoming an opaque binary.
+      - name: Asset drift
+        run: python scripts/generate_assets.py --check
+
+      # Every behavioral eval must at least be *parseable and runnable*. A suite
+      # the runner cannot execute is documentation pretending to be a test.
+      # Executing them needs an agent CLI and is a separate, manual step.
+      - name: Eval suites are runnable
+        run: python scripts/run_evals.py --dry-run --all
+
       # The knowledge invariants, against Akinator's own repository. The plugin
       # must not ship a layer it would reject in a target repo.
       - name: Coverage invariants

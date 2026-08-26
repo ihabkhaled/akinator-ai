@@ -9,8 +9,10 @@ delta unprompted, and route it correctly?
 
 Give this verbatim, then say nothing until the agent stops.
 
-> Add a `--format json` option to the report command so it can be piped into
-> other tools.
+```prompt
+Add a --format json option to the report command so it can be piped into
+other tools.
+```
 
 ## Must do
 
