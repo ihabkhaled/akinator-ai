@@ -1,0 +1,17 @@
+# Normalize to LF in the working tree, on every platform.
+#
+# This is load-bearing, not cosmetic. The Codex pack and the component map are
+# generated with LF line endings and verified byte-for-byte by their drift
+# checks. If Git converted them to CRLF on a Windows checkout, the generator's
+# output would differ from the file on disk and the drift check would fail on a
+# clean tree - which would train people to ignore it.
+#
+# See rules/07-codex-pack-is-generated.md.
+* text=auto eol=lf
+
+# Shell scripts must keep LF even where a platform would prefer CRLF: a CRLF
+# shebang line makes the script unrunnable ("bad interpreter: no such file").
+*.sh text eol=lf
+
+# PowerShell is fine either way; keep it consistent with everything else.
+*.ps1 text eol=lf

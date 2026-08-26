@@ -1,0 +1,45 @@
+{
+  "name": "akinator",
+  "version": "1.0.0",
+  "description": "Ask everything, document everything, skillify everything, rule everything. A behavioral operating system that makes it structurally impossible to change code without growing the knowledge layer around it.",
+  "author": {
+    "name": "Ihab Khaled"
+  },
+  "homepage": "https://github.com/ihabkhaled/akinator",
+  "repository": "https://github.com/ihabkhaled/akinator",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "knowledge-management",
+    "agent-skills",
+    "context-engineering",
+    "onboarding",
+    "business-logic",
+    "runbooks",
+    "adr",
+    "codebase-memory",
+    "ai-agents",
+    "coding-agents",
+    "institutional-memory",
+    "gate-economy",
+    "router-sync"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Akinator",
+    "shortDescription": "The knowledge layer ships with the code",
+    "longDescription": "Akinator runs every codebase touch through a twelve-station loop: ask, resolve, audit, plan, implement, document, skillify, rule, contextify, memoize, index-and-sync, verify. Stations six through eleven are not deferrable, so a change is never merged without the docs, skills, rules, context maps and memory that let the next agent act on it in seconds. It captures business logic, product intent and operational procedure in the repository itself, keeps every AI router file in sync, and enforces gate economy so verification runs once at the end instead of burning the machine per edit.",
+    "developerName": "Ihab Khaled",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/ihabkhaled/akinator",
+    "defaultPrompt": [
+      "Onboard this repository with Akinator and report the knowledge gaps ranked by severity.",
+      "Run the Akinator loop on this change and produce the knowledge delta with it.",
+      "Audit this repo's knowledge layer for staleness, router drift and unindexed artifacts."
+    ]
+  }
+}

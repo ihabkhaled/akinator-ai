@@ -1,0 +1,10 @@
+# Paths deliberately not held to the Akinator invariants.
+#
+# Keep this file short and justify every line. A repository that ignores its way
+# to green has defeated the checker rather than satisfied it.
+
+# Fixture repositories carry planted defects on purpose. Their rot is the point:
+# it is what the audit and coverage evals are run against, and what
+# tests/test_coverage_checker.py asserts the checker detects.
+# See evals/fixtures/rotten/README.md for the full list of planted defects.
+evals/fixtures

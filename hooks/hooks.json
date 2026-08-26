@@ -1,0 +1,15 @@
+{
+  "description": "Akinator SessionStart hook: injects the behavioral contract (creed, loop, non-negotiables) and reports which knowledge entry points the current repo actually has, so station 2 (RESOLVE) starts from facts. Display-only: it emits context and never returns a permission decision.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}
