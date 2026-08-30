@@ -167,4 +167,4 @@ gate-economy, router-sync
 ## Review when
 
 - The skill count, command surface or invariant count changes.
-- Last verified: 2026-08-26, against plugin version 1.0.1.
+- Last verified: 2026-08-26, against plugin version 1.0.2.

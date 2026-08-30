@@ -4,7 +4,7 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
-## [Unreleased]
+## [1.0.2] - 2026-08-26
 
 ### Added
 
@@ -38,6 +38,14 @@ repositories depend on it the way they depend on an API.
   not the right bar for the repository that ships the checker.
 
 - `docs/agents.md` - an index for the seven boardroom lenses, which had none.
+
+- `docs/akinator-v2-design.md` - the approved design for the next major version.
+  It names the conflict v1 never resolved: "document every needle" is a write
+  problem and "a new chat knows everything in seconds" is a retrieval problem,
+  and optimizing the first degrades the second. v2 splits them into an unbounded
+  corpus and a hard-capped brief, and adds the learning loop - a fingerprinted
+  failure ledger, recurrence-to-rule synthesis, and rule evolution when a rule
+  causes the next failure. Seven phases, not yet implemented.
 
 ### Fixed
 
