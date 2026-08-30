@@ -13,6 +13,7 @@ Facts that can be extracted from the tree live in `context/`, not here.
 | [Business case](business-case.md) | Why this exists, what it is worth, how to tell whether it is working, and what would make it fail |
 | [Compatibility](compatibility.md) | The Claude Code and Codex contracts relied on, how they were verified, and what breaks when they move |
 | [Listing](listing.md) | The directory-submission copy - name, description, example use cases - kept in the repo so it cannot drift from what ships |
+| [The ledger](ledger.md) | What happened - failures, questions, decisions and surprises - fingerprinted so recurrence becomes a rule |
 | [Akinator v2 design](akinator-v2-design.md) | The approved design for the next major version - the capture/distil/harden/project/surface pipeline, its budgets, and the seven implementation phases |
 | [Deviations](deviations.md) | Where the implementation departs from the build brief, and why |
 

@@ -109,6 +109,11 @@ MD_LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 BACKTICK_PATH = re.compile(r"`([A-Za-z0-9_./\\-]+\.[A-Za-z0-9]{1,8})`")
 # Headings, used to locate a rule's Enforcement section.
 HEADING = re.compile(r"^#{1,6}\s+(.*?)\s*$", re.MULTILINE)
+# A generated-file banner: an HTML comment at the very top, optionally after
+# YAML frontmatter (Cursor's .mdc puts frontmatter first).
+LEADING_COMMENT = re.compile(
+    r"\A(?:---\n.*?\n---\n\s*)?<!--.*?-->", re.DOTALL
+)
 # An intentional per-tool divergence marker in a router.
 TOOL_SPECIFIC = re.compile(r"<!--\s*akinator:tool-specific\s*-->", re.IGNORECASE)
 
@@ -747,11 +752,26 @@ def check_module_routers(repo: Repo) -> list[Finding]:
 def check_generated(repo: Repo) -> list[Finding]:
     findings: list[Finding] = []
     for path in repo.markdown:
-        head = repo.text(path)[:600].lower()
+        # Templates and their filled examples show what a generated artifact
+        # looks like; they are not generated artifacts of this repository. A
+        # filled example necessarily names a generator that exists only in the
+        # fiction it illustrates.
+        if repo.rel(path).startswith("templates/"):
+            continue
+
+        # A generated-file banner is an HTML comment at the top. Scanning any
+        # prose in the first 600 characters was wrong: a ledger record whose
+        # subject was "a generated file multiplies one stale reference" tripped
+        # the check by describing the thing rather than being it. False
+        # positives are how a checker loses its reader.
+        banner_match = LEADING_COMMENT.match(repo.text(path))
+        if not banner_match:
+            continue
+        head = banner_match.group(0).lower()
         if not any(marker in head for marker in GENERATED_MARKERS):
             continue
         rel = repo.rel(path)
-        banner_region = repo.text(path)[:1200]
+        banner_region = banner_match.group(0)
 
         # A banner naming a placeholder generator - `scripts/<extractor>.py` -
         # is a template showing what a generated file looks like, not a claim

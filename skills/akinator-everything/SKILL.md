@@ -48,8 +48,10 @@ and the exit condition that lets you leave it.
 ### Phase 1 - Establish the ground
 
 1. **RESOLVE** (`akinator`) - read the layer: routers, rules, skills, context,
-   memory, generated manifests, docs. Cite what you found; a citation is the
-   proof that this ran.
+   memory, generated manifests, docs, and **the ledger**
+   (`python scripts/akinator_ledger.py list --recurring`). Cite what you found;
+   a citation is the proof that this ran. The recurring failures are the ones
+   most likely to bite this pass too.
 2. **Detect the conventions** (`akinator-onboard`, section A1) - even outside
    onboarding. What does this repo call things? Adopt those names for everything
    that follows. Getting this wrong poisons every artifact the pass produces.
@@ -98,6 +100,17 @@ For **each** batch, in order:
     extractor rather than the map wherever the fact is derivable.
 13. **MEMOIZE** (`akinator-memoize`) - decisions, surprises, dead ends, with
     dates and reversal conditions. Prune while you are there.
+13b. **LEDGER** - record what actually happened, not only what was decided:
+
+    ```bash
+    python scripts/akinator_ledger.py add failure --title "..." --field ...
+    python scripts/akinator_ledger.py occurred <fingerprint> --source self-report
+    python scripts/akinator_ledger.py list --recurring
+    ```
+
+    Anything at two occurrences or more **stops the pass** and asks whether it
+    should become a rule, a skill, or neither. Record the answer either way, so
+    it is not re-asked. See `docs/ledger.md`.
 14. **Record decisions** (`akinator-adr`) - anything chosen between real
     alternatives.
 15. **Business, product, operations** - `akinator-business-map`,
@@ -123,6 +136,7 @@ For **each** batch, in order:
     python scripts/render_routers.py --check
     python scripts/extract_components.py --check
     python scripts/generate_assets.py --check
+    python scripts/akinator_ledger.py verify
     ```
 
 20. **Coverage and the newcomer test** (`akinator-coverage`) - both halves. A

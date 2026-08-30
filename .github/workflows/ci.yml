@@ -38,6 +38,11 @@ jobs:
       - name: Context map drift
         run: python scripts/extract_components.py --check
 
+      # Every ledger record parses and carries its required fields. A
+      # half-written record is a record that will not be found when it matters.
+      - name: Ledger integrity
+        run: python scripts/akinator_ledger.py verify
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift
