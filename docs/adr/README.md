@@ -28,6 +28,7 @@ and on what grounds, is knowledge.
 | [0004](0004-gate-receipts-over-hook-bypass.md) | Tree-bound gate receipts, not hook bypass | accepted | git gains native content-addressed check results |
 | [0005](0005-single-command-surface.md) | One command, not one per mode | accepted | the owner asks for a second, or a mode needs a different tool allowlist |
 | [0006](0006-index-completeness-as-its-own-invariant.md) | Index completeness is a separate invariant, and CI runs at `--strict` | accepted | MEDIUM proves the wrong grade in practice, or the one-level nesting limit produces a real miss |
+| [0007](0007-vendored-artifacts-declare-origin-not-generator.md) | A vendored artifact declares its origin, not a generator | accepted | the pack stops being copied and starts being referenced in place, or a second artifact needs to travel |
 
 ## Adding one
 

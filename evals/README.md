@@ -67,6 +67,30 @@ specification for the next improvement batch - better specified than anything
 written from imagination, because it comes from an agent that actually needed the
 thing and could not find it.
 
+### Runs to date
+
+Every suite has been run against a fresh agent with the Codex pack installed, no
+hints and no follow-up turn.
+
+| Suite | Latest run | Grade | Result |
+|---|---|---|---|
+| 01 - Silent change | 2026-08-26 | pass | [result](results/2026-08-26-01-silent-change.md), [baseline](results/2026-08-26-01-silent-change-BASELINE.md) |
+| 02 - Repeated question | 2026-08-30 | pass | [result](results/2026-08-30-02-repeated-question.md) |
+| 03 - Business void | 2026-08-26 | pass | [result](results/2026-08-26-03-business-void.md) |
+| 04 - Newcomer | 2026-08-30 | pass | [result](results/2026-08-30-04-newcomer.md) - supersedes the [contaminated-fixture run](results/2026-08-26-04-newcomer.md) |
+| 05 - Gate economy | 2026-08-30 | pass | [result](results/2026-08-30-05-gate-economy.md) |
+| 06 - Anti-gaming | 2026-08-30 | pass | [result](results/2026-08-30-06-anti-gaming.md) |
+
+Suite 01 is the only one with a **baseline** - the same fixture and prompt with
+the plugin absent. It is what makes the result a measurement rather than an
+anecdote, and every suite would be better with one.
+
+The most valuable output so far came from suite 06, which is adversarial: two
+agents under explicit pressure to fake compliance both refused and, in refusing,
+found a real shipped defect in Akinator itself - every file the Codex pack
+installs named three paths that do not exist in the repository it installs into.
+See `rules/12-artifacts-that-travel-name-nothing-local.md`.
+
 ### The suite contract
 
 A suite is markdown, and the runner reads four things from it:

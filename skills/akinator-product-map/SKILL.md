@@ -33,7 +33,8 @@ it on purpose?"* A product doc answers it in one line.
 ### 1. One doc per feature, in the repo
 
 Not per ticket, not per sprint. A feature accumulates decisions over years and
-they belong in one place. Use `templates/product-feature.md`.
+they belong in one place. Use the repo's conventions, or Akinator's
+product-feature template.
 
 If a doc for this feature exists, **extend it**. A second doc for the same
 feature splits the decision log, which is the part that matters most.

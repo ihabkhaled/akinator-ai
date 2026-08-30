@@ -117,6 +117,12 @@ LEADING_COMMENT = re.compile(
 # An intentional per-tool divergence marker in a router.
 TOOL_SPECIFIC = re.compile(r"<!--\s*akinator:tool-specific\s*-->", re.IGNORECASE)
 
+# A vendored artifact declares its upstream and how to refresh it, INSTEAD of
+# naming a local generator. Both halves are required: "installed from X" with no
+# way to update is as useless to the reader as a generator that is not there.
+VENDORED_ORIGIN = re.compile(r"\binstalled from\b", re.IGNORECASE)
+VENDORED_UPDATE = re.compile(r"\breinstall\b", re.IGNORECASE)
+
 
 IGNORE_FILE = ".akinatorignore"
 
@@ -344,8 +350,8 @@ CHECKS: dict[str, str] = {
     "router-sync": "Root routers do not fork - none references knowledge the "
                    "others omit without an intentional-divergence marker.",
     "module-routers": "Every module or service has a local router file.",
-    "generated": "Generated artifacts name their generator, the generator "
-                 "exists, and nothing generated was hand-edited.",
+    "generated": "Generated artifacts name a generator that exists; vendored "
+                 "artifacts name their origin and how to refresh them.",
     "doc-truth": "Paths named in docs exist in the tree.",
     "skill-format": "Every skill has frontmatter with name and description, and "
                     "the required sections.",
@@ -780,17 +786,22 @@ def check_generated(repo: Repo) -> list[Finding]:
             continue
 
         # A generator may be named by path (`scripts/gen.py`) or by bare
-        # filename. The bare form matters: the portable Codex contract is copied
-        # into other repositories, where a repo-relative path would be a false
-        # claim, so it names its generator by filename only.
+        # filename. The bare form matters for a file a repository both generates
+        # and keeps: the name resolves without asserting a layout.
+        named = BACKTICK_PATH.findall(banner_region)
         generators = [
-            t for t in BACKTICK_PATH.findall(banner_region)
+            t for t in named
             if repo.exists_rel(t.replace("\\", "/"))
             or ("/" not in t and any(p.name == t for p in repo.files))
         ]
         if generators:
             continue
-        named = BACKTICK_PATH.findall(banner_region)
+
+        # Named-but-absent is checked BEFORE the vendored branch below, and
+        # deliberately so. A banner that still points at a generator is making a
+        # claim about a local file, and that claim is checked whatever else the
+        # banner says - otherwise "installed from" becomes a phrase you write to
+        # silence the check, which is the gaming pattern this repo rates worst.
         if named:
             findings.append(Finding(
                 check="generated",
@@ -801,15 +812,43 @@ def check_generated(repo: Repo) -> list[Finding]:
                 fix="Point the banner at the real extractor, or stop declaring "
                     "the file generated (skill: akinator-contextify).",
             ))
-        else:
+            continue
+
+        # Nothing is named. That is correct for a **vendored** artifact: it was
+        # installed from somewhere else and the generator is deliberately not in
+        # this tree, so demanding one inverts the check and turns a correct file
+        # into a finding. This was not hypothetical - installing Akinator's own
+        # Codex pack produced 22 HIGH findings in the target repository on the
+        # first run, for exactly this reason.
+        #
+        # What such a file owes its reader is not a local script but its origin
+        # and a way to refresh it. Both halves are required: an origin with no
+        # refresh path is a dead end, and a stale copy that cannot be updated is
+        # no better than a generator that is not there.
+        if VENDORED_ORIGIN.search(banner_region):
+            if VENDORED_UPDATE.search(banner_region):
+                continue
             findings.append(Finding(
                 check="generated",
-                severity="medium",
+                severity="high",
                 path=rel,
-                message="declares itself generated but names no generator",
-                fix="Name the extractor in the banner, by path, in backticks, so "
-                    "regeneration and drift checking are possible.",
+                message="declares itself installed from elsewhere but gives no "
+                        "way to update it",
+                fix="State how to refresh the vendored copy - normally by "
+                    "reinstalling whatever placed it here - so a stale copy is "
+                    "fixable rather than merely unexplained.",
             ))
+            continue
+
+        findings.append(Finding(
+            check="generated",
+            severity="medium",
+            path=rel,
+            message="declares itself generated but names no generator",
+            fix="Name the extractor in the banner, by path, in backticks - or, "
+                "if the file is vendored, say where it was installed from and "
+                "how to refresh it.",
+        ))
     return findings
 
 

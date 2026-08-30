@@ -43,7 +43,7 @@ marked superseded with a link forward, because the history is the point.
 
 ### 2. Write the record
 
-Use the repo's ADR conventions; otherwise `templates/adr.md`. Numbered
+Use the repo's ADR conventions; otherwise Akinator's ADR template. Numbered
 sequentially, never renumbered.
 
 **Status** - `proposed`, `accepted`, `superseded by NNNN`, or `deprecated`.

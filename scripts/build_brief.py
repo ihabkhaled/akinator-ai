@@ -124,13 +124,24 @@ FRONT = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 FIRST_PARA = re.compile(r"^(?!#|>|\||-|\*|`)(\S.+?)(?:\n\n|\Z)", re.MULTILINE | re.DOTALL)
 
 
+def _clip(text: str, limit: int) -> str:
+    """Truncate with an ellipsis, never mid-sentence with no marker.
+
+    A bare `text[:limit]` looks identical whether it cut nothing or cut a
+    sentence in half - the reader has no way to tell short-and-complete from
+    short-and-truncated. This is the one place that distinction is made, so
+    every caller gets it for free rather than reimplementing it inconsistently.
+    """
+    return text[:limit].rstrip() + ("..." if len(text) > limit else "")
+
+
 def _summary(text: str, limit: int = 240) -> str:
     body = FRONT.sub("", text)
     body = re.sub(r"^#.*$", "", body, flags=re.MULTILINE)
     body = re.sub(r"^<!--.*?-->", "", body, flags=re.DOTALL)
     match = FIRST_PARA.search(body)
     para = " ".join((match.group(1) if match else body).split())
-    return para[:limit].rstrip() + ("..." if len(para) > limit else "")
+    return _clip(para, limit)
 
 
 def collect_constraints(repo: Path) -> list[Item]:
@@ -170,7 +181,7 @@ def collect_failures(repo: Path) -> list[Item]:
         out.append(Item(
             section="failures",
             title=f"{record.title} (seen {seen}x)",
-            body=f"**Symptom:** {symptom[:180]} **Fix:** {fix[:180]}",
+            body=f"**Symptom:** {_clip(symptom, 180)} **Fix:** {_clip(fix, 180)}",
             path=f"{led.LEDGER_DIR}/failure/{record.id}.md",
             # Recurrence is the multiplier: a thing that happened three times
             # will happen a fourth, and that is exactly what a session needs

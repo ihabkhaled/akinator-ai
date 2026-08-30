@@ -56,7 +56,8 @@ File the answer here before coding past it.
 ### 3. Write it in business language
 
 Someone who has never seen the codebase must be able to read it and know what the
-product does. Use `templates/business-logic.md`. Each rule states:
+product does. Use the repo's conventions, or Akinator's business-logic
+template. Each rule states:
 
 - **The rule**, in a sentence, in business terms. No function names, no types.
 - **Who decided, and when** - absolute date. Business rules are decisions, and

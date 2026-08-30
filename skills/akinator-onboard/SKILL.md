@@ -64,7 +64,7 @@ What matters is not that `rules/` exists but *how* the repo writes rules. Record
 
 ### A2. Write the mapping document
 
-Use `templates/onboarding-mapping.md`. This is the deliverable that makes
+Use Akinator's onboarding-mapping template. This is the deliverable that makes
 adopt-never-impose verifiable rather than a promise. It records, per kind of
 knowledge: what the repo calls it, where it lives, and whether Akinator adopted
 or created that home.
@@ -129,8 +129,8 @@ correct, because nothing is written down yet:
 
 ### B2. Scaffold from templates
 
-Create the taxonomy using `templates/`, and the routers from
-`templates/router.md`. Create only what the interview and the code justify -
+Create the taxonomy using Akinator's templates, and the routers from
+Akinator's router template. Create only what the interview and the code justify -
 empty scaffolding trains people that the directories are decoration.
 
 ### B3. Extract what the code already proves
@@ -176,7 +176,7 @@ Test it literally:
 3. Grade: pass, partial, fail - and record the actual failure, which is the
    specification for the next batch.
 
-See `evals/newcomer/README.md` for the harness and the grading rubric.
+Akinator's newcomer harness carries the method and the grading rubric.
 
 ## Failure modes and pitfalls
 
@@ -191,7 +191,8 @@ See `evals/newcomer/README.md` for the harness and the grading rubric.
 - **Doing the blitz in one batch.** Gate economy applies; a fifty-file
   onboarding batch cannot be verified meaningfully.
 - **Declaring done because the files exist.** The newcomer test is the bar.
-- **Adding git hooks.** Prohibited - `rules/05-no-git-hook-complication.md`.
+- **Adding git hooks.** Prohibited, always. Hooks gate code and must stay
+  fast.
 
 ## Definition of done
 

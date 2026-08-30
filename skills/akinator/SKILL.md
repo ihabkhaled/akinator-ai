@@ -181,7 +181,9 @@ Taxonomy laws:
 - **Asking questions the layer already answers.** Many questions early, near zero
   questions late. Interrupting mid-flow for something `context/` states is a
   failure of station 2, not diligence.
-- **Adding knowledge checks to git hooks.** Prohibited - see `rules/05-no-git-hook-complication.md`.
+- **Adding knowledge checks to git hooks.** Prohibited, always. Hooks gate
+  code and must stay fast; knowledge enforcement lives in CI, in tests and in
+  session behavior.
 
 ## Definition of done
 

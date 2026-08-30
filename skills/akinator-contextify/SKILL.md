@@ -61,8 +61,12 @@ If it is extractable, go to step 2. If it genuinely is not - conceptual grouping
 
 The extractor:
 - Lives in the repo's scripts location, matching existing conventions.
-- Writes a map with a **generated-file banner** naming the extractor and warning
-  against hand edits.
+- Writes a map with a **generated-file banner** warning against hand edits and
+  saying how to get a correct copy. For a map that stays in this repository,
+  that means naming the extractor by path, because the reader can run it. For an
+  artifact that is **installed into other repositories**, name no file at all -
+  give its origin and how to refresh it instead, because a path that resolves
+  here is a false claim wherever the file lands.
 - Is deterministic - same tree, byte-identical output - so drift is detectable by
   regenerate-and-diff.
 - Is runnable in CI as a drift check: regenerate, diff, fail if different.

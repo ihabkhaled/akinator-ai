@@ -1,7 +1,7 @@
 # Akinator v2 - design
 
-- **Status:** approved, not implemented
-- **Date:** 2026-08-26
+- **Status:** implemented, shipped in 1.1.0 on 2026-08-30
+- **Date:** 2026-08-26 (approved), 2026-08-30 (all seven phases landed)
 - **Approved by:** Ihab Khaled
 - **Supersedes:** nothing. Extends v1; every v1 artifact keeps working.
 
@@ -33,9 +33,9 @@ is what a session actually reads.
 
 ## Artifacts this design specifies
 
-None of these exist yet. They are the output of the phases below, listed here
-once so the rest of the document can refer to them without asserting that the
-tree already contains them:
+None of these existed when this design was written; all six now do, as the
+output of the phases below. Listed here once so the rest of the document can
+refer to them by name:
 
 ```
 .ai/BRIEF.md                       the budget-capped context bundle
@@ -237,8 +237,10 @@ noise, and noise gets suppressed wholesale.
 All generated from one canonical contract by per-tool adapters that differ only
 in path conventions and invocation syntax. All drift-checked.
 
-The coverage checker already **detects** ten of these names; the generator
-currently emits two. v2 closes generation to match detection.
+The coverage checker detected ten of these names before this phase shipped; the
+generator emitted two. Phase 1 closed generation to match detection - all
+eleven are now generated and drift-checked, confirmed by
+`python scripts/render_routers.py --check`.
 
 Eleven hand-maintained routers would be eleven times the fork surface. They are
 only safe because they are generated - this is `rules/07-codex-pack-is-generated.md`
@@ -299,9 +301,11 @@ pointer - it is not dropped, it is demoted.
 
 ### The retrieval index
 
-.ai/index.json - generated. Per artifact: `kind`, `tags`, `token_cost`,
-`last_verified`, `value_score`, `path`. This is what ranks the brief and what a
-session greps when the brief points at something.
+.ai/index.json - generated. Per artifact: `section`, `title`, `path`, `score`,
+`tokens`, `tags`, `in_brief` - see `scripts/build_brief.py` for the source of
+truth. This is what ranks the brief and what a session greps when the brief
+points at something. The field names above are the shipped schema; an earlier
+draft of this paragraph named a different, never-implemented set.
 
 ---
 
@@ -394,15 +398,18 @@ green when it is broken - see
 Ordered by dependency, not by size. Each phase lands complete, gated once, with
 its own knowledge delta.
 
-| Phase | Delivers | Depends on |
-|---|---|---|
-| **1** | Router fan-out to eleven targets, all generated and drift-checked | nothing - independent, lowest risk, ships value immediately |
-| **2** | The ledger: schema, redaction, write path, indexes | nothing |
-| **3** | The brief: composition, budget enforcement, retrieval index | 2 (needs something to surface) |
-| **4** | Distil: fingerprinting, recurrence counting, the stop-and-ask | 2 |
-| **5** | Harden: rule frontmatter, evolution, conflict detection | 4 |
-| **6** | Value-weighted docs: dependency and component maps, value scoring | 3 |
-| **7** | Change-scoping and the interrupt budget | 1-6 |
+All seven shipped in 1.1.0. The "Delivers" column is what actually landed;
+where it differs from the plan, the difference is noted.
+
+| Phase | Delivers | Depends on | Shipped as |
+|---|---|---|---|
+| **1** | Router fan-out to eleven targets, all generated and drift-checked | nothing - independent, lowest risk, ships value immediately | `scripts/render_routers.py`, `context/router-contract.md`, `rules/09` |
+| **2** | The ledger: schema, redaction, write path, indexes | nothing | `scripts/akinator_ledger.py`, `rules/10`, `docs/ledger.md` |
+| **3** | The brief: composition, budget enforcement, retrieval index | 2 (needs something to surface) | `scripts/build_brief.py`, `.ai/BRIEF.md`, `.ai/index.json`, `docs/brief.md` |
+| **4** | Distil: fingerprinting, recurrence counting, the stop-and-ask | 2 | `scripts/akinator_distil.py`, `docs/distil.md` |
+| **5** | Harden: rule frontmatter, evolution, conflict detection | 4 | `scripts/akinator_rules.py`, `docs/rule-evolution.md` |
+| **6** | Value-weighted docs: dependency and component maps, value scoring | 3 | `scripts/extract_stack.py`, `scripts/extract_components.py`. **Value scoring did not ship as code** - the formula stayed a judgement aid in the skills rather than becoming a number the tool computes, because a score invites optimising the score |
+| **7** | Change-scoping and the interrupt budget | 1-6 | `scripts/akinator_scope.py`, `docs/scoping.md` |
 
 Phase 1 first is deliberate: it is independent, mechanical, and proves the
 generation pattern that phases 3 and 6 reuse.
@@ -426,4 +433,4 @@ The command rename to `/akinator:everything` rides along with phase 1.
 - Any phase lands, to confirm the interfaces held.
 - Fingerprint matching produces real data, which should change the tuning
   strategy from guess to evidence.
-- Last verified: 2026-08-26.
+- Last verified: 2026-08-30, against 1.1.0, all seven phases confirmed shipped.

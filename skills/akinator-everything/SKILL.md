@@ -72,7 +72,7 @@ and the exit condition that lets you leave it.
     This **never skips a station**. It reports which have work, so a quiet one
     is run and finds nothing rather than being silently dropped. Ask the
     budgeted questions in **one grouped message**; twenty questions in a session
-    means zero answers by the third. See `docs/scoping.md`.
+    means zero answers by the third.
 
 **Exit when:** the layer has been read, the conventions are named, the open
 questions are asked or explicitly assumed, and every claim has a status.
@@ -118,7 +118,7 @@ For **each** batch, in order:
     record it - `akinator_rules.py caused <rule> <fingerprint>` - and write the
     replacement that satisfies both. The superseded rule stays; deleting it
     deletes the reason the replacement is shaped as it is. See
-    `docs/rule-evolution.md`.
+    Akinator's rule-evolution guide.
 12. **CONTEXTIFY** (`akinator-contextify`) - structural facts; build the
     extractor rather than the map wherever the fact is derivable. **Do not write
     a document per library, component or module** - one generated map replaces
@@ -152,7 +152,7 @@ For **each** batch, in order:
     would have caught it - so you approve rather than author. Record the answer
     either way; **`neither` is valid** and stops it being re-asked. Recurrence
     proves the failure is real; it does not prove an enforceable mechanism
-    exists. See `docs/ledger.md` and `docs/distil.md`.
+    exists. Akinator's ledger and distil guides cover the mechanics.
 14. **Record decisions** (`akinator-adr`) - anything chosen between real
     alternatives.
 15. **Business, product, operations** - `akinator-business-map`,
@@ -169,7 +169,9 @@ For **each** batch, in order:
 
 18. **Gate once** (`akinator-gate-economy`) - at the end, scoped to what was
     touched. Fix reds, re-run only what was red, judge by exit codes.
-19. **Run every mechanical check** the repo has. In this repository:
+19. **Run every mechanical check the repo has** - whatever tests, linters and
+    drift checks it already runs, plus `akinator-coverage`. For example, in the
+    Akinator repository itself:
 
     ```bash
     python -m pytest tests/ -q

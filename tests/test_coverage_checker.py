@@ -685,3 +685,70 @@ def test_flags_a_generated_file_whose_generator_is_missing(tmp_path: Path) -> No
     hits = by_check(root, "generated")
     assert [f.path for f in hits] == ["context/map.md"]
     assert "no_such_extractor.py" in hits[0].message
+
+
+# --------------------------------------------------------------------------
+# Vendored artifacts
+#
+# A file installed from elsewhere was deliberately not generated here, so
+# demanding a local generator inverts the check: it turns a correct file into a
+# finding. This was not hypothetical. Installing Akinator's own Codex pack
+# produced 22 HIGH findings in the target repository on the first run, because
+# 21 skill banners named `scripts/build_codex_pack.py` and the portable
+# contract named `build_codex_pack.py` - none of which a target repo has.
+#
+# What a vendored file owes its reader is its origin and a way to refresh it.
+# Both halves are required, and both directions are tested per rule 11.
+# --------------------------------------------------------------------------
+
+def _vendored(root: Path, banner: str) -> None:
+    write(root, "CLAUDE.md", "# V\n\n- Context: `context/README.md`\n")
+    write(root, "context/README.md", "# Context\n\n- [pack](pack.md) - vendored\n")
+    write(root, "context/pack.md", f"{banner}\n# Pack\n")
+
+
+def test_a_vendored_artifact_needs_no_local_generator(tmp_path: Path) -> None:
+    root = tmp_path / "vendored-ok"
+    root.mkdir()
+    _vendored(root, (
+        "<!--\nDO NOT EDIT BY HAND.\n"
+        "Installed from the Akinator plugin.\n"
+        "To update: reinstall Akinator.\n-->\n"
+    ))
+    assert by_check(root, "generated") == []
+
+
+def test_a_vendored_artifact_with_no_way_to_update_is_flagged(tmp_path: Path) -> None:
+    """The mutation that matters: drop the refresh instruction and the file
+    becomes a dead end - it says where it came from and nothing else."""
+    root = tmp_path / "vendored-stuck"
+    root.mkdir()
+    _vendored(root, (
+        "<!--\nDO NOT EDIT BY HAND.\n"
+        "Installed from the Akinator plugin.\n-->\n"
+    ))
+    hits = by_check(root, "generated")
+    assert [f.path for f in hits] == ["context/pack.md"]
+    assert hits[0].severity == "high"
+    assert "no way to update" in hits[0].message
+
+
+def test_claiming_vendored_status_does_not_excuse_a_dead_generator_path(
+    tmp_path: Path
+) -> None:
+    """The escape hatch is narrow on purpose. A banner that still points at a
+    generator is making a claim about a local file, and that claim is checked -
+    otherwise 'vendored' becomes a word you write to silence the check."""
+    root = tmp_path / "vendored-liar"
+    root.mkdir()
+    _vendored(root, (
+        "<!--\nDO NOT EDIT BY HAND.\n"
+        "Installed from the Akinator plugin.\n"
+        "To update: reinstall Akinator, or regenerate with "
+        "`scripts/no_such_extractor.py`.\n-->\n"
+    ))
+    hits = by_check(root, "generated")
+    assert [f.path for f in hits] == ["context/pack.md"], (
+        "vendored wording must not suppress a claim about a local file"
+    )
+    assert "no_such_extractor.py" in hits[0].message

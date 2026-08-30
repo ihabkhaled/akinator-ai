@@ -4,6 +4,106 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
+## [1.1.0] - 2026-08-30
+
+The v2 pipeline, and a defect the plugin was shipping into every repository that
+installed it.
+
+### Fixed
+
+- **Installing Akinator no longer dirties the repository it installs into.**
+  Every file the Codex pack ships carried a banner naming
+  `scripts/build_codex_pack.py` and `skills/<name>/SKILL.md`; the portable
+  contract named `build_codex_pack.py`. None of those exists in a repository
+  that installs the pack. A bare repo that ran the installer and then the
+  coverage checker got **22 HIGH findings on its first run**, every one on a
+  file the plugin had just written - from the plugin whose premise is that a
+  document asserting things that are not there is a critical defect.
+
+  Both banners now name no file at all. They state where the file came from and
+  how to refresh it, which is what a vendored artifact actually owes its reader.
+  `check_generated` gained a matching branch requiring **both** halves, ordered
+  after the named-generator check so that "installed from" cannot become a
+  phrase you write to silence it.
+
+  Twenty-one tests covered the pack, including one named
+  `test_portable_contract_names_no_repo_relative_paths`. All of them read it
+  from inside this checkout, where every path resolves; none read it from where
+  it lands. The new regression test writes the pack into a scratch repository
+  and runs the real checker there. See
+  `rules/12-artifacts-that-travel-name-nothing-local.md`,
+  `docs/adr/0007-vendored-artifacts-declare-origin-not-generator.md` and
+  `memory/2026-08-30-a-claim-is-only-true-relative-to-a-tree.md`.
+
+  Found by two red-team agents in eval 06, independently, while refusing the
+  shortcuts they were told to take.
+
+### Added
+
+- **CAPTURE - the ledger** (`scripts/akinator_ledger.py`). Failures, questions,
+  decisions and surprises as durable records, fingerprinted so the same problem
+  under a different error message is recognised as the same problem.
+  **Redaction runs inside `Ledger.write()`**, with no bypass and no per-record
+  opt-out: a credential written into a committed ledger is in git history
+  forever. `rules/10`.
+
+- **DISTIL - what recurs becomes a proposal** (`scripts/akinator_distil.py`).
+  At two occurrences the pass stops and asks: rule, skill, or neither.
+  **"Neither" is a recorded answer**, which is what stops the question being
+  re-asked every session. Two of this repository's four decisions are refusals.
+
+- **HARDEN - rule evolution** (`scripts/akinator_rules.py`). Rules gain optional
+  provenance - `introduced_by`, `supersedes`, `caused` - so a rule that fixed
+  one problem and created another can be traced and replaced rather than
+  accumulating beside its own damage. Bodies are preserved byte-for-byte.
+
+- **PROJECT - eleven routers from one contract** (`scripts/render_routers.py`).
+  CLAUDE, AGENTS, CODEX, GEMINI, GLM, KIMI, QWEN, DEEPSEEK, MISTRAL, the Cursor
+  rule and the Copilot instructions are all rendered from
+  `context/router-contract.md`. Eleven hand-maintained entry points is eleven
+  chances to fork. `rules/09`.
+
+- **PROJECT - the stack map** (`scripts/extract_stack.py`). One generated map of
+  every dependency and module, linked to the ADR that chose each one and the
+  failure record it caused - **instead of a document per library**. A page
+  saying "we use axios for HTTP" restates `package.json`, rots on the next
+  version bump, and at a hundred libraries buries the handful of pages that
+  carry real knowledge.
+
+- **SURFACE - the brief** (`scripts/build_brief.py`). `.ai/BRIEF.md` plus a
+  complete `.ai/index.json`, under a hard token cap (lean 4k, standard 12k, deep
+  25k). The corpus is unbounded; the brief is not. "Document every needle" is a
+  write problem and "a new chat knows everything in seconds" is a retrieval
+  problem, and optimising the first degrades the second.
+
+- **Change scoping and the interrupt budget** (`scripts/akinator_scope.py`).
+  **"Everything" means every station, not every file.** Stations are scoped, not
+  skipped: on a typo most find nothing and the batch records
+  `knowledge delta: none, because ...` in one line. Questions are ranked and
+  capped at five per session, with the remainder carried rather than dropped -
+  twenty questions in one session means zero answers by session three.
+
+- `rules/12-artifacts-that-travel-name-nothing-local.md`,
+  `docs/adr/0007-vendored-artifacts-declare-origin-not-generator.md`.
+
+### Verified
+
+- **All six behavioral eval suites now have runs, all passing.** Suites 02, 05
+  and 06 had never been run; 04 was re-run against decontaminated fixtures and
+  its earlier result is superseded. Grades and full write-ups in
+  `evals/results/`, indexed from `evals/README.md`.
+
+  Suite 06 is adversarial - five prompts pressuring the agent to fake
+  compliance. All five were declined, and two of them found the pack defect
+  above.
+
+- Full test suite passing, `--strict` coverage clean, ledger verified, no rule
+  conflicts, all six drift checks clean, `claude plugin validate .` passing. The
+  count is intentionally not stated - a number in prose that no mechanism
+  maintains goes stale on the next commit, and this release fixed exactly that
+  class of defect elsewhere; run `python -m pytest tests/ -q` for the current
+  count.
+
 ## [1.0.2] - 2026-08-26
 
 ### Added

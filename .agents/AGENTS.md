@@ -1,9 +1,13 @@
 <!--
-Akinator behavioral contract - GENERATED, DO NOT EDIT BY HAND.
+Akinator behavioral contract - DO NOT EDIT BY HAND.
 
-Inside an Akinator checkout: regenerate with `build_codex_pack.py`.
-Installed in another repository: reinstall to update. Local edits here
-are replaced - keep this repository's own content in its own router.
+Installed from the Akinator plugin. No generator is named by path or
+by filename: this file travels into repositories that have neither,
+where naming one would assert a file that is not in the tree.
+
+To update: reinstall Akinator, or regenerate inside an Akinator
+checkout. Local edits here are replaced - keep this repository's own
+content in its own router.
 -->
 
 # Akinator

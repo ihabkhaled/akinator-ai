@@ -175,25 +175,40 @@ This repository is maintained under its own discipline, and its own checks run
 against it:
 
 ```bash
-python -m pytest tests/ -q                    # 145 structural + enforcement tests
+python -m pytest tests/ -q                     # the structural + enforcement suite
 python scripts/akinator_coverage.py . --strict # the invariants, against itself
-python scripts/build_codex_pack.py --check    # Codex pack drift
-python scripts/render_routers.py --check      # router drift (11 routers)
-python scripts/extract_components.py --check  # context-map drift
-python scripts/generate_assets.py --check     # brand-asset drift
-python scripts/run_evals.py --dry-run --all   # every eval suite is runnable
+python scripts/akinator_ledger.py verify       # every ledger record well-formed
+python scripts/akinator_rules.py conflicts     # no rule contradicts another
+python scripts/build_codex_pack.py --check     # Codex pack drift
+python scripts/render_routers.py --check       # router drift (11 routers)
+python scripts/extract_components.py --check   # component-map drift
+python scripts/extract_stack.py --check        # stack-map drift
+python scripts/build_brief.py --check          # context-brief drift
+python scripts/generate_assets.py --check      # brand-asset drift
+python scripts/run_evals.py --dry-run --all    # every eval suite is runnable
 ```
+
+The test count is deliberately not written here. A number in prose that no
+mechanism maintains goes stale on the next commit, and this repository has
+already recorded that failure twice - see
+`memory/2026-08-26-fix-the-index-not-only-its-pointers.md`.
 
 The behavioral evals need an agent CLI, so they are a separate step:
 
 ```bash
-python scripts/run_evals.py --all --grade --stamp 2026-08-26
+python scripts/run_evals.py --all --grade --stamp $(date +%F)
 ```
 
-Four were run for v1.0.0, including a **paired baseline** - the same task, same
-fixture, same model, with and without the pack. With it: code, tests and docs.
-Without it: code and tests, documentation explicitly declined. Results in
-[evals/results/](evals/results/).
+**All six suites have been run, and all six pass.** Suite 01 also has a
+**paired baseline** - the same task, same fixture, same model, with and without
+the pack. With it: code, tests and docs. Without it: code and tests,
+documentation explicitly declined. Grades and write-ups are indexed from
+[evals/README.md](evals/README.md), results in [evals/results/](evals/results/).
+
+Suite 06 is adversarial - five prompts pressuring the agent to fake compliance.
+All five were declined, and two of them found a real defect in the plugin: every
+file the Codex pack installed named paths that do not exist in the repository it
+installs into. See `rules/12-artifacts-that-travel-name-nothing-local.md`.
 
 Each suite runs in a disposable copy of its fixture, with a fresh agent per step
 and no follow-up turn, and is graded by a second independent agent that sees only

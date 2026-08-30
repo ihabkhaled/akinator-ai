@@ -263,3 +263,33 @@ def test_recurring_failures_reach_the_brief(repo: Path) -> None:
         assert record.id in brief, (
             f"{record.id} recurs but does not appear in the brief"
         )
+
+
+def test_a_truncated_failure_field_ends_with_a_marker(tmp_path: Path) -> None:
+    """A cut sentence with no marker is indistinguishable from a complete one.
+
+    `bb._clip(text, 180)[:180]` used to be a bare slice with no ellipsis, so a
+    fix field over 180 characters silently lost its tail with nothing telling
+    the reader it had been cut - discovered when a real ledger record's Fix
+    field (227 characters) hit this path and .ai/BRIEF.md ended mid-sentence.
+    """
+    long_fix = "x" * 250
+    assert bb._clip(long_fix, 180) == ("x" * 180) + "..."
+
+    short_fix = "a short fix"
+    assert bb._clip(short_fix, 180) == short_fix, "must not add a marker unearned"
+
+    root = tmp_path / "long-field"
+    root.mkdir()
+    ledger = led.Ledger(root)
+    ledger.write(led.Record(
+        kind="failure", id="long-fix-field-000000",
+        title="a failure whose fix field is long",
+        fields={"symptom": "s", "trigger": "t", "root_cause": "r",
+                "fix": long_fix},
+        occurrences=["2026-08-01 (self-report)"],
+    ))
+    items = bb.collect_failures(root)
+    assert items[0].body.rstrip().endswith("..."), (
+        "a truncated field reached the brief with no ellipsis"
+    )

@@ -43,13 +43,19 @@ its own docs, skills, rules, context and memory delta.
   `rules/10-ledger-records-are-redacted-before-write.md`
 - **Rule 11 - Every invariant ships with a test that proves it fires** - A checker cannot be validated by running it on a healthy tree and seeing zero findings. **Zero findings is exactly what a broken checker produces.**
   `rules/11-invariants-ship-with-a-mutation-test.md`
+- **Rule 12 - An artifact that travels names nothing only its birthplace has** - Akinator's whole premise is that a document asserting things that are not there is a critical defect. It was shipping 22 of them per install.
+  `rules/12-artifacts-that-travel-name-nothing-local.md`
 
 ## Recurring failures and their fixes
 
 - **a coverage check reported green because its matcher was too loose (seen 3x)** - **Symptom:** the checker exits 0 and the report says all invariants hold, on a tree that violates one **Fix:** resolve each index reference to a repo-relative path and compare; never pattern-match a bare token
   `.ai/ledger/failure/checker-silent-false-negative-a1b2c3d4e5f6.md`
+- **backslash escapes collapsed inside a shell heredoc and silently changed a regex (seen 3x)** - **Symptom:** a regex written as \b...\b reached the file as a literal backspace character, so the pattern compiled and matched nothing; the check it guarded passed by never firing **Fix:** write anything containing a backslash with the Edit or Write tool, never through a heredoc; if a shell is unavoidable, build the escape with chr(92) rather than typing it
+  `.ai/ledger/failure/heredoc-ate-the-backslashes-7f3a91c204de.md`
 - **a fact was corrected everywhere except the index that states it (seen 2x)** - **Symptom:** a doc says 21 and links to a page that says twenty; the reader clicks through from a corrected number to an uncorrected one **Fix:** grep for the fact, not for the artifact that holds it; a router carries facts, not only links
   `.ai/ledger/failure/fixed-pointers-left-the-index-b2c3d4e5f6a7.md`
+- **a generated artifact that travels named files only its birthplace has (seen 1x)** - **Symptom:** a bare repository that installs the Codex pack fails the coverage checker on its first run with 22 HIGH findings, every one on a file the plugin just wrote **Fix:** both banners name no file at all; they state the origin and how to refresh instead. check_generated grew a vendored branch requiring both halves, and the pack is now checked from a...
+  `.ai/ledger/failure/a-generated-artifact-that-travels-named-56871dcd648a.md`
 - **a generator emitted a reference to a path the same batch deleted (seen 1x)** - **Symptom:** every rendered router pointed at a command file the rename had just removed **Fix:** after any rename, grep the generators too, then re-run the drift check - which is what caught it
   `.ai/ledger/failure/generator-emitted-a-dead-reference-c3d4e5f6a7b8.md`
 

@@ -30,7 +30,7 @@ test completely - perfectly indexed documents that answer no question anyone has
 ## When NOT to use
 
 - Mid-batch. It is a verification station, not a working tool.
-- **Never in a git hook.** See `rules/05-no-git-hook-complication.md`.
+- **Never in a git hook.** Hooks gate code and must stay fast.
 
 ## Procedure
 
@@ -53,7 +53,7 @@ The checks, and what each one prevents:
 | `rule-enforcement` | Every rule names an enforcement mechanism that exists in the tree - and it is not a git hook |
 | `router-sync` | No root router omits knowledge the others carry, unless marked tool-specific |
 | `module-routers` | Every module or service has a local router |
-| `generated` | Generated artifacts name a generator that exists |
+| `generated` | A file that declares itself generated says how to get a correct copy. Two forms count: it **names a generator that exists** in the tree, or - if it was **installed from somewhere else** - it names its origin and how to refresh it, and no local file at all. The second form matters because a vendored artifact's generator is deliberately absent, and demanding one turns a correct file into a finding. A banner that still names a generator is checked either way, so "installed from" cannot be written to silence it. The vendored form is recognised by two literal phrases - "installed from" and "reinstall" - so a banner using different words for the same thing lands as a MEDIUM "names no generator" finding rather than an error |
 | `doc-truth` | Paths named in docs exist in the tree |
 | `skill-format` | Every skill has trigger frontmatter and the required sections |
 | `staleness` | Every context map states a regenerate-or-review trigger |
@@ -132,8 +132,9 @@ did not answer, and the agent did not notice.
 Every failure names a missing artifact. That list is the next improvement batch,
 and it is better specified than anything you would have written yourself.
 
-Record results in the repo - `evals/newcomer/results/` or the equivalent - with
-the date, so improvement is visible across runs.
+Record results in the repo - a results directory next to the eval suites, or
+whatever the repo already uses - with the date, so improvement is visible
+across runs.
 
 ## Failure modes and pitfalls
 

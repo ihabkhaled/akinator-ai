@@ -45,7 +45,7 @@ none, because the agent picks one at random and half the time it is the stale on
 
 Adopt, never impose. If the target repo already has a skills format, numbering or
 index style, use it. Only if the repo has none do you use the Akinator template
-(`templates/skill.md`).
+(Akinator's skill template).
 
 ### 3. Write the skill
 

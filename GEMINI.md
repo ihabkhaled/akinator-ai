@@ -36,6 +36,7 @@ its own docs, skills, rules, context and memory delta.
 - **Routers are rendered from this contract** - `rules/09-routers-are-rendered-from-one-contract.md`
 - **Ledger records are redacted before write** - `rules/10-ledger-records-are-redacted-before-write.md`
 - **Every invariant ships with a test that proves it fires** - `rules/11-invariants-ship-with-a-mutation-test.md`
+- **Anything installed elsewhere names no local file** - `rules/12-artifacts-that-travel-name-nothing-local.md`
 
 The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 

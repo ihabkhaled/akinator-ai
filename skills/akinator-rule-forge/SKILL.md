@@ -44,7 +44,7 @@ Good: "Quota fields are written only inside src/quota/apply.ts.
        No other file assigns to them."
 ```
 
-See `templates/examples/rule.md` for a fully worked example.
+Akinator ships a rule template with a fully worked example.
 
 If you cannot state it testably, you do not yet understand the constraint well
 enough to enforce it - and an unenforceable rule will be ignored.
@@ -73,12 +73,12 @@ Knowledge and constraint checks do not go into pre-commit or pre-push hooks. Git
 hooks gate code and must stay fast; loading them with checks produces slow
 commits, bypassed hooks and timeout flakiness that reads as real failure.
 Enforcement lives in the type system, the test suite, CI, and session behavior.
-This is a hard design rule - see `rules/05-no-git-hook-complication.md`.
+This is a hard design rule, and it has no exceptions.
 
 ### 4. Write the rule
 
 Use the repo's existing rule format if it has one; otherwise
-`templates/rule.md`. Numbered, in `rules/NN-short-name.md`, containing:
+Akinator's rule template. Numbered, one file per rule, containing:
 
 - **Purpose** - what breaks if this is violated, concretely.
 - **Applies to** - the paths, modules or situations in scope, and what is

@@ -104,13 +104,30 @@ python scripts/akinator_ledger.py verify
 ## What is in this repository's ledger
 
 Seeded from real defects made while building Akinator, not from fixtures. The
-two recurring ones are the reason the loop exists:
+recurring ones are the reason the loop exists:
 
 - **A coverage check reported green because its matcher was too loose** - three
   times, each fix producing the next failure. The lesson is in
-  `memory/2026-08-26-checkers-fail-silently-in-both-directions.md`.
+  `memory/2026-08-26-checkers-fail-silently-in-both-directions.md`, and the rule
+  is `rules/11-invariants-ship-with-a-mutation-test.md`.
 - **A fact was corrected everywhere except the index that states it** - twice.
   See `memory/2026-08-26-fix-the-index-not-only-its-pointers.md`.
+- **Backslash escapes collapsed inside a shell heredoc** - three times, the last
+  of them silently compiling a regex that matched nothing. Decided **neither**:
+  the fault is in a shell outside the tree and leaves no artifact to check, so a
+  rule would have no mechanism and `rules/03` forbids one without. Recorded as
+  memory instead, and caught in practice by the mutation-test rule.
+
+The single-occurrence records are worth as much. The most expensive one so far -
+**a generated artifact that travels named files only its birthplace has** - was
+found by an adversarial eval rather than by recurrence, and produced
+`rules/12-artifacts-that-travel-name-nothing-local.md`. A threshold of 2 is the
+trigger for *asking*, not the bar for *acting*.
+
+**A decision of "neither" is a real answer and is recorded like any other.** Two
+of the four decisions in this ledger are refusals to make a rule. Without them
+the same question gets re-asked every session, which is the cost the ledger
+exists to remove.
 
 ## Related
 

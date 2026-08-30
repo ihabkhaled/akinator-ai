@@ -71,7 +71,8 @@ executed concurrently and corrupt something.
 
 ### 3. Write the runbook
 
-Use `templates/ops-runbook.md`. It states:
+Use the repo's runbook conventions, or Akinator's ops-runbook template. It
+states:
 
 - **Trigger** - "when X happens or changes". Written so someone can tell from the
   outside whether this runbook applies to their situation.

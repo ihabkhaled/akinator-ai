@@ -46,7 +46,7 @@ stamp the new date.
 
 ### 2. Write the entry
 
-Use the repo's memory conventions; otherwise `templates/memory.md`. Each entry
+Use the repo's memory conventions; otherwise Akinator's memory template. Each entry
 holds one fact and states:
 
 - **The fact** - in one or two sentences, plainly.
