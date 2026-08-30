@@ -71,6 +71,7 @@ The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 | Regenerate the context brief | `python scripts/build_brief.py --write` |
 | Verify the ledger | `python scripts/akinator_ledger.py verify` |
 | Regenerate the component map | `python scripts/extract_components.py --write` |
+| Regenerate the stack map | `python scripts/extract_stack.py --write` |
 | Regenerate the brand assets | `python scripts/generate_assets.py --write` |
 | Install to Codex | `sh scripts/install-codex.sh --user` |
 

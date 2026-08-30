@@ -59,6 +59,10 @@ jobs:
       - name: Rule conflicts
         run: python scripts/akinator_rules.py conflicts
 
+      # Dependencies and modules, extracted rather than described.
+      - name: Stack map drift
+        run: python scripts/extract_stack.py --check
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift

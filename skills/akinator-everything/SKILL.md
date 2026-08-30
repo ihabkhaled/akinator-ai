@@ -108,7 +108,15 @@ For **each** batch, in order:
     deletes the reason the replacement is shaped as it is. See
     `docs/rule-evolution.md`.
 12. **CONTEXTIFY** (`akinator-contextify`) - structural facts; build the
-    extractor rather than the map wherever the fact is derivable.
+    extractor rather than the map wherever the fact is derivable. **Do not write
+    a document per library, component or module** - one generated map replaces
+    N generated documents, and the prose budget goes to the decision that chose
+    the dependency and the failure it caused:
+
+    ```bash
+    python scripts/extract_stack.py --write        # dependencies and modules
+    python scripts/extract_components.py --write   # the plugin's own surface
+    ```
 13. **MEMOIZE** (`akinator-memoize`) - decisions, surprises, dead ends, with
     dates and reversal conditions. Prune while you are there.
 13b. **LEDGER** - record what actually happened, not only what was decided:
@@ -160,6 +168,8 @@ For **each** batch, in order:
     python scripts/generate_assets.py --check
     python scripts/akinator_ledger.py verify
     python scripts/build_brief.py --check
+    python scripts/extract_stack.py --check
+    python scripts/akinator_rules.py conflicts
     ```
 
 20. **Coverage and the newcomer test** (`akinator-coverage`) - both halves. A

@@ -80,7 +80,7 @@ Claude-only; the same contract reaches Codex through the generated
 |---|---|
 | `SessionStart` | `sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"` |
 
-## Scripts - 12
+## Scripts - 13
 
 | Script | Purpose |
 |---|---|
@@ -91,6 +91,7 @@ Claude-only; the same contract reaches Codex through the generated
 | `scripts/build_brief.py` | Compose the context brief - what a new session actually reads. |
 | `scripts/build_codex_pack.py` | Generate the Codex pack from the canonical Claude skills. |
 | `scripts/extract_components.py` | Generate `context/components.md` from the tree. |
+| `scripts/extract_stack.py` | Generate the stack map - dependencies and modules, extracted from the tree. |
 | `scripts/generate_assets.py` | Generate Akinator's brand assets. |
 | `scripts/install-codex.ps1` | Install the Akinator Codex pack. |
 | `scripts/install-codex.sh` | Install the Akinator Codex pack. |
