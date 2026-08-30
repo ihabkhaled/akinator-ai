@@ -15,7 +15,13 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 - a shallow (default) checkout gives git log a single
+      # commit, so mine_git() in scripts/akinator_distil.py finds no fix:
+      # history no matter how much really exists. Full history is what the
+      # miner is testing against.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
