@@ -80,12 +80,13 @@ Claude-only; the same contract reaches Codex through the generated
 |---|---|
 | `SessionStart` | `sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"` |
 
-## Scripts - 9
+## Scripts - 10
 
 | Script | Purpose |
 |---|---|
 | `scripts/akinator_coverage.py` | Akinator coverage checker - the mechanically verifiable knowledge invariants. |
 | `scripts/akinator_ledger.py` | The Akinator ledger - what happened, so the next session does not rediscover it. |
+| `scripts/build_brief.py` | Compose the context brief - what a new session actually reads. |
 | `scripts/build_codex_pack.py` | Generate the Codex pack from the canonical Claude skills. |
 | `scripts/extract_components.py` | Generate `context/components.md` from the tree. |
 | `scripts/generate_assets.py` | Generate Akinator's brand assets. |

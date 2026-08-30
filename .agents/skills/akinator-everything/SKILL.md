@@ -143,6 +143,7 @@ For **each** batch, in order:
     python scripts/extract_components.py --check
     python scripts/generate_assets.py --check
     python scripts/akinator_ledger.py verify
+    python scripts/build_brief.py --check
     ```
 
 20. **Coverage and the newcomer test** (`akinator-coverage`) - both halves. A
@@ -157,8 +158,12 @@ For **each** batch, in order:
 23. **Clean up** (`akinator-resource-guard`) - machine as you found it. Verify by
     listing, not by assuming.
 
-**Exit when:** every check has been run and its exit code observed, and no lens
-holds a veto.
+23b. **Regenerate the brief** - `python scripts/build_brief.py --write`. It is
+    what the next session reads; everything this pass learned is invisible until
+    it is composed in.
+
+**Exit when:** every check has been run and its exit code observed, the brief is
+current, and no lens holds a veto.
 
 ### Phase 5 - Loop until proven, then stop
 

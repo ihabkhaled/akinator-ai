@@ -1,0 +1,265 @@
+{
+  "budget": 12000,
+  "items": [
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/checker-silent-false-negative-a1b2c3d4e5f6.md",
+      "score": 0.855,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x3"
+      ],
+      "title": "a coverage check reported green because its matcher was too loose (seen 3x)",
+      "tokens": 91
+    },
+    {
+      "in_brief": true,
+      "path": "rules/01-knowledge-delta-per-batch.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 01 - Every batch declares and delivers a knowledge delta",
+      "tokens": 89
+    },
+    {
+      "in_brief": true,
+      "path": "rules/02-skills-carry-all-six-parts.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 02 - Every skill carries all six parts",
+      "tokens": 39
+    },
+    {
+      "in_brief": true,
+      "path": "rules/03-rules-need-live-enforcement.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 03 - Every rule names an enforcement mechanism that exists",
+      "tokens": 86
+    },
+    {
+      "in_brief": true,
+      "path": "rules/04-routers-stay-thin-and-synced.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 04 - Routers stay thin, and they never fork",
+      "tokens": 87
+    },
+    {
+      "in_brief": true,
+      "path": "rules/05-no-git-hook-complication.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 05 - Never put knowledge checks in git hooks",
+      "tokens": 77
+    },
+    {
+      "in_brief": true,
+      "path": "rules/06-gate-once-scoped-at-the-end.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 06 - Gate once, at the end, scoped to what was touched",
+      "tokens": 89
+    },
+    {
+      "in_brief": true,
+      "path": "rules/07-codex-pack-is-generated.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 07 - The Codex pack is generated, never hand-edited",
+      "tokens": 88
+    },
+    {
+      "in_brief": true,
+      "path": "rules/08-skills-dir-holds-only-skill-directories.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 08 - `skills/` holds only skill directories",
+      "tokens": 84
+    },
+    {
+      "in_brief": true,
+      "path": "rules/09-routers-are-rendered-from-one-contract.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 09 - Every router is rendered from one contract",
+      "tokens": 78
+    },
+    {
+      "in_brief": true,
+      "path": "rules/10-ledger-records-are-redacted-before-write.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 10 - Ledger records are redacted before they are written",
+      "tokens": 93
+    },
+    {
+      "in_brief": true,
+      "path": "rules/README.md",
+      "score": 0.7,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "Constraints you must not break",
+      "tokens": 15
+    },
+    {
+      "in_brief": true,
+      "path": "docs/skills.md",
+      "score": 0.665,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "How to do things here",
+      "tokens": 13
+    },
+    {
+      "in_brief": true,
+      "path": "docs/README.md",
+      "score": 0.63,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "Architecture, decisions, compatibility",
+      "tokens": 17
+    },
+    {
+      "in_brief": true,
+      "path": "docs/ledger.md",
+      "score": 0.63,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "What happened, and what recurs",
+      "tokens": 15
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/fixed-pointers-left-the-index-b2c3d4e5f6a7.md",
+      "score": 0.598,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x2"
+      ],
+      "title": "a fact was corrected everywhere except the index that states it (seen 2x)",
+      "tokens": 98
+    },
+    {
+      "in_brief": true,
+      "path": "context/README.md",
+      "score": 0.595,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "Structural facts, generated",
+      "tokens": 15
+    },
+    {
+      "in_brief": true,
+      "path": "memory/index.md",
+      "score": 0.595,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "Durable decisions and surprises",
+      "tokens": 16
+    },
+    {
+      "in_brief": true,
+      "path": "docs/agents.md",
+      "score": 0.49,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "Review lenses and what each vetoes",
+      "tokens": 16
+    },
+    {
+      "in_brief": true,
+      "path": "templates/README.md",
+      "score": 0.42,
+      "section": "map",
+      "tags": [
+        "index"
+      ],
+      "title": "What gets written into target repos",
+      "tokens": 18
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/question/how-big-should-the-brief-budget-be.md",
+      "score": 0.392,
+      "section": "questions",
+      "tags": [
+        "question",
+        "answered"
+      ],
+      "title": "How large should the context brief be?",
+      "tokens": 86
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/question/where-does-the-failure-signal-come-from.md",
+      "score": 0.392,
+      "section": "questions",
+      "tags": [
+        "question",
+        "answered"
+      ],
+      "title": "Where should the failure signal come from?",
+      "tokens": 89
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/generator-emitted-a-dead-reference-c3d4e5f6a7b8.md",
+      "score": 0.299,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x1"
+      ],
+      "title": "a generator emitted a reference to a path the same batch deleted (seen 1x)",
+      "tokens": 88
+    }
+  ],
+  "tier": "standard",
+  "used": 1629
+}

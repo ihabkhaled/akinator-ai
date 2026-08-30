@@ -29,6 +29,8 @@ its own docs, skills, rules, context and memory delta.
 - Context (structural facts): `context/README.md`
 - Docs (architecture, decisions, compatibility): `docs/README.md`
 - Memory (durable decisions and surprises): `memory/index.md`
+- The brief (what a new session reads first): `.ai/BRIEF.md`
+- The ledger (what happened, and what recurs): `docs/ledger.md`
 - Templates (what Akinator ships to target repos): `templates/README.md`
 
 ## Before you change anything
@@ -49,6 +51,8 @@ The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 | Coverage check (strict) | `python scripts/akinator_coverage.py . --strict` - the tier CI uses |
 | Regenerate the Codex pack | `python scripts/build_codex_pack.py --write` |
 | Regenerate every router | `python scripts/render_routers.py --write` |
+| Regenerate the context brief | `python scripts/build_brief.py --write` |
+| Verify the ledger | `python scripts/akinator_ledger.py verify` |
 | Regenerate the component map | `python scripts/extract_components.py --write` |
 | Regenerate the brand assets | `python scripts/generate_assets.py --write` |
 | Install to Codex | `sh scripts/install-codex.sh --user` |

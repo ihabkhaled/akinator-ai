@@ -43,6 +43,11 @@ jobs:
       - name: Ledger integrity
         run: python scripts/akinator_ledger.py verify
 
+      # The brief is what a new session reads. A stale one is the worst
+      # possible artifact to ship, because it is the most trusted.
+      - name: Brief drift
+        run: python scripts/build_brief.py --check
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift
