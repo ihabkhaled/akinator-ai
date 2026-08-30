@@ -80,7 +80,7 @@ Claude-only; the same contract reaches Codex through the generated
 |---|---|
 | `SessionStart` | `sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"` |
 
-## Scripts - 13
+## Scripts - 14
 
 | Script | Purpose |
 |---|---|
@@ -88,6 +88,7 @@ Claude-only; the same contract reaches Codex through the generated
 | `scripts/akinator_distil.py` | Distil - turn what recurs into a rule proposal. |
 | `scripts/akinator_ledger.py` | The Akinator ledger - what happened, so the next session does not rediscover it. |
 | `scripts/akinator_rules.py` | Harden - rule evolution and conflict detection. |
+| `scripts/akinator_scope.py` | Scope a pass to what actually changed, and budget the questions. |
 | `scripts/build_brief.py` | Compose the context brief - what a new session actually reads. |
 | `scripts/build_codex_pack.py` | Generate the Codex pack from the canonical Claude skills. |
 | `scripts/extract_components.py` | Generate `context/components.md` from the tree. |

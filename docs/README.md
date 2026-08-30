@@ -14,6 +14,7 @@ Facts that can be extracted from the tree live in `context/`, not here.
 | [Compatibility](compatibility.md) | The Claude Code and Codex contracts relied on, how they were verified, and what breaks when they move |
 | [Listing](listing.md) | The directory-submission copy - name, description, example use cases - kept in the repo so it cannot drift from what ships |
 | [The brief](brief.md) | The budget-capped context bundle a new session reads first, and how items compete for a place in it |
+| [Scoping](scoping.md) | How a pass scales to the change without skipping a station, and the interrupt budget on questions |
 | [Rule evolution](rule-evolution.md) | When a rule's enforcement causes the next failure - and why a superseded rule is never deleted |
 | [Distil](distil.md) | How a recurring failure becomes a rule proposal - and why `neither` is a real answer |
 | [The ledger](ledger.md) | What happened - failures, questions, decisions and surprises - fingerprinted so recurrence becomes a rule |

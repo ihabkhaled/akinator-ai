@@ -70,6 +70,8 @@ The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 | Regenerate every router | `python scripts/render_routers.py --write` |
 | Regenerate the context brief | `python scripts/build_brief.py --write` |
 | Verify the ledger | `python scripts/akinator_ledger.py verify` |
+| Scope a pass to the change | `python scripts/akinator_scope.py plan` |
+| What recurs and needs a decision | `python scripts/akinator_distil.py detect` |
 | Regenerate the component map | `python scripts/extract_components.py --write` |
 | Regenerate the stack map | `python scripts/extract_stack.py --write` |
 | Regenerate the brand assets | `python scripts/generate_assets.py --write` |

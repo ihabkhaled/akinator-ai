@@ -62,6 +62,18 @@ and the exit condition that lets you leave it.
    touches. Anything marked done names its live call path; anything marked
    missing names the search that failed.
 
+4b. **SCOPE the pass** - which stations this change actually wakes:
+
+    ```bash
+    python scripts/akinator_scope.py plan --against HEAD
+    python scripts/akinator_scope.py questions      # the batched ask, budget 5
+    ```
+
+    This **never skips a station**. It reports which have work, so a quiet one
+    is run and finds nothing rather than being silently dropped. Ask the
+    budgeted questions in **one grouped message**; twenty questions in a session
+    means zero answers by the third. See `docs/scoping.md`.
+
 **Exit when:** the layer has been read, the conventions are named, the open
 questions are asked or explicitly assumed, and every claim has a status.
 
