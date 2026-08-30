@@ -41,6 +41,8 @@ its own docs, skills, rules, context and memory delta.
   `rules/09-routers-are-rendered-from-one-contract.md`
 - **Rule 10 - Ledger records are redacted before they are written** - The ledger exists to capture what broke. What broke arrives as **error text**, and error text carries credentials: bearer tokens in a failed request, a connection string in a database error, an API key echoed by a misconfigured client, a cu...
   `rules/10-ledger-records-are-redacted-before-write.md`
+- **Rule 11 - Every invariant ships with a test that proves it fires** - A checker cannot be validated by running it on a healthy tree and seeing zero findings. **Zero findings is exactly what a broken checker produces.**
+  `rules/11-invariants-ship-with-a-mutation-test.md`
 
 ## Recurring failures and their fixes
 

@@ -54,6 +54,8 @@ its own docs, skills, rules, context and memory delta.
 - **Never add knowledge checks to git hooks** - `rules/05-no-git-hook-complication.md`
 - **The Codex pack and every router are generated** - `rules/07-codex-pack-is-generated.md`
 - **Routers are rendered from this contract** - `rules/09-routers-are-rendered-from-one-contract.md`
+- **Ledger records are redacted before write** - `rules/10-ledger-records-are-redacted-before-write.md`
+- **Every invariant ships with a test that proves it fires** - `rules/11-invariants-ship-with-a-mutation-test.md`
 
 The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
 

@@ -115,8 +115,19 @@ For **each** batch, in order:
     ```
 
     Anything at two occurrences or more **stops the pass** and asks whether it
-    should become a rule, a skill, or neither. Record the answer either way, so
-    it is not re-asked. See `docs/ledger.md`.
+    should become a rule, a skill, or neither:
+
+    ```bash
+    python scripts/akinator_distil.py detect     # what reached the threshold
+    python scripts/akinator_distil.py propose <fingerprint>
+    python scripts/akinator_distil.py decide <fingerprint> --as rule --note "..."
+    ```
+
+    The proposal arrives pre-drafted - the rule, its mechanism and the test that
+    would have caught it - so you approve rather than author. Record the answer
+    either way; **`neither` is valid** and stops it being re-asked. Recurrence
+    proves the failure is real; it does not prove an enforceable mechanism
+    exists. See `docs/ledger.md` and `docs/distil.md`.
 14. **Record decisions** (`akinator-adr`) - anything chosen between real
     alternatives.
 15. **Business, product, operations** - `akinator-business-map`,

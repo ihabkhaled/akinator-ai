@@ -125,6 +125,17 @@
     },
     {
       "in_brief": true,
+      "path": "rules/11-invariants-ship-with-a-mutation-test.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 11 - Every invariant ships with a test that proves it fires",
+      "tokens": 69
+    },
+    {
+      "in_brief": true,
       "path": "rules/README.md",
       "score": 0.7,
       "section": "map",
@@ -261,5 +272,5 @@
     }
   ],
   "tier": "standard",
-  "used": 1629
+  "used": 1698
 }
