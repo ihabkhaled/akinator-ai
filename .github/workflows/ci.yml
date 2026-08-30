@@ -54,6 +54,11 @@ jobs:
       - name: Recurring failures awaiting a decision
         run: python scripts/akinator_distil.py detect
 
+      # Rules whose scopes overlap and whose mandates disagree. Reported,
+      # never auto-resolved - the resolution is a human decision.
+      - name: Rule conflicts
+        run: python scripts/akinator_rules.py conflicts
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift

@@ -95,7 +95,18 @@ For **each** batch, in order:
    business meaning, the operational consequence. Route each to its home.
 10. **SKILLIFY** (`akinator-skillify`) - any procedure that will happen twice.
 11. **RULE** (`akinator-rule-forge`) - any new constraint, with a mechanism that
-    exists in the tree.
+    exists in the tree. Then check what the existing ones are doing:
+
+    ```bash
+    python scripts/akinator_rules.py conflicts   # overlapping, opposed
+    python scripts/akinator_rules.py evolve      # a rule that caused a failure
+    ```
+
+    If this batch's failure was **caused by an existing rule's enforcement**,
+    record it - `akinator_rules.py caused <rule> <fingerprint>` - and write the
+    replacement that satisfies both. The superseded rule stays; deleting it
+    deletes the reason the replacement is shaped as it is. See
+    `docs/rule-evolution.md`.
 12. **CONTEXTIFY** (`akinator-contextify`) - structural facts; build the
     extractor rather than the map wherever the fact is derivable.
 13. **MEMOIZE** (`akinator-memoize`) - decisions, surprises, dead ends, with
