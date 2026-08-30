@@ -193,7 +193,10 @@ def test_there_is_exactly_one_command(command_paths: list[Path]) -> None:
         "Akinator ships a single unified command; found: "
         f"{[p.name for p in command_paths]}"
     )
-    assert command_paths[0].stem == "akinator"
+    assert command_paths[0].stem == "everything", (
+        "the command is /akinator:everything - the plugin namespace supplies "
+        "the 'akinator' half"
+    )
 
 
 def test_command_declares_description_and_argument_hint(

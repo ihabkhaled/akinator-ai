@@ -104,6 +104,8 @@ stop.
   invariants. Runs in CI and on demand. **Never in a git hook.**
 - `scripts/build_codex_pack.py` generates the Codex pack from the canonical
   skills, deterministically, with a drift check.
+- `scripts/render_routers.py` renders all eleven AI entry-point files from
+  `context/router-contract.md`, deterministically, with a drift check.
 - `scripts/extract_components.py` generates `context/components.md` from the
   tree.
 - `scripts/generate_assets.py` draws the brand assets Codex validation requires,
@@ -195,6 +197,7 @@ against it:
 python -m pytest tests/ -q                    # structural + enforcement tests
 python scripts/akinator_coverage.py . --strict # the invariants, against itself
 python scripts/build_codex_pack.py --check    # pack drift
+python scripts/render_routers.py --check      # router drift (11 routers)
 python scripts/extract_components.py --check  # context-map drift
 python scripts/generate_assets.py --check     # brand-asset drift
 python scripts/run_evals.py --dry-run --all   # every eval suite is runnable

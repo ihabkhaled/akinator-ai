@@ -108,24 +108,9 @@ def test_projected_skills_keep_their_trigger_description(repo: Path) -> None:
         assert source_desc == projected_desc
 
 
-def test_agents_md_is_a_thin_router(repo: Path) -> None:
-    content = pack.plan(repo)["AGENTS.md"]
-    assert len(content.splitlines()) < 200, "AGENTS.md is an index, not a document"
-    assert "akinator:tool-specific" in content, (
-        "Codex-only content must be marked so router-sync can tell it from rot"
-    )
-
-
-def test_agents_md_carries_the_non_negotiables(repo: Path) -> None:
-    content = pack.plan(repo)["AGENTS.md"]
-    for phrase in (
-        "Stations 6-11",
-        "prohibited sentence",
-        "Gate once",
-        "never add knowledge",
-        "Adopt, never impose",
-    ):
-        assert phrase.lower() in content.lower(), f"AGENTS.md omits: {phrase}"
+def test_portable_contract_is_thin(repo: Path) -> None:
+    content = pack.plan(repo)[".agents/AGENTS.md"]
+    assert len(content.splitlines()) < 200, "the contract is an index, not a document"
 
 
 # --------------------------------------------------------------------------
@@ -135,7 +120,7 @@ def test_agents_md_carries_the_non_negotiables(repo: Path) -> None:
 def test_write_creates_the_pack(sandbox: Path) -> None:
     written, removed = pack.write(sandbox)
     assert written and not removed
-    assert (sandbox / "AGENTS.md").is_file()
+    assert (sandbox / ".agents" / "AGENTS.md").is_file()
     assert (sandbox / ".agents" / "skills" / "akinator" / "SKILL.md").is_file()
 
 
@@ -203,9 +188,18 @@ def test_missing_skills_directory_is_exit_two(tmp_path: Path) -> None:
 
 
 def test_installers_exist_and_are_referenced(repo: Path) -> None:
+    """The installers must be discoverable - from the router, not the contract.
+
+    The portable contract deliberately names no repo-relative paths, because it
+    is copied into other repositories where `scripts/install-codex.sh` does not
+    exist. So the reference lives in this repository's own routers, which are
+    rendered from the contract and are free to name real local paths.
+    """
     assert (repo / "scripts" / "install-codex.sh").is_file()
     assert (repo / "scripts" / "install-codex.ps1").is_file()
-    assert "install-codex.sh" in pack.plan(repo)["AGENTS.md"]
+
+    router = (repo / "AGENTS.md").read_text(encoding="utf-8")
+    assert "install-codex.sh" in router
 
 
 # --------------------------------------------------------------------------
@@ -250,11 +244,21 @@ def test_portable_contract_carries_the_non_negotiables(repo: Path) -> None:
 
 
 def test_portable_contract_is_not_akinators_own_router(repo: Path) -> None:
-    """The two files are deliberately different documents."""
-    plan = pack.plan(repo)
-    assert plan[CONTRACT] != plan["AGENTS.md"]
-    assert "python -m pytest tests/" not in plan[CONTRACT]
-    assert "Templates (what Akinator ships" not in plan[CONTRACT]
+    """The two files are deliberately different documents.
+
+    The pack ships a contract that names no repo-relative paths, because it is
+    copied into OTHER repositories. This repository's own AGENTS.md is one of
+    eleven routers rendered from context/router-contract.md and is full of paths
+    that exist only here.
+    """
+    contract = pack.plan(repo)[CONTRACT]
+    own_router = (repo / "AGENTS.md").read_text(encoding="utf-8")
+
+    assert contract != own_router
+    assert "python -m pytest tests/" not in contract
+    assert "rules/README.md" not in contract
+    # ...and the router does carry exactly what the contract must not.
+    assert "rules/README.md" in own_router
 
 
 def test_installers_copy_the_contract_not_the_router(repo: Path) -> None:

@@ -5,7 +5,11 @@ The Claude skills in `skills/` are canonical. This script projects them into the
 locations Codex actually reads:
 
     .agents/skills/<name>/SKILL.md   the skills, per the Codex skills contract
-    AGENTS.md                        the root router / behavioral contract
+    .agents/AGENTS.md                the portable behavioral contract, which the
+                                     installer copies into target repositories
+
+This repository's own AGENTS.md is NOT generated here - it is one of eleven
+routers rendered from context/router-contract.md by scripts/render_routers.py.
 
 Both are build outputs. Editing them by hand is a rule violation - see
 rules/07-codex-pack-is-generated.md - because two hand-maintained copies of one
@@ -110,152 +114,6 @@ def discover(skills_root: Path) -> list[tuple[str, Path]]:
             continue
         out.append((name, skill_md))
     return out
-
-
-def render_agents_md(repo: Path, skills: list[tuple[str, Path]]) -> str:
-    """The root AGENTS.md - a thin router, not a mirror.
-
-    It carries the same facts as CLAUDE.md. Codex-specific content is marked so
-    the coverage check's router-sync invariant can tell an intentional
-    difference from rot.
-    """
-    lines: list[str] = []
-    lines.append(banner("skills/**/SKILL.md"))
-    lines.append("# Akinator")
-    lines.append("")
-    lines.append(
-        "Ask everything. Document everything. Skillify everything. "
-        "Rule everything."
-    )
-    lines.append("")
-    lines.append(
-        "A change is never the code alone. A change is the code plus the "
-        "knowledge that lets"
-    )
-    lines.append("the next agent act on it in seconds. Half a change is no change.")
-    lines.append("")
-    lines.append("## The loop")
-    lines.append("")
-    lines.append("Run every codebase touch through twelve stations:")
-    lines.append("")
-    lines.append("```")
-    lines.append("ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT ->")
-    lines.append("SKILLIFY -> RULE -> CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY")
-    lines.append("```")
-    lines.append("")
-    lines.append("Non-negotiable:")
-    lines.append("")
-    lines.append(
-        "- Stations 6-11 happen in the same batch as station 5. "
-        '"I\'ll document in a'
-    )
-    lines.append('  follow-up" is a prohibited sentence.')
-    lines.append(
-        "- The knowledge delta is declared at PLAN time, by path, per batch. "
-        "A batch"
-    )
-    lines.append("  with no knowledge delta states why, explicitly.")
-    lines.append(
-        "- Gate once, at the end, scoped to what was touched. Never per edit, "
-        "never per"
-    )
-    lines.append("  commit, never all-workspace.")
-    lines.append(
-        "- Never add knowledge or documentation checks to git hooks. "
-        "Hooks gate code."
-    )
-    lines.append(
-        "- Adopt, never impose: match this repo's existing conventions before"
-    )
-    lines.append("  creating anything new.")
-    lines.append("")
-    lines.append("## Start here")
-    lines.append("")
-    lines.append("- Rules (constraints you must not break): `rules/README.md`")
-    lines.append("- Skills (the loop's stations): `docs/skills.md`")
-    lines.append("- Context (structural facts): `context/README.md`")
-    lines.append("- Docs (architecture, decisions, compatibility): `docs/README.md`")
-    lines.append("- Memory (durable decisions and surprises): `memory/index.md`")
-    lines.append(
-        "- Templates (what Akinator ships to target repos): `templates/README.md`"
-    )
-    lines.append("")
-    # These links must match the other routers exactly. A router that omits a
-    # constraint the others carry is a fork, and the coverage check fails it.
-    lines.append("## Before you change anything")
-    lines.append("")
-    lines.append(
-        "- **Every batch declares a knowledge delta by path** - "
-        "`rules/01-knowledge-delta-per-batch.md`"
-    )
-    lines.append(
-        "- **Never add knowledge checks to git hooks** - "
-        "`rules/05-no-git-hook-complication.md`"
-    )
-    lines.append(
-        "- **The Codex pack is generated, never hand-edited** - "
-        "`rules/07-codex-pack-is-generated.md`"
-    )
-    lines.append("")
-    lines.append(
-        "The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`."
-    )
-    lines.append("")
-    lines.append("## Running this repo")
-    lines.append("")
-    lines.append("| Task | Command |")
-    lines.append("|---|---|")
-    lines.append("| Test | `python -m pytest tests/ -q` |")
-    lines.append(
-        "| Coverage check | `python scripts/akinator_coverage.py .` |"
-    )
-    lines.append(
-        "| Coverage check (strict) | "
-        "`python scripts/akinator_coverage.py . --strict` - the tier CI uses |"
-    )
-    lines.append(
-        "| Regenerate the Codex pack | "
-        "`python scripts/build_codex_pack.py --write` |"
-    )
-    lines.append(
-        "| Check the pack for drift | "
-        "`python scripts/build_codex_pack.py --check` |"
-    )
-    lines.append("| Install to Codex | `sh scripts/install-codex.sh --user` |")
-    lines.append("")
-    lines.append(
-        "Gate once, at the end of the batch, scoped to what you touched. See"
-    )
-    lines.append("`rules/06-gate-once-scoped-at-the-end.md`.")
-    lines.append("")
-    lines.append("## Skills")
-    lines.append("")
-    lines.append("| Skill | Use when |")
-    lines.append("|---|---|")
-    for name, path in skills:
-        description = _description_of(path)
-        lines.append(f"| `{name}` | {description} |")
-    lines.append("")
-    lines.append("<!-- akinator:tool-specific -->")
-    lines.append("## Codex specifics")
-    lines.append("")
-    lines.append(
-        "- Skills are read from `.agents/skills/` - repository scope, walking up "
-        "from the"
-    )
-    lines.append("  working directory to the repository root.")
-    lines.append(
-        "- Invoke a skill explicitly with `$<skill-name>`, or let Codex select "
-        "one from"
-    )
-    lines.append("  its description.")
-    lines.append(
-        "- Install into a repository or a user profile with "
-        "`scripts/install-codex.sh`"
-    )
-    lines.append("  (or `scripts/install-codex.ps1` on Windows).")
-    lines.append("")
-    return "\n".join(lines)
 
 
 def render_contract_md(skills: list[tuple[str, Path]]) -> str:
@@ -420,9 +278,13 @@ def plan(repo: Path) -> dict[str, str]:
         out[target] = render_skill(
             source_rel, path.read_text(encoding="utf-8", errors="replace")
         )
-    out["AGENTS.md"] = render_agents_md(repo, skills)
-    # The portable contract the installer copies into target repositories.
-    # Distinct from the router above, deliberately - see render_contract_md.
+    # NOTE: this repository's own AGENTS.md is NOT generated here. It is one of
+    # eleven routers rendered from context/router-contract.md by
+    # scripts/render_routers.py. Two generators writing one file is a fork with
+    # extra steps.
+    #
+    # What the pack owns is the *portable* contract - the file the installer
+    # copies into OTHER repositories, which names no repo-relative paths.
     out[".agents/AGENTS.md"] = render_contract_md(skills)
     return out
 
@@ -435,9 +297,8 @@ def existing_pack(repo: Path) -> set[str]:
         for path in agents_skills.rglob("*"):
             if path.is_file():
                 found.add(path.relative_to(repo).as_posix())
-    for rel in ("AGENTS.md", ".agents/AGENTS.md"):
-        if (repo / rel).is_file():
-            found.add(rel)
+    if (repo / ".agents" / "AGENTS.md").is_file():
+        found.add(".agents/AGENTS.md")
     return found
 
 

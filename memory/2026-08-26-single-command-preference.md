@@ -39,6 +39,6 @@ is the default path anyway.
 
 ## Related
 
-- `commands/akinator.md` - the single command
+- `commands/everything.md` - the single command
 - `docs/adr/0005-single-command-surface.md` - the decision record
 - `tests/test_plugin_structure.py::test_there_is_exactly_one_command`

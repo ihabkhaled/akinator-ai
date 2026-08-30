@@ -60,7 +60,7 @@ get invoked; it is how a user asks for a specific mode deliberately.
 
 ## Decision
 
-Akinator ships exactly one command: `commands/akinator.md`.
+Akinator ships exactly one command: `commands/everything.md`.
 
 **It runs everything by default.** With no arguments, or with free text, it loads
 `akinator-everything` and runs the complete pass - every station, every
@@ -69,6 +69,11 @@ of Done is proven with evidence. The mode words `onboard`, `audit`, `status`,
 `sync`, `question` and `decide` narrow the *target*, never the depth.
 
 A second command is not added without the owner asking for one.
+
+**Renamed 2026-08-26.** The command file moved to `commands/everything.md` from
+its original name, so it is invoked as `/akinator:everything` - the plugin
+namespace supplies the `akinator` half, and the file name supplies the rest.
+Still exactly one command; the name now says what it does.
 
 **Amended 2026-08-26.** The original decision had the command run the loop
 *scaled to the work*. The owner asked for the root command to "run literally
@@ -105,7 +110,7 @@ which is the right default when no one typed a command at all.
 
 ## Related
 
-- Code: `commands/akinator.md`
+- Code: `commands/everything.md`
 - Memory: `memory/2026-08-26-single-command-preference.md`
 - Test: `tests/test_plugin_structure.py::test_there_is_exactly_one_command`
 - Docs: `docs/deviations.md` - every deviation from the build brief

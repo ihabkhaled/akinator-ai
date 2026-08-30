@@ -67,7 +67,7 @@ Read by Claude Code from `commands/`.
 
 | Command | Arguments |
 |---|---|
-| `/akinator` | `[what you want done] / [onboard / audit / status / sync / question / decide]` |
+| `/everything` | `[what you want done] / [onboard / audit / status / sync / question / decide]` |
 
 ## Hooks - 1
 
@@ -80,7 +80,7 @@ Claude-only; the same contract reaches Codex through the generated
 |---|---|
 | `SessionStart` | `sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"` |
 
-## Scripts - 7
+## Scripts - 8
 
 | Script | Purpose |
 |---|---|
@@ -90,6 +90,7 @@ Claude-only; the same contract reaches Codex through the generated
 | `scripts/generate_assets.py` | Generate Akinator's brand assets. |
 | `scripts/install-codex.ps1` | Install the Akinator Codex pack. |
 | `scripts/install-codex.sh` | Install the Akinator Codex pack. |
+| `scripts/render_routers.py` | Render every AI entry-point file from one canonical contract. |
 | `scripts/run_evals.py` | Run Akinator's behavioral evals against the fixture repositories. |
 
 ## Templates - 10

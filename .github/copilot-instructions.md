@@ -68,14 +68,10 @@ Gate once, at the end of the batch, scoped to what you touched. See
 | Every router file | CLAUDE, AGENTS, CODEX, GEMINI and the rest | **yes** - `scripts/render_routers.py` |
 
 <!-- akinator:tool-specific -->
-## Codex and the common fallback
+## GitHub Copilot
 
-- Skills are read from `.agents/skills/` - repository scope, walking up from
-  the working directory to the repository root, then `$HOME/.agents/skills`.
-- Invoke a skill explicitly with `$akinator`, or describe the task and let
-  the skill be selected by its trigger description.
-- Install with `scripts/install-codex.sh` (or `scripts/install-codex.ps1`).
-- The Codex plugin manifest is `.codex-plugin/plugin.json`. Codex validation
-  rejects unsupported manifest fields such as `hooks`, so the SessionStart
-  hook is a Claude-only surface - the same contract reaches Codex through
-  this file. See `docs/compatibility.md`.
+- This file is one of several AI entry points in this repository. They are
+  all rendered from `context/router-contract.md` and state the same facts.
+- If your tool reads skills from a directory, point it at `skills/` (the
+  canonical source) or `.agents/skills/` (the generated pack). They cannot
+  diverge - a drift check fails the build if they do.

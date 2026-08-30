@@ -120,6 +120,7 @@ For **each** batch, in order:
     python -m pytest tests/ -q
     python scripts/akinator_coverage.py . --strict
     python scripts/build_codex_pack.py --check
+    python scripts/render_routers.py --check
     python scripts/extract_components.py --check
     python scripts/generate_assets.py --check
     ```

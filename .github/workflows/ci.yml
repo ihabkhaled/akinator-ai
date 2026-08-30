@@ -38,6 +38,11 @@ jobs:
       - name: Context map drift
         run: python scripts/extract_components.py --check
 
+      # Eleven routers, one contract. Hand-editing any of them, or changing the
+      # contract without re-rendering, fails here.
+      - name: Router drift
+        run: python scripts/render_routers.py --check
+
       # The brand assets Codex validation requires must match their generator,
       # so the mark keeps its provenance instead of becoming an opaque binary.
       - name: Asset drift

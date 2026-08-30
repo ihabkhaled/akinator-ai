@@ -124,7 +124,7 @@ into a visible edit to the plan.
 |---|---|
 | **21 skills** | `akinator-everything` (the all-in-one pass), the master router, the loop's stations, business/product/ops mapping, and gate economy, resource guard and anti-gaming |
 | **7 agents** | Boardroom review lenses with real vetoes - business owner, CTO, product owner, ops, analyst, PM, and the **librarian**, which blocks any batch whose knowledge delta is missing |
-| **1 command** | `/akinator` - runs everything by default; mode words narrow the target, never the depth |
+| **1 command** | `/akinator:everything` - runs everything by default; mode words narrow the target, never the depth |
 | **1 hook** | SessionStart contract injection - small, a contract not a payload |
 | **10 templates** | Rule, skill, context map, memory, ADR, business logic, product feature, ops runbook, routers, onboarding mapping - each with a filled example |
 | **6 behavioral evals** | Runnable against three fixture repos, graded by an independent agent |
@@ -178,6 +178,7 @@ against it:
 python -m pytest tests/ -q                    # 145 structural + enforcement tests
 python scripts/akinator_coverage.py . --strict # the invariants, against itself
 python scripts/build_codex_pack.py --check    # Codex pack drift
+python scripts/render_routers.py --check      # router drift (11 routers)
 python scripts/extract_components.py --check  # context-map drift
 python scripts/generate_assets.py --check     # brand-asset drift
 python scripts/run_evals.py --dry-run --all   # every eval suite is runnable

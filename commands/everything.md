@@ -4,12 +4,12 @@ argument-hint: [what you want done] | [onboard | audit | status | sync | questio
 allowed-tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "TodoWrite", "AskUserQuestion", "Skill", "Task"]
 ---
 
-# Akinator
+# Akinator - everything
 
 **One command. It runs everything.**
 
 Load the `akinator-everything` skill and follow it. That is the default and the
-main path - not a mode, not an opt-in. `/akinator` means *the complete pass*:
+main path - not a mode, not an opt-in. `/akinator:everything` means *the complete pass*:
 every station of the loop, every applicable boardroom lens, every mechanical
 check, looping until the Definition of Done is **proven with evidence** rather
 than asserted.
