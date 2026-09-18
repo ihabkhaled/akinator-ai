@@ -33,3 +33,5 @@ and on what grounds, is knowledge.
 ## Adding one
 
 Use `skills/akinator-adr/SKILL.md`, or `/akinator decide <the question>`.
+
+- [ADR 0006 — Always-on master contract and living wiki](0006-always-on-master-contract.md)
