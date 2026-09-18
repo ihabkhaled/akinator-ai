@@ -67,7 +67,7 @@ Read by Claude Code from `commands/`.
 
 | Command | Arguments |
 |---|---|
-| `/everything` | `[what you want done] / [onboard / audit / status / sync / question / decide]` |
+| `/everything` | `[what you want done]` |
 
 ## Hooks - 1
 
@@ -99,7 +99,7 @@ Claude-only; the same contract reaches Codex through the generated
 | `scripts/render_routers.py` | Render every AI entry-point file from one canonical contract. |
 | `scripts/run_evals.py` | Run Akinator's behavioral evals against the fixture repositories. |
 
-## Templates - 10
+## Templates - 11
 
 What Akinator writes into target repositories. Every template ships a
 filled example.
@@ -108,6 +108,7 @@ filled example.
 |---|---|
 | `templates/adr.md` | `templates/examples/adr.md` |
 | `templates/business-logic.md` | `templates/examples/business-logic.md` |
+| `templates/change-record.md` | `templates/examples/change-record.md` |
 | `templates/context-map.md` | `templates/examples/context-map.md` |
 | `templates/memory.md` | `templates/examples/memory.md` |
 | `templates/onboarding-mapping.md` | `templates/examples/onboarding-mapping.md` |
