@@ -45,7 +45,12 @@ See [the ADR index](adr/README.md) for the full list and the conventions.
 - `memory/index.md` - durable decisions and surprises
 - `evals/README.md` - the behavioral eval suites
 
-
 ## Living product knowledge
 
 - [Living wiki contract](living-wiki.md) — use when an agent needs to resolve or maintain product/business intent, change provenance, current truth, historical truth, future intent, failures, decisions, constraints and staleness conditions above the codebase.
+
+## Change records
+
+Meaningful changes are indexed here so their provenance remains reachable instead of becoming orphaned documentation.
+
+- [2026-09-18 — Always-on, one-command Akinator](changes/2026-09-18-always-on-one-command.md) — records the move to automatic repository behavior, the single explicit command surface, living-wiki expansion, and the reasoning/provenance behind the change.
