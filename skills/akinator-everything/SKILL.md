@@ -1,6 +1,6 @@
 ---
 name: akinator-everything
-description: ALWAYS-ON master orchestrator for repository-changing prompts. Run automatically for normal coding prompts and through the sole explicit command /akinator:everything. Evaluates every station, every applicable boardroom lens, knowledge update and mechanical check until the Definition of Done is proven.
+description: Use when any prompt can change a repository, and automatically for normal coding prompts. ALWAYS-ON master orchestrator; also reached through the sole explicit command /akinator:everything. Evaluates every station, applicable boardroom lens, knowledge update and mechanical check until the Definition of Done is proven.
 ---
 
 # Akinator Everything - the all-in-one pass
@@ -28,6 +28,11 @@ check executes, and completion is proven with evidence rather than claimed.
 - On a change too expensive to get wrong - money, permissions, deletion, a
   public contract, a migration.
 - When onboarding a repository that matters.
+
+## When NOT to use
+
+- Pure conversation with no repository consequence; the standing contract may resolve context but must not manufacture repository changes.
+- Inside a narrow subagent whose parent session owns the complete pass.
 
 ## Scope discipline
 
