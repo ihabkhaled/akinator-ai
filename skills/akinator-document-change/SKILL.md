@@ -26,7 +26,35 @@ when deleting behavior - deletion is a documentation event.
 
 ## Procedure
 
-### 1. Ask the four questions the code cannot answer
+### 1. Write the change provenance
+
+Every meaningful change must leave a durable change record in the repository's
+existing history/changelog convention. If none exists, use the change-record
+template and establish one during onboarding.
+
+Record, when applicable:
+
+- **When** — date/time or the best available durable timestamp.
+- **Actor / agent** — human owner, agent/tool, or `unknown`; never invent identity.
+- **Request / source** — issue, prompt, incident, requirement or decision.
+- **Affected code/components** — paths and surfaces.
+- **Before** — the behavior/state before the change.
+- **Change** — what was changed.
+- **Now** — the resulting behavior/state.
+- **Why** — the reason and problem being solved.
+- **Business intent** and **product intent**.
+- **Technical reasoning**, alternatives and trade-offs.
+- **Compatibility, migration and rollback** consequences.
+- **Rules, skills, failures, ADRs, docs, context and memory** created or changed.
+- **Verification evidence**.
+- **Future implications / follow-ups**, clearly labeled as future rather than done.
+- **Stale when** — what event would make the record's current-state claims stale.
+
+History is not the same as current truth: keep the change record immutable enough
+to explain the past, while current product/business/architecture docs describe
+the resulting present.
+
+### 2. Ask the four questions the code cannot answer
 
 For the change you just made:
 
@@ -44,7 +72,7 @@ If all four answers are genuinely "nothing beyond what the code says" - a typo
 fix, a rename with no semantic change - say so explicitly in the batch. That is a
 justified empty delta, not a skipped station.
 
-### 2. Route each answer to its canonical home
+### 3. Route each answer to its canonical home
 
 | Answer | Home | Skill |
 |---|---|---|
@@ -59,7 +87,7 @@ justified empty delta, not a skipped station.
 
 Never write the same fact into two homes. The second one is a link.
 
-### 3. Write it so it earns its bytes
+### 4. Write it so it earns its bytes
 
 Each doc change states:
 
@@ -71,7 +99,7 @@ Each doc change states:
   it is what makes staleness detectable instead of discovered.
 - **Links to the code** it describes, by path.
 
-### 4. Handle deletion
+### 5. Handle deletion
 
 When behavior is removed:
 
@@ -84,7 +112,7 @@ When behavior is removed:
 A doc describing deleted behavior is a **critical** finding in
 `akinator-coverage`. Leaving one behind is worse than never having written it.
 
-### 5. Verify against the tree
+### 6. Verify against the tree
 
 Before the batch is done, for each doc you touched:
 
@@ -110,6 +138,7 @@ This verification is what separates documentation from fiction.
 
 ## Definition of done
 
+- [ ] A change-provenance record exists for every meaningful change, or a mechanical-only `knowledge delta: none — <reason>` is recorded.
 - [ ] The four questions were asked for this change, and answered or explicitly
       dismissed.
 - [ ] Every answer is written into exactly one canonical home.
