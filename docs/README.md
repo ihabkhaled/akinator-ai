@@ -44,3 +44,8 @@ See [the ADR index](adr/README.md) for the full list and the conventions.
 - `context/README.md` - generated structural maps
 - `memory/index.md` - durable decisions and surprises
 - `evals/README.md` - the behavioral eval suites
+
+
+## Living product knowledge
+
+- [Living wiki contract](living-wiki.md) — use when an agent needs to resolve or maintain product/business intent, change provenance, current truth, historical truth, future intent, failures, decisions, constraints and staleness conditions above the codebase.
