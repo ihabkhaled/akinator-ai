@@ -24,7 +24,7 @@ Read by Claude Code from `skills/`, and by Codex from the generated
 
 | Skill | Loop station | Trigger |
 |---|---|---|
-| `akinator` | master | Use when touching a codebase in any way - planning, exploring, auditing, refactoring, implementing, fixing, upgrading, deleting or... |
+| `akinator` | master | Use when any user prompt is received in a repository. |
 | `akinator-adr` | 6 DOCUMENT | Use when a decision was made between real alternatives that will be questioned later - a library or vendor choice, an architectural... |
 | `akinator-anti-gaming` | discipline | Use when reviewing whether documentation work is real, when a checklist is about to be ticked, when tempted to weaken a failing check, or... |
 | `akinator-audit` | 3 AUDIT | Use before planning work on anything claimed to already exist, when a doc or ticket says a feature is done, when inheriting unfamiliar... |
@@ -32,7 +32,7 @@ Read by Claude Code from `skills/`, and by Codex from the generated
 | `akinator-contextify` | 9 CONTEXTIFY | Use when a change alters a structural fact about the system - ownership, module boundaries, routes, ports, events, permissions,... |
 | `akinator-coverage` | 12 VERIFY | Use to audit whether a repository's knowledge layer is complete, reachable and true - before claiming onboarding is done, when docs are... |
 | `akinator-document-change` | 6 DOCUMENT | Use in the same batch as any code change, before the batch is called done. |
-| `akinator-everything` | all-in-one | Use when the user explicitly asks for everything - "run the full akinator", "do all of it", "maximum depth", "leave nothing out", "the... |
+| `akinator-everything` | all-in-one | Use when any prompt can change a repository, and automatically for normal coding prompts. |
 | `akinator-gate-economy` | 12 VERIFY | Use before running any lint, typecheck, test or build, and before any commit or push during multi-step work. |
 | `akinator-index-sync` | 11 INDEX | Use whenever a knowledge artifact is created, renamed, moved or deleted - a rule, skill, doc, context map, ADR or memory entry. |
 | `akinator-intake` | 1 ASK | Use before planning any substantive work, and whenever a request has two readings that lead to materially different work, or when... |
