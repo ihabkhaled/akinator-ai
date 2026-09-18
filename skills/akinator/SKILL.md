@@ -1,6 +1,6 @@
 ---
 name: akinator
-description: Use when touching a codebase in any way - planning, exploring, auditing, refactoring, implementing, fixing, upgrading, deleting or documenting. Runs the twelve-station Akinator loop so every change ships with the knowledge that lets the next agent act on it in seconds. Ask everything, document everything, skillify everything, rule everything.
+description: ALWAYS-ON repository contract. Trigger on every user prompt in a repository; for any repository-changing intent, run the complete Akinator pass so code, product intent, business logic, decisions, history, skills, rules, context and verification evolve together. No slash command is required.
 ---
 
 # Akinator
@@ -69,13 +69,11 @@ skill is the router.
 
 ### The all-in-one pass
 
-When the work is worth maximum thoroughness - a release, a handover, an audit, a
-change too expensive to get wrong - or when the user asks for everything, load
-`akinator-everything`. It runs every station, every applicable boardroom lens and
-every mechanical check, and loops until the Definition of Done is proven rather
-than asserted. It is what the `/akinator` command runs by default.
-
-This skill scales the loop to the change; that one does not scale down.
+`akinator-everything` is the master orchestrator for repository-changing work.
+Load it automatically; do not wait for a slash command. It evaluates every
+station, every applicable boardroom lens and every applicable mechanical check,
+and loops until the Definition of Done is proven rather than asserted. The sole
+explicit command `/akinator:everything` enters this same path.
 
 ### Non-negotiables
 
@@ -124,8 +122,8 @@ Read in this order, stopping when the question is answered:
 6. **Generated manifests** - `.ai/` for machine-readable derived facts.
 7. **Docs** - `docs/` for narrative: architecture, business, product, ops, ADRs.
 
-If the repo has none of these, you are on a greenfield target: say so and offer
-`/akinator onboard` rather than silently inventing a structure.
+If the repo has none of these, you are on a greenfield target: run the onboarding
+behavior through the master orchestrator. Do not require or invent another command.
 
 ### Then run the stations
 
