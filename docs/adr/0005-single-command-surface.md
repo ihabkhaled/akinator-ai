@@ -114,3 +114,11 @@ which is the right default when no one typed a command at all.
 - Memory: `memory/2026-08-26-single-command-preference.md`
 - Test: `tests/test_plugin_structure.py::test_there_is_exactly_one_command`
 - Docs: `docs/deviations.md` - every deviation from the build brief
+
+
+## Superseded interface detail — 2026-09-18
+
+ADR 0006 supersedes the mode-dispatch portion of this decision. The invariant
+that Akinator exposes exactly one explicit command remains. The command is
+`/akinator:everything`; mode words are no longer a user-facing API, and normal
+prompts activate the standing contract automatically.
