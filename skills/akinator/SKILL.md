@@ -1,6 +1,6 @@
 ---
 name: akinator
-description: ALWAYS-ON repository contract. Trigger on every user prompt in a repository; for any repository-changing intent, run the complete Akinator pass so code, product intent, business logic, decisions, history, skills, rules, context and verification evolve together. No slash command is required.
+description: Use when any user prompt is received in a repository. This is the ALWAYS-ON repository contract; for repository-changing intent, run the complete Akinator pass so code, product intent, business logic, decisions, history, skills, rules, context and verification evolve together. No slash command is required.
 ---
 
 # Akinator
