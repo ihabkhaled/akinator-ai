@@ -2,6 +2,14 @@
 name: akinator
 description: Use when any user prompt is received in a repository. This is the ALWAYS-ON repository contract; for repository-changing intent, run the complete Akinator pass so code, product intent, business logic, decisions, history, skills, rules, context and verification evolve together. No slash command is required.
 ---
+<!--
+DO NOT EDIT BY HAND.
+Installed from the Akinator plugin - the canonical akinator skill.
+No generator is named by path: this file travels into repositories
+that do not have one, where naming it would be a false claim.
+To update: reinstall Akinator, or regenerate inside an Akinator
+checkout. Local edits here are replaced either way.
+-->
 
 # Akinator
 
