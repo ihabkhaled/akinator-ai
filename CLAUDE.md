@@ -82,6 +82,6 @@ Gate once, at the end of the batch, scoped to what you touched. See
 
 - Skills load from `skills/`, agents from `agents/`, the command from
   `commands/`, and the SessionStart hook from `hooks/hooks.json`.
-- `/akinator` runs the complete pass. Mode words narrow the target, never
-  the depth - see `commands/everything.md`.
+- Akinator is always-on from SessionStart; normal prompts require no command.
+- The sole explicit command is `/akinator:everything`; there are no subcommands or modes.
 - Install with `/plugin marketplace add` then `/plugin install`.
