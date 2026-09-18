@@ -159,7 +159,7 @@ def render_contract_md(skills: list[tuple[str, Path]]) -> str:
     """
     lines: list[str] = []
     lines.append(contract_banner())
-    lines.append("# Akinator")
+    lines.append("# Akinator — ALWAYS ON")
     lines.append("")
     lines.append(
         "Ask everything. Document everything. Skillify everything. "
@@ -174,7 +174,7 @@ def render_contract_md(skills: list[tuple[str, Path]]) -> str:
     lines.append("")
     lines.append("## The loop")
     lines.append("")
-    lines.append("Run every codebase touch through twelve stations:")
+    lines.append("Every user prompt enters this contract first. For repository-changing work, load `akinator-everything` automatically and run all twelve stations:")
     lines.append("")
     lines.append("```")
     lines.append("ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT ->")
@@ -250,21 +250,15 @@ def render_contract_md(skills: list[tuple[str, Path]]) -> str:
     lines.append("")
     lines.append("## Skills")
     lines.append("")
-    lines.append(
-        "Installed under `.agents/skills/`. Invoke one explicitly with "
-        "`$<name>`, or"
-    )
-    lines.append("describe the task and let the skill be selected by its trigger.")
+    lines.append("Installed under `.agents/skills/`. These are internal implementation skills.")
+    lines.append("Normal prompts must route through `akinator-everything` automatically; explicit `$<name>` invocation is only a fallback.")
     lines.append("")
     lines.append("| Skill | Use when |")
     lines.append("|---|---|")
     for name, path in skills:
         lines.append(f"| `{name}` | {_description_of(path)} |")
     lines.append("")
-    lines.append(
-        "Start with `$akinator` - it carries the full creed, the loop and the"
-    )
-    lines.append("knowledge taxonomy, and routes to the rest.")
+    lines.append("`akinator-everything` is the always-on master orchestrator; `akinator` carries the creed and taxonomy. Users should not need to call either for normal prompts.")
     lines.append("")
     return "\n".join(lines)
 

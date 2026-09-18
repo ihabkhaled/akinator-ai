@@ -1,6 +1,6 @@
 ---
 name: akinator-everything
-description: Use when the user explicitly asks for everything - "run the full akinator", "do all of it", "maximum depth", "leave nothing out", "the complete pass" - or before a release, an audit, a handover, or any change too expensive to get wrong. Loads and applies every station, every boardroom lens and every mechanical check, and does not stop until the Definition of Done is proven rather than asserted.
+description: Use when any prompt can change a repository, and automatically for normal coding prompts. ALWAYS-ON master orchestrator; also reached through the sole explicit command /akinator:everything. Evaluates every station, applicable boardroom lens, knowledge update and mechanical check until the Definition of Done is proven.
 ---
 <!--
 DO NOT EDIT BY HAND.
@@ -21,10 +21,10 @@ produce nothing, and the batch records `knowledge delta: none, because ...`
 in a line. That is correct as a default, because ceremony applied to trivia
 gets the whole discipline abandoned.
 
-This skill is the other setting. It is **deliberately invoked**, it assumes the
-work is worth maximum thoroughness, and it does not scale down. Every station
-runs. Every applicable lens reviews. Every check executes. Nothing is deferred,
-nothing is sampled, and completion is proven with evidence rather than claimed.
+This is the default orchestrator for repository-changing prompts. It is loaded
+automatically by the standing contract; the user does not need to invoke it.
+Every station is evaluated, every applicable lens reviews, every applicable
+check executes, and completion is proven with evidence rather than claimed.
 
 ## When to use
 
@@ -39,14 +39,15 @@ nothing is sampled, and completion is proven with evidence rather than claimed.
 
 ## When NOT to use
 
-- **Ordinary work.** Use `akinator`, which scales the loop to the change. Running
-  the full pass on a typo is the fastest way to make the team stop running any of
-  it.
-- When the user wants one specific station - use that station's skill.
-- Inside a subagent dispatched to execute one narrow step. The dispatching
-  session owns the pass.
-- As a substitute for thinking. This skill is exhaustive, not clairvoyant: it
-  guarantees nothing is skipped, not that every judgment is right.
+- Pure conversation with no repository consequence; the standing contract may resolve context but must not manufacture repository changes.
+- Inside a narrow subagent whose parent session owns the complete pass.
+
+## Scope discipline
+
+The master pass is always active, but relevance still matters. A mechanical-only
+edit may produce `knowledge delta: none — <reason>`. Never manufacture docs,
+rules or decisions. Subagents may execute narrow internal steps; the dispatching
+session owns completion of the master pass.
 
 ## Procedure
 

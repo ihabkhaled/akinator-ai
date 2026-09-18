@@ -67,8 +67,8 @@ class Adapter:
 CODEX_SPECIFICS = (
     "- Skills are read from `.agents/skills/` - repository scope, walking up from",
     "  the working directory to the repository root, then `$HOME/.agents/skills`.",
-    "- Invoke a skill explicitly with `$akinator`, or describe the task and let",
-    "  the skill be selected by its trigger description.",
+    "- Akinator is always-on: every prompt enters the standing contract first; repository-changing",
+    "  work loads `$akinator-everything` automatically. Explicit skill invocation is a fallback.",
     "- Install with `scripts/install-codex.sh` (or `scripts/install-codex.ps1`).",
     "- The Codex plugin manifest is `.codex-plugin/plugin.json`. Codex validation",
     "  rejects unsupported manifest fields such as `hooks`, so the SessionStart",
@@ -79,12 +79,13 @@ CODEX_SPECIFICS = (
 CLAUDE_SPECIFICS = (
     "- Skills load from `skills/`, agents from `agents/`, the command from",
     "  `commands/`, and the SessionStart hook from `hooks/hooks.json`.",
-    "- `/akinator` runs the complete pass. Mode words narrow the target, never",
-    "  the depth - see `commands/everything.md`.",
+    "- Akinator is always-on from SessionStart; normal prompts require no command.",
+    "- The sole explicit command is `/akinator:everything`; there are no subcommands or modes.",
     "- Install with `/plugin marketplace add` then `/plugin install`.",
 )
 
 GENERIC_SPECIFICS = (
+    "- Akinator is always-on for normal repository prompts; no slash command is required.",
     "- This file is one of several AI entry points in this repository. They are",
     "  all rendered from `context/router-contract.md` and state the same facts.",
     "- If your tool reads skills from a directory, point it at `skills/` (the",

@@ -82,8 +82,8 @@ Gate once, at the end of the batch, scoped to what you touched. See
 
 - Skills are read from `.agents/skills/` - repository scope, walking up from
   the working directory to the repository root, then `$HOME/.agents/skills`.
-- Invoke a skill explicitly with `$akinator`, or describe the task and let
-  the skill be selected by its trigger description.
+- Akinator is always-on: every prompt enters the standing contract first; repository-changing
+  work loads `$akinator-everything` automatically. Explicit skill invocation is a fallback.
 - Install with `scripts/install-codex.sh` (or `scripts/install-codex.ps1`).
 - The Codex plugin manifest is `.codex-plugin/plugin.json`. Codex validation
   rejects unsupported manifest fields such as `hooks`, so the SessionStart

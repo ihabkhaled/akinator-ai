@@ -1,6 +1,6 @@
 # Templates
 
-What Akinator writes into target repositories. Ten templates, each with a filled
+What Akinator writes into target repositories. Eleven templates, each with a filled
 example in `examples/`.
 
 A template is a skeleton with placeholders. The example is the same document
@@ -18,8 +18,9 @@ filled in properly - particularly the sections that are usually left thin.
 | [ops-runbook.md](ops-runbook.md) | An operational procedure, with its point of no return | [example](examples/ops-runbook.md) |
 | [router.md](router.md) | Thin CLAUDE.md / AGENTS.md / CODEX.md index skeletons | [example](examples/router.md) |
 | [onboarding-mapping.md](onboarding-mapping.md) | Adopt-never-impose, recorded as a contract | [example](examples/onboarding-mapping.md) |
+| [change-record.md](change-record.md) | Durable before → change → now provenance, intent and verification | [example](examples/change-record.md) |
 
-All ten examples are written against **one** fictional product, so they
+All eleven examples are written against **one** fictional product, so they
 cross-reference each other the way real artifacts do. See
 [examples/README.md](examples/README.md).
 

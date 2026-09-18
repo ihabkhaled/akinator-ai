@@ -80,6 +80,7 @@ Gate once, at the end of the batch, scoped to what you touched. See
 <!-- akinator:tool-specific -->
 ## GitHub Copilot
 
+- Akinator is always-on for normal repository prompts; no slash command is required.
 - This file is one of several AI entry points in this repository. They are
   all rendered from `context/router-contract.md` and state the same facts.
 - If your tool reads skills from a directory, point it at `skills/` (the
