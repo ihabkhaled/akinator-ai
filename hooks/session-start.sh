@@ -1,59 +1,34 @@
 #!/bin/sh
-# Akinator SessionStart hook.
-#
-# Injects the behavioral contract - not a payload. The full creed, loop and
-# taxonomy live in the `akinator` skill; this hook exists so the contract is the
-# session's default operating mode before the first tool call, and so the agent
-# knows which knowledge entry points this particular repo actually has.
-#
-# Contract: stdout of a SessionStart hook is added to the session context.
-# Keep it short. Every line here costs context in every session forever.
-
+# Akinator Claude SessionStart hook: inject the always-on contract before prompt 1.
 set -u
-
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
-
 cat <<'CONTRACT'
-# Akinator is active
+# Akinator is ALWAYS ACTIVE
 
-Ask everything. Document everything. Skillify everything. Rule everything.
+No slash command is required. Treat every user prompt as entering Akinator first.
+For repository-changing work, load `akinator-everything` plus `akinator` and
+run the complete contract. Internal skills are implementation details.
 
-A change is never the code alone. A change is the code plus the knowledge that
-lets the next agent act on it in seconds. Half a change is no change.
-
-Run every codebase touch through the twelve-station loop:
 ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT -> SKILLIFY -> RULE ->
 CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY
 
-Non-negotiable:
-- Stations 6-11 happen in the same batch as station 5. "I'll document in a
-  follow-up" is a prohibited sentence.
-- The knowledge delta is declared at PLAN time, per batch. A batch with no
-  knowledge delta must state why, explicitly.
-- Gate once, at the end, scoped to what was touched. Never per edit, never
-  per commit, never all-workspace.
-- Never add knowledge or documentation checks to git hooks. Hooks gate code.
-- Adopt, never impose: match this repo's existing conventions before creating
-  anything new.
+Code + knowledge is the change. Preserve WHAT, WHY, WHO/agent when knowable,
+WHEN, BEFORE, NOW, NEXT, business/product intent, technical reasoning, decisions,
+failures, constraints and consequences. Record failures; reusable prevention
+becomes an enforced rule. Repeatable procedures become skills.
 
-Load the `akinator` skill for the full creed, loop and knowledge taxonomy.
+Adopt existing repo conventions. One canonical home per fact. Never guess on
+money, permissions, deletion, security or public contracts. Knowledge work is
+same-batch, never follow-up. Gate once, late and scoped. Never put knowledge
+checks in git hooks.
 CONTRACT
-
-# Report which knowledge entry points this repo actually has, so RESOLVE
-# (station 2) starts from facts instead of guesses.
 FOUND=""
-for path in CLAUDE.md AGENTS.md CODEX.md GEMINI.md .cursorrules rules skills context memory docs .ai; do
-  if [ -e "$PROJECT_DIR/$path" ]; then
-    FOUND="$FOUND $path"
-  fi
+for path in CLAUDE.md AGENTS.md CODEX.md .cursor/rules rules skills context memory docs .ai; do
+  if [ -e "$PROJECT_DIR/$path" ]; then FOUND="$FOUND $path"; fi
 done
-
 if [ -n "$FOUND" ]; then
-  printf '\nKnowledge entry points present in this repo:%s\n' "$FOUND"
-  printf 'RESOLVE from these before planning. Follow their indexes; do not re-derive.\n'
+  printf '\nKnowledge entry points:%s\nResolve them before planning.\n' "$FOUND"
 else
-  printf '\nNo knowledge layer detected in this repo.\n'
-  printf 'Offer /akinator:onboard before inventing a structure.\n'
+  printf '\nNo knowledge layer detected. Use Akinator onboarding behavior automatically; do not require another command.\n'
 fi
-
 exit 0
