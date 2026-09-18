@@ -2,7 +2,7 @@
 
 Durable facts, decisions, surprises and dead ends from building and maintaining
 Akinator. One fact per file, each with its why, an absolute date and its
-reversal conditions. See `skills/akinator-memoize/SKILL.md`.
+reversal conditions. See `skills/everything/references/akinator-memoize.md`.
 
 Memory is not a scratchpad. Session state does not go here; only things a future
 agent would otherwise rediscover.
@@ -19,6 +19,7 @@ agent would otherwise rediscover.
 | 2026-08-30 | [A claim is only true relative to a tree, and every test checked the same tree](2026-08-30-a-claim-is-only-true-relative-to-a-tree.md) | surprise |
 | 2026-08-30 | [A backslash written through a shell heredoc reaches the file as something else](2026-08-30-backslashes-do-not-survive-a-heredoc.md) | constraint |
 | 2026-08-30 | [A test that reads git history can pass locally and fail only in CI](2026-08-30-ci-checkouts-are-shallow-by-default.md) | surprise |
+| 2026-09-18 | ["One command" is decided by the menu, not by the commands folder](2026-09-18-one-command-is-decided-by-the-menu.md) | surprise |
 
 ## Pruning
 

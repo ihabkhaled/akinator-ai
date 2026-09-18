@@ -86,9 +86,9 @@ not add up is a cap that silently slips.
 ## Using it
 
 ```bash
-python scripts/build_brief.py --write     # regenerate
-python scripts/build_brief.py --check     # exit 1 if drifted (CI runs this)
-python scripts/build_brief.py --explain   # the ranking, and what fit
+python skills/everything/scripts/build_brief.py --write     # regenerate
+python skills/everything/scripts/build_brief.py --check     # exit 1 if drifted (CI runs this)
+python skills/everything/scripts/build_brief.py --explain   # the ranking, and what fit
 ```
 
 `--explain` is the one to reach for when something you expected is missing: it
@@ -98,7 +98,7 @@ prints every candidate with its score, token cost and whether it made the cut.
 
 - Docs: `docs/ledger.md` - where the recurring failures come from
 - Docs: `docs/akinator-v2-design.md` - stage 5, SURFACE
-- Code: `scripts/build_brief.py`, `tests/test_brief.py`
+- Code: `skills/everything/scripts/build_brief.py`, `tests/test_brief.py`
 
 ## Review when
 

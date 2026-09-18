@@ -16,7 +16,7 @@ morning.
 
 A prompt asking an agent to document things decays within one session. So the
 behavior has to be **installed** rather than requested: loaded at session start,
-reinforced by skills that trigger on every kind of codebase touch, blocked by a
+reinforced by a skill that triggers on every kind of codebase touch, blocked by a
 review lens when it is skipped, and verified by a check that fails in CI.
 
 ## The five surfaces
@@ -24,95 +24,99 @@ review lens when it is skipped, and verified by a check that fails in CI.
 Akinator is one behavior delivered through five mechanisms, each catching the
 discipline at a different moment.
 
-### 1. The SessionStart hook - the contract
+### 1. The always-on contract - one per platform
 
-`hooks/hooks.json` runs `hooks/session-start.sh` when a Claude Code session
-begins. Its stdout becomes session context.
+Every platform gets the same contract through the strongest surface it has:
+
+| Platform | Surface | Reads it |
+|---|---|---|
+| Claude Code | `hooks/hooks.json` runs `hooks/session-start.sh` at session start, in exec form; its stdout becomes session context | automatically, every session |
+| Codex | a marked `akinator:begin`/`akinator:end` block the installer merges into `AGENTS.md` - `~/.codex/AGENTS.md` for a user install, the repository's own for a repo install | at session start, and again at every turn boundary |
+| Cursor | an `alwaysApply: true` rule the installer writes to `~/.cursor/rules/` or the repository's `.cursor/rules/` - and a repository's root `AGENTS.md`, which Cursor also reads | every Agent chat |
 
 It is deliberately small - a contract, not a payload. Every line costs context in
-every session forever. It states the creed in five lines, names the twelve
-stations, lists the non-negotiables, and then reports **which knowledge entry
-points this particular repository actually has**, so station 2 (RESOLVE) starts
-from facts instead of guesses.
+every session forever. It states the creed, names the twelve stations, lists the
+non-negotiables, and (on Claude) reports **which knowledge entry points this
+particular repository actually has**, so station 2 (RESOLVE) starts from facts.
 
-Codex has no equivalent: its plugin validation rejects a `hooks` field. The same
-contract reaches Codex through the generated `AGENTS.md`, which it reads at
-session start by its own convention.
+The hook is in **exec form** (`command` plus `args`). The shell form it used
+before exited 126 on Claude Code 2.1.154 under Git Bash, so the contract silently
+never reached CLI sessions on Windows - see
+`.ai/ledger/failure/hook-shell-form-exited-126-8b21c6e0d4f3.md`.
 
-### 2. Skills - the stations
+### 2. One skill - the stations as references
 
-Twenty-one skills in `skills/`, auto-triggered by their descriptions. This is the
-main surface: the user never has to invoke anything, because the description of
-`akinator-ops-map` matches what someone is thinking when they add a migration.
+**Akinator is one skill**, `skills/everything/`, and it is also the one command.
+Claude Code, Codex and Cursor all list every skill as a user-facing entry, and
+neither Codex nor Cursor can hide one, so twenty-one skills meant twenty-one
+menu entries on every platform. The stations are **reference files** inside the
+one skill instead, opened when the work reaches them:
 
-The master skill `akinator` carries the creed, the loop and the taxonomy, and
-routes to the loop's stations. `akinator-everything` is the all-in-one pass, described under
-surface 4. Each station of the loop has a skill; three more cover business,
-product and operational knowledge; three cover discipline (gate economy,
-resource guard, anti-gaming); two cover installation and audit.
+```
+skills/everything/
+  SKILL.md       the entry: when to use, the station table, standing rules,
+                 the outline of the pass, the Definition of Done
+  references/    one file per station, plus procedure.md - the full pass
+  scripts/       the host-repository tools - coverage, ledger, distil, rules,
+                 scope, brief, stack map - which travel with the skill
+```
+
+`SKILL.md` stays under 8,000 bytes, because Codex truncates an explicitly invoked
+skill there; the detail lives in `references/`. The skill's description is what
+makes it fire on normal prompts without anyone typing anything.
 
 Skill quality is what makes this surface work, so it is enforced:
 `rules/02-skills-carry-all-six-parts.md`, checked by the coverage checker and by
-the test suite. A skill whose description describes the skill rather than the
-situation never fires, and is worth nothing.
+the test suite - which also fails if a second skill, a command file, an unlinked
+reference or an oversized `SKILL.md` appears.
 
 ### 3. Agents - the review lenses
 
 Seven subagent definitions in `agents/`, invoked at station 4 (PLAN) and station
 12 (VERIFY). They are lenses with defined powers, not roleplay: each reviews one
-dimension and has an explicit veto.
+dimension and has an explicit veto. Only Claude Code has subagents; on Codex and
+Cursor the skill applies the same questions inline.
 
 `akinator-librarian` is the enforcement heart. It runs on **every** batch,
 compares the declared knowledge delta against the tree, and blocks completion
 until stations 6 through 11 are satisfied. It fires before a commit exists,
 which is earlier and cheaper than any hook and can explain what is missing and
-which skill produces it.
+which station produces it.
 
 The other six - business owner, CTO, product owner, ops, analyst, PM - are
 invoked when the work touches their dimension.
 
-### 4. The command - and it runs everything
+### 4. The one command
 
-One command, `/akinator`. See `docs/adr/0005-single-command-surface.md` for why
-one rather than six, and for the amendment that made it exhaustive.
+`/akinator:everything` on Claude Code, `$akinator` on Codex, `/akinator` on Cursor
+- and each is the one skill itself, not a separate file. There is no `commands/`
+directory, no subcommands and no mode words. See
+`docs/adr/0009-one-skill-one-command-one-installer.md`, which supersedes the
+command-file mechanism of `docs/adr/0005-single-command-surface.md` and
+`docs/adr/0008-always-on-master-contract.md`.
 
-**The command's default is the complete pass.** With no arguments, or with free
-text, it loads `akinator-everything`: every station, every applicable boardroom
-lens, every mechanical check, looping until the Definition of Done is proven with
-evidence rather than asserted. Mode words - `onboard`, `audit`, `status`, `sync`,
-`question`, `decide` - narrow the **target**, never the depth.
+Normally nobody types it: the contract applies to every prompt. The skill scales
+by relevance - on genuinely trivial work it says so in a line, does it, records
+`knowledge delta: none, because ...`, and stops. Ceremony applied to trivia is the
+fastest way to get the whole discipline abandoned.
 
-That gives the plugin two deliberately different settings, and the distinction
-is load-bearing:
+### 5. Tools, build scripts and the installer
 
-| | `akinator` (skill) | `akinator-everything` (skill) |
-|---|---|---|
-| How it fires | auto-triggered, on any codebase touch | deliberately invoked, and by `/akinator` |
-| Depth | scales to the change - on trivial work most stations produce nothing, and the batch says so | does not scale down |
-| Right when | nobody typed a command; the work is ordinary | a release, a handover, an audit, or a change too expensive to get wrong |
-
-The scaling matters as much as the thoroughness. Ceremony applied to trivia is
-the fastest way to get the whole discipline abandoned, which is why the
-auto-triggered default scales and only the explicit invocation does not.
-`akinator-everything` states the one exception out loud: on genuinely trivial
-work, say so in a line, do it, record `knowledge delta: none, because ...`, and
-stop.
-
-### 5. Scripts - the mechanical checks
-
-- `scripts/akinator_coverage.py` implements the mechanically verifiable
-  invariants. Runs in CI and on demand. **Never in a git hook.**
-- `scripts/build_codex_pack.py` generates the Codex pack from the canonical
-  skills, deterministically, with a drift check.
-- `scripts/render_routers.py` renders all eleven AI entry-point files from
-  `context/router-contract.md`, deterministically, with a drift check.
-- `scripts/extract_components.py` generates `context/components.md` from the
-  tree.
-- `scripts/generate_assets.py` draws the brand assets Codex validation requires,
-  from a signed distance field, with a drift check.
-- `scripts/run_evals.py` runs the behavioral eval suites against the fixtures -
-  fresh agent per step, disposable workspace, optional independent grader.
-- `scripts/install-codex.sh` / `.ps1` install the pack where Codex reads it.
+- **Tools**, in `skills/everything/scripts/`, travel with the skill and run in
+  whatever repository it is installed into: `akinator_coverage.py` (the
+  mechanically verifiable invariants - **never in a git hook**), the ledger,
+  distil, rule evolution, scoping, the brief and the stack map.
+- **Build scripts**, in `scripts/`, only make sense in this checkout:
+  `build_codex_pack.py` generates the portable pack (the one skill for Codex and
+  Cursor, the portable contract, the Cursor rule); `render_routers.py` renders
+  all eleven AI entry-point files from `context/router-contract.md`;
+  `extract_components.py` generates `context/components.md`; `run_evals.py` runs
+  the behavioral eval suites. All generators are deterministic, with a drift
+  check.
+- **The installer**, `install.sh` and its Windows twin `install.ps1`, installs
+  all three platforms from GitHub in one line, updates on re-run, removes the
+  old per-station skills of earlier versions, owns only what carries the Akinator
+  banner, and uninstalls a host repository back to its exact bytes.
 
 ## The loop
 
@@ -166,7 +170,7 @@ removes it.
 
 One canonical home per kind of knowledge, enforced by routing at station 6 and
 checked for reachability at station 11. The full table is in
-`skills/akinator/SKILL.md`.
+`skills/everything/references/akinator.md`.
 
 The four laws:
 
@@ -195,11 +199,10 @@ against it:
 
 ```bash
 python -m pytest tests/ -q                    # structural + enforcement tests
-python scripts/akinator_coverage.py . --strict # the invariants, against itself
+python skills/everything/scripts/akinator_coverage.py . --strict # the invariants, against itself
 python scripts/build_codex_pack.py --check    # pack drift
 python scripts/render_routers.py --check      # router drift (11 routers)
 python scripts/extract_components.py --check  # context-map drift
-python scripts/generate_assets.py --check     # brand-asset drift
 python scripts/run_evals.py --dry-run --all   # every eval suite is runnable
 ```
 

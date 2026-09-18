@@ -20,8 +20,12 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# The scripts are executable modules, not an installed package.
+# The scripts are executable modules, not an installed package. The host-repo
+# tools live inside the one skill, so they travel with it to every platform;
+# the build scripts that only make sense inside this checkout stay in scripts/.
+SKILL_ROOT = REPO_ROOT / "skills" / "everything"
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
+sys.path.insert(0, str(SKILL_ROOT / "scripts"))
 
 
 @pytest.fixture(scope="session")

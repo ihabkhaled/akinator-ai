@@ -4,6 +4,129 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
+## [1.2.0] - 2026-09-18
+
+One skill, one command, one installer - and the always-on work from PR #1, which
+ships in this release together with what it got wrong. Decision record:
+`docs/adr/0009-one-skill-one-command-one-installer.md`. Change record:
+`docs/changes/2026-09-18-one-skill-one-installer.md`.
+
+### Fixed
+
+- **The menus showed 22 Akinator entries, not one.** PR #1 (ADR 0008) removed
+  every command but `/akinator:everything` and declared the surface to be one
+  command. Claude Code lists every skill in its `/` menu, so the owner saw
+  `/akinator:everything` plus 21 skills. Codex cannot hide a skill from its `$`
+  picker (`policy.allow_implicit_invocation: false` hides it from the model
+  only), and Cursor lists every folder it loads from `.agents/skills`. The
+  requirement was about the menu; nobody had looked at the menu. Now there is
+  one skill, and a live Claude Code 2.1.154 session's init event lists the
+  Akinator slash commands as exactly `['akinator:everything']`. Ledger:
+  `.ai/ledger/failure/slash-menu-listed-every-skill-3f9a0c71e2b5.md`;
+  memory: `memory/2026-09-18-one-command-is-decided-by-the-menu.md`.
+
+- **The always-on contract never reached Claude Code CLI sessions on Windows.**
+  The SessionStart hook used shell form, which exited 126 on Claude Code 2.1.154
+  under Git Bash - silently. It is now exec form (`sh` with the hook script as
+  its argument), verified live to exit 0. Ledger:
+  `.ai/ledger/failure/hook-shell-form-exited-126-8b21c6e0d4f3.md`.
+
+- **The README told Cursor users to copy Akinator's own router**, a file naming
+  21 paths that exist only in this repository. Cursor now gets the portable
+  contract as an `alwaysApply` rule, written by the installer.
+
+- **The coverage checker ignored `.mdc` files entirely.** Cursor rules now count
+  as routers and are link-checked.
+
+- **The skill's procedure ran tools by repo-only paths** (`python scripts/...`),
+  which do not exist in a host repository. The tools now travel inside the
+  skill and run as `python <skill>/scripts/<tool>.py`. This was the third
+  sighting of "a generated artifact that travels names files only its
+  birthplace has"; the distil decision is to evolve rules/12 -
+  `.ai/ledger/decision/distil-a-generated-artifact-that-travels-named-56871dcd648a.md`.
+
+- **Two ADRs were both numbered 0006.** PR #1 filed the always-on decision as
+  0006, already taken; it is now `docs/adr/0008-always-on-master-contract.md`,
+  and `test_adr_numbers_are_unique` stops it recurring. Ledger:
+  `.ai/ledger/failure/adr-number-filed-twice-5c0e93b8a14d.md`.
+
+- **CI failed for 7 minutes per run after the logo change**, on a test that
+  byte-compared generated brand assets against the hand-designed artwork.
+  Ledger: `.ai/ledger/failure/byte-compare-test-hid-a-logo-for-7-minutes-e1b6f3a09d27.md`.
+
+- **The new installer rewrote CRLF files as LF** - caught by its own test
+  before shipping. It now preserves the user's line endings. Ledger:
+  `.ai/ledger/failure/installer-rewrote-line-endings-d7e4a1f09c62.md`.
+
+- **`homepage` and `repository` in both plugin manifests pointed at the wrong
+  repository** (`akinator` instead of `akinator-ai`).
+
+- Also recorded: `.ai/ledger/failure/skill-edit-dropped-its-contract-4c1e8a92b7d3.md`.
+
+### Added
+
+- **One installer, no clone** - `install.sh` (POSIX) and `install.ps1`
+  (Windows PowerShell 5.1+):
+
+  ```
+  curl -fsSL https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.sh | sh
+  irm https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.ps1 | iex
+  ```
+
+  Flags `--claude --codex --cursor` (default: every platform detected),
+  `--repo PATH`, `--ref REF`, `--uninstall`; PowerShell `-Claude -Codex -Cursor
+  -Repo -Ref -Uninstall`. Re-running updates. Claude Code gets the plugin via
+  `claude plugin marketplace add` and `claude plugin install` (the CLI is found
+  on PATH or inside the VS Code extension). Codex and Cursor get the one skill
+  in their shared skills folder, a marked always-on block merged into the Codex
+  `AGENTS.md` (with a warning when an `AGENTS.override.md` would shadow it) and
+  a Cursor `alwaysApply` rule. It removes the per-station folders earlier
+  versions installed - only those carrying the Akinator banner - and
+  `--uninstall` restores a host repository byte for byte.
+  `tests/test_installer.py` runs the real installers (sh everywhere, PowerShell
+  on Windows) against a throwaway home with a stub `claude`.
+
+- **A Cursor rule in the portable pack**, generated beside the skill and the
+  portable `AGENTS.md`. The user-level rule format is inferred from the project
+  format; Cursor's docs name the folder but not the format.
+
+- `docs/adr/0009-one-skill-one-command-one-installer.md` - supersedes the
+  command-file mechanism of ADR 0005 and point 5 of ADR 0008.
+
+- From PR #1, first released here: the always-on master contract (ADR 0008),
+  the living wiki (`docs/living-wiki.md`) and change records
+  (`templates/change-record.md`).
+
+### Changed
+
+- **Akinator is one skill**: `skills/everything/`, with `SKILL.md` kept under
+  8,000 bytes (Codex truncates an explicitly invoked `SKILL.md` there), the 20
+  former skills as station references plus the full procedure in
+  `skills/everything/references/`, and the 7 host-repo tools in
+  `skills/everything/scripts/`. Station ids keep their old names.
+- **One entry per platform**: Claude Code `/akinator:everything` (the skill is
+  the command), Codex `$akinator`, Cursor `/akinator`. Normally nobody types
+  any of them.
+- The Codex pack is one skill projected as `akinator`, plus the portable
+  contract and the Cursor rule. Codex and Cursor both read `.agents/skills`, so
+  one folder serves both.
+
+### Removed
+
+- The command file and its directory - the skill is the command.
+- The 20 standalone station skills (now references).
+- The generated-logo script (the owner replaced the logo with hand-designed
+  1254x1254 artwork) and the Codex-only install scripts (replaced by the root
+  installer).
+
+### Not verified here
+
+- The Codex plugin route (`codex plugin marketplace add ihabkhaled/akinator-ai`,
+  then `codex plugin add akinator@akinator`) comes from Codex docs and source;
+  Codex is not installed on this machine. It gives `$akinator:everything` but
+  not the always-on block, and plugins are not supported in the Codex IDE
+  extension, so the installer is the recommended Codex route.
+
 ## [1.1.0] - 2026-08-30
 
 The v2 pipeline, and a defect the plugin was shipping into every repository that

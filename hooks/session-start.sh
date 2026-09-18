@@ -6,8 +6,10 @@ cat <<'CONTRACT'
 # Akinator is ALWAYS ACTIVE
 
 No slash command is required. Treat every user prompt as entering Akinator first.
-For repository-changing work, load `akinator-everything` plus `akinator` and
-run the complete contract. Internal skills are implementation details.
+For repository-changing work, load Akinator's one skill (`everything`) and run
+its complete pass. Its twelve stations are reference files inside that skill,
+opened as the work reaches them. `/akinator:everything` is the one explicit
+command - it is the same skill.
 
 ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT -> SKILLIFY -> RULE ->
 CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY

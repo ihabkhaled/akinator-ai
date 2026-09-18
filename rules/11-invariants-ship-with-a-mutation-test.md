@@ -28,7 +28,7 @@ existing.
 ## Applies to
 
 - **In scope:** every check registered in `CHECKS` in
-  `scripts/akinator_coverage.py`, and every drift check shipped by a generator
+  `skills/everything/scripts/akinator_coverage.py`, and every drift check shipped by a generator
   in `scripts/`.
 - **Out of scope:** tests of ordinary behavior, where a passing test on correct
   input is meaningful evidence. This rule is specifically about **detectors**,

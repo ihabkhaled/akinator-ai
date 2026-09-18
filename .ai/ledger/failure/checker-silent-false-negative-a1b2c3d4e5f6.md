@@ -32,7 +32,7 @@ resolve each index reference to a repo-relative path and compare; never pattern-
 
 ## Module
 
-scripts/akinator_coverage.py
+skills/everything/scripts/akinator_coverage.py
 
 ## Operation
 

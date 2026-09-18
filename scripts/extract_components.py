@@ -3,14 +3,15 @@
 
 Structural facts rot when they are written by hand and changed by code. This
 extractor derives the component map from the repository itself, so the map
-cannot drift: every skill, agent, command, hook event, script and template is
-discovered, not listed.
+cannot drift: the one skill and its station references, the agents, the hook,
+the tools, the build scripts, the installers and the templates are discovered,
+not listed.
 
-The one thing not derivable from the tree is which loop station a skill serves -
-that is a fact about the design, not about the files - so it is declared here,
-in the generator, and the generator **fails** if a skill is missing from the
-declaration. A new skill therefore cannot be added without deciding where in the
-loop it belongs, which is the correct forcing function.
+The one thing not derivable from the tree is which loop station a reference
+serves - a fact about the design, not about the files - so it is declared here,
+and the generator **fails** if a reference is missing from the declaration. A
+new station reference cannot be added without deciding where in the loop it
+belongs, which is the correct forcing function.
 
 Deterministic: sorted iteration, no clock, no absolute paths.
 
@@ -29,12 +30,14 @@ from pathlib import Path
 
 GENERATOR = "scripts/extract_components.py"
 TARGET = "context/components.md"
+SKILL = Path("skills") / "everything"
 
-# Which loop station each skill serves. Declared, not derived - see the module
-# docstring. A skill absent from this map is an error, not a default.
+# Which loop station each reference of the one skill serves. Declared, not
+# derived - see the module docstring. A reference absent from this map is an
+# error, not a default.
 STATIONS: dict[str, str] = {
-    "akinator": "master",
-    "akinator-everything": "all-in-one",
+    "akinator": "2 RESOLVE - creed, loop, taxonomy",
+    "procedure": "all - the full pass, step by step",
     "akinator-intake": "1 ASK",
     "akinator-audit": "3 AUDIT",
     "akinator-plan": "4 PLAN",
@@ -86,6 +89,15 @@ def frontmatter(path: Path) -> dict[str, str]:
     return out
 
 
+def load_when(path: Path) -> str:
+    """The reference's own 'Load when:' line - its trigger, kept from the days
+    it was a skill of its own."""
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "Load when:" in line:
+            return first_sentence(line.split("Load when:", 1)[1].strip())
+    return "(no load-when line)"
+
+
 def first_sentence(text: str, limit: int = 140) -> str:
     text = text.replace("|", "/").strip()
     for end in (". ", ".\n"):
@@ -97,102 +109,77 @@ def first_sentence(text: str, limit: int = 140) -> str:
     return text
 
 
-def render(repo: Path) -> str:
-    skills = sorted((repo / "skills").glob("*/SKILL.md"))
-    agents = sorted((repo / "agents").glob("*.md"))
-    commands = sorted((repo / "commands").glob("*.md"))
-    templates = sorted(
-        p for p in (repo / "templates").glob("*.md")
-        if p.name.lower() != "readme.md"
-    )
-    scripts = sorted(
-        p for p in (repo / "scripts").iterdir()
-        if p.is_file() and p.suffix in (".py", ".sh", ".ps1")
-    )
+def _files(directory: Path, suffixes: tuple[str, ...]) -> list[Path]:
+    if not directory.is_dir():
+        return []
+    return sorted(p for p in directory.iterdir()
+                  if p.is_file() and p.suffix in suffixes)
 
-    undeclared = sorted({p.parent.name for p in skills} - set(STATIONS))
+
+def render(repo: Path) -> str:
+    skill_md = repo / SKILL / "SKILL.md"
+    references = _files(repo / SKILL / "references", (".md",))
+    tools = _files(repo / SKILL / "scripts", (".py",))
+    agents = sorted((repo / "agents").glob("*.md"))
+    build = _files(repo / "scripts", (".py", ".sh", ".ps1"))
+    installers = [p for p in (repo / "install.sh", repo / "install.ps1") if p.is_file()]
+    templates = sorted(p for p in (repo / "templates").glob("*.md")
+                       if p.name.lower() != "readme.md")
+
+    undeclared = sorted({p.stem for p in references} - set(STATIONS))
     if undeclared:
         raise SystemExit(
-            f"{GENERATOR}: these skills have no declared loop station: "
+            f"{GENERATOR}: these references have no declared loop station: "
             f"{', '.join(undeclared)}\n"
-            "Add them to STATIONS - a skill must belong somewhere in the loop."
-        )
+            "Add them to STATIONS - a reference must belong somewhere in the loop.")
 
+    meta = frontmatter(skill_md) if skill_md.is_file() else {}
     lines: list[str] = [banner()]
-    lines.append("# Component map")
-    lines.append("")
-    lines.append(
-        "Every component this plugin ships, where it lives, and which platform"
-    )
-    lines.append("reads it.")
-    lines.append("")
-    lines.append("## Scope")
-    lines.append("")
-    lines.append(
-        "- **Covers:** the plugin's own components - skills, agents, commands,"
-    )
-    lines.append(
-        "  hooks, scripts and templates - and which platform surface each serves."
-    )
-    lines.append(
-        "- **Does not cover:** what each component *does*. That is"
-    )
-    lines.append(
-        "  `docs/skills.md`, `docs/architecture.md`, and the components"
-    )
-    lines.append("  themselves.")
-    lines.append("")
-
-    # -- skills -------------------------------------------------------------
-    lines.append(f"## Skills - {len(skills)}")
-    lines.append("")
-    lines.append(
-        "Read by Claude Code from `skills/`, and by Codex from the generated"
-    )
-    lines.append("`.agents/skills/`. `skills/` is canonical.")
-    lines.append("")
-    lines.append("| Skill | Loop station | Trigger |")
-    lines.append("|---|---|---|")
-    for path in skills:
-        name = path.parent.name
-        meta = frontmatter(path)
-        lines.append(
-            f"| `{name}` | {STATIONS[name]} | "
-            f"{first_sentence(meta.get('description', ''))} |"
-        )
+    lines += [
+        "# Component map",
+        "",
+        "Every component this plugin ships, where it lives, and which platform reads it.",
+        "",
+        "## Scope",
+        "",
+        "- **Covers:** the plugin's own components - the one skill and its station",
+        "  references, agents, the hook, tools, build scripts, installers and",
+        "  templates - and which platform surface each serves.",
+        "- **Does not cover:** what each component *does*. That is `docs/skills.md`,",
+        "  `docs/architecture.md`, and the components themselves.",
+        "",
+        "## The skill - 1",
+        "",
+        "Akinator is one skill and one command. There is no `commands/` directory:",
+        "Claude Code lists every skill in its `/` menu, so the skill itself is the",
+        "command. Codex and Cursor read the generated copy in `.agents/skills/`.",
+        "",
+        "| Skill | Claude Code | Codex | Cursor |",
+        "|---|---|---|---|",
+        f"| `{meta.get('name', '?')}` (`{SKILL.as_posix()}/SKILL.md`) | "
+        "`/akinator:everything` | `$akinator` | `/akinator` |",
+        "",
+        f"## Station references - {len(references)}",
+        "",
+        "Inside the one skill, opened when the work reaches that station. None is",
+        "a skill of its own, so none is an entry in any menu.",
+        "",
+        "| Reference | Loop station | Load when |",
+        "|---|---|---|",
+    ]
+    for path in references:
+        lines.append(f"| `{path.stem}` | {STATIONS[path.stem]} | {load_when(path)} |")
     lines.append("")
 
-    # -- agents -------------------------------------------------------------
-    lines.append(f"## Agents - {len(agents)}")
-    lines.append("")
-    lines.append(
-        "Read by Claude Code from `agents/`. Codex has no equivalent subagent"
-    )
-    lines.append("surface; the same review lenses are applied inline there.")
-    lines.append("")
-    lines.append("| Agent | Reviews for |")
-    lines.append("|---|---|")
+    lines += [f"## Agents - {len(agents)}", "",
+              "Read by Claude Code from `agents/`. Codex and Cursor have no equivalent",
+              "subagent surface; the skill applies the same review lenses inline there.",
+              "", "| Agent | Reviews for |", "|---|---|"]
     for path in agents:
-        meta = frontmatter(path)
-        lines.append(
-            f"| `{path.stem}` | {first_sentence(meta.get('description', ''))} |"
-        )
+        lines.append(f"| `{path.stem}` | "
+                     f"{first_sentence(frontmatter(path).get('description', ''))} |")
     lines.append("")
 
-    # -- commands -----------------------------------------------------------
-    lines.append(f"## Commands - {len(commands)}")
-    lines.append("")
-    lines.append("Read by Claude Code from `commands/`.")
-    lines.append("")
-    lines.append("| Command | Arguments |")
-    lines.append("|---|---|")
-    for path in commands:
-        meta = frontmatter(path)
-        hint = meta.get("argument-hint", "").replace("|", "/")
-        lines.append(f"| `/{path.stem}` | `{hint}` |")
-    lines.append("")
-
-    # -- hooks --------------------------------------------------------------
     hooks_path = repo / "hooks" / "hooks.json"
     events: list[tuple[str, str]] = []
     if hooks_path.is_file():
@@ -200,80 +187,67 @@ def render(repo: Path) -> str:
         for event, entries in sorted(data.get("hooks", {}).items()):
             for entry in entries:
                 for hook in entry.get("hooks", []):
-                    events.append((event, hook.get("command", "")))
-
-    lines.append(f"## Hooks - {len(events)}")
-    lines.append("")
-    lines.append(
-        "Read by Claude Code from `hooks/hooks.json`. Codex plugin validation"
-    )
-    lines.append(
-        "rejects a `hooks` field in its manifest, so this surface is"
-    )
-    lines.append(
-        "Claude-only; the same contract reaches Codex through the generated"
-    )
-    lines.append("`AGENTS.md`.")
-    lines.append("")
-    lines.append("| Event | Command |")
-    lines.append("|---|---|")
+                    command = " ".join([hook.get("command", ""), *hook.get("args", [])])
+                    events.append((event, command))
+    lines += [f"## Hooks - {len(events)}", "",
+              "Read by Claude Code from `hooks/hooks.json`, in exec form. Codex and",
+              "Cursor have no SessionStart equivalent, so the installer gives them the",
+              "same contract as an `AGENTS.md` block and an always-applied rule.",
+              "", "| Event | Command |", "|---|---|"]
     for event, command in events:
         lines.append(f"| `{event}` | `{command}` |")
     lines.append("")
 
-    # -- scripts ------------------------------------------------------------
-    lines.append(f"## Scripts - {len(scripts)}")
+    lines += [f"## Tools - {len(tools)}", "",
+              "Inside the skill, so they travel with it to every platform and run in",
+              "whatever repository it is installed into.",
+              "", "| Tool | Purpose |", "|---|---|"]
+    for path in tools:
+        lines.append(f"| `{SKILL.as_posix()}/scripts/{path.name}` | {_script_purpose(path)} |")
     lines.append("")
-    lines.append("| Script | Purpose |")
-    lines.append("|---|---|")
-    for path in scripts:
+
+    lines += [f"## Build scripts - {len(build)}", "",
+              "Only meaningful inside this checkout; they never travel.",
+              "", "| Script | Purpose |", "|---|---|"]
+    for path in build:
         lines.append(f"| `scripts/{path.name}` | {_script_purpose(path)} |")
     lines.append("")
 
-    # -- templates ----------------------------------------------------------
-    lines.append(f"## Templates - {len(templates)}")
+    lines += [f"## Installers - {len(installers)}", "",
+              "One installer for Claude Code, Codex and Cursor, in both shells.",
+              "", "| Installer | Purpose |", "|---|---|"]
+    for path in installers:
+        lines.append(f"| `{path.name}` | {_script_purpose(path)} |")
     lines.append("")
-    lines.append(
-        "What Akinator writes into target repositories. Every template ships a"
-    )
-    lines.append("filled example.")
-    lines.append("")
-    lines.append("| Template | Filled example |")
-    lines.append("|---|---|")
+
+    lines += [f"## Templates - {len(templates)}", "",
+              "What Akinator writes into target repositories. Every template ships a",
+              "filled example.", "", "| Template | Filled example |", "|---|---|"]
     for path in templates:
         example = repo / "templates" / "examples" / path.name
-        marker = (
-            f"`templates/examples/{path.name}`" if example.is_file() else "**MISSING**"
-        )
+        marker = f"`templates/examples/{path.name}`" if example.is_file() else "**MISSING**"
         lines.append(f"| `templates/{path.name}` | {marker} |")
     lines.append("")
 
-    # -- staleness ----------------------------------------------------------
-    lines.append("## Regenerate when")
-    lines.append("")
-    lines.append(f"- Extractor: `{GENERATOR}`")
-    lines.append(f"- Regenerate with: `python {GENERATOR} --write`")
-    lines.append(
-        f"- Drift check: `python {GENERATOR} --check` in CI - regenerates in"
-    )
-    lines.append("  memory and diffs; exits non-zero if they differ.")
-    lines.append(
-        "- Regenerate when: a skill, agent, command, hook, script or template is"
-    )
-    lines.append("  added, removed or renamed.")
-    lines.append("")
-    lines.append("## Related")
-    lines.append("")
-    lines.append(
-        "- Docs: `docs/architecture.md` - what these components do and how they"
-    )
-    lines.append("  interact")
-    lines.append(
-        "- Docs: `docs/compatibility.md` - the platform contracts each surface"
-    )
-    lines.append("  relies on")
-    lines.append("- Skills: `docs/skills.md` - the skills index")
-    lines.append("")
+    lines += [
+        "## Regenerate when",
+        "",
+        f"- Extractor: `{GENERATOR}`",
+        f"- Regenerate with: `python {GENERATOR} --write`",
+        f"- Drift check: `python {GENERATOR} --check` in CI - regenerates in",
+        "  memory and diffs; exits non-zero if they differ.",
+        "- Regenerate when: a reference, agent, hook, tool, script, installer or",
+        "  template is added, removed or renamed.",
+        "",
+        "## Related",
+        "",
+        "- Docs: `docs/architecture.md` - what these components do and how they",
+        "  interact",
+        "- Docs: `docs/compatibility.md` - the platform contracts each surface",
+        "  relies on",
+        "- Skills: `docs/skills.md` - the one skill and its station references",
+        "",
+    ]
     return "\n".join(lines)
 
 
@@ -288,7 +262,7 @@ def _script_purpose(path: Path) -> str:
             return first_sentence(stripped[2:].strip(), 100)
         if stripped.startswith(".SYNOPSIS"):
             continue
-        if stripped and stripped.startswith("Install the Akinator"):
+        if stripped.startswith("Akinator installer"):
             return first_sentence(stripped, 100)
     return "(no description)"
 
@@ -301,15 +275,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     repo = Path(args.root).resolve()
-    if not (repo / "skills").is_dir():
-        print(f"no skills/ directory under {repo}", file=sys.stderr)
+    if not (repo / SKILL / "SKILL.md").is_file():
+        print(f"no {SKILL.as_posix()}/SKILL.md under {repo}", file=sys.stderr)
         return 2
 
     desired = render(repo)
     target = repo / TARGET
-    current = (
-        target.read_text(encoding="utf-8") if target.is_file() else None
-    )
+    current = target.read_text(encoding="utf-8") if target.is_file() else None
 
     if args.write:
         if current == desired:

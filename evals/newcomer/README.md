@@ -90,6 +90,6 @@ Agent: fresh context, no hints
 
 ## Related
 
-- `skills/akinator-coverage/SKILL.md` - both halves of coverage
-- `skills/akinator-onboard/SKILL.md` - where this is the completion bar
+- `skills/everything/references/akinator-coverage.md` - both halves of coverage
+- `skills/everything/references/akinator-onboard.md` - where this is the completion bar
 - `docs/business-case.md` - why this is the success measure

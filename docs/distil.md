@@ -3,7 +3,7 @@
 Stage 2 of the v2 pipeline. The ledger records what happened; distil decides
 what to do about it.
 
-Run by `scripts/akinator_distil.py`.
+Run by `skills/everything/scripts/akinator_distil.py`.
 
 ## The threshold is 2
 
@@ -18,7 +18,7 @@ becomes noise.
 ## The proposal is pre-drafted
 
 ```bash
-python scripts/akinator_distil.py propose <fingerprint>
+python skills/everything/scripts/akinator_distil.py propose <fingerprint>
 ```
 
 It emits the rule text, an enforcement mechanism to fill in, and the test that
@@ -31,7 +31,7 @@ blank**, and only one of them reliably happens at the end of a long session.
 ## `neither` is a real answer
 
 ```bash
-python scripts/akinator_distil.py decide <fingerprint> --as neither --note "..."
+python skills/everything/scripts/akinator_distil.py decide <fingerprint> --as neither --note "..."
 ```
 
 **Recurrence proves the failure is real. It does not prove that an enforceable
@@ -56,8 +56,8 @@ Whatever is decided is recorded, so the question is never asked again.
 ## Cross-referencing the sources
 
 ```bash
-python scripts/akinator_distil.py mine --since 90.days
-python scripts/akinator_distil.py detect
+python skills/everything/scripts/akinator_distil.py mine --since 90.days
+python skills/everything/scripts/akinator_distil.py detect
 ```
 
 | Source | Strength | Blind spot |
@@ -85,7 +85,7 @@ it means a human owes the repository a decision.
 - Docs: `docs/akinator-v2-design.md` - stage 2, DISTIL
 - Rules: `rules/11-invariants-ship-with-a-mutation-test.md` - the rule this loop
   produced on its first real run
-- Code: `scripts/akinator_distil.py`, `tests/test_distil.py`
+- Code: `skills/everything/scripts/akinator_distil.py`, `tests/test_distil.py`
 
 ## Review when
 

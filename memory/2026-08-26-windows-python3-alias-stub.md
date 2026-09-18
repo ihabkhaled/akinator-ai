@@ -31,7 +31,7 @@ The alias is a stub installer shim, not an interpreter. It is on PATH by default
 in `%LOCALAPPDATA%\Microsoft\WindowsApps` and can only be disabled per-user in
 Settings, so a cross-platform script cannot assume it is absent.
 
-Found when `scripts/install-codex.sh` selected `python3`, failed to regenerate
+Found when the Codex installer of the time selected `python3`, failed to regenerate
 the pack, and - under `set -e` - exited after printing a message that read like a
 missing-Python error on a machine where Python 3.13 was installed and working.
 
@@ -48,5 +48,6 @@ missing-Python error on a machine where Python 3.13 was installed and working.
 
 ## Related
 
-- `scripts/install-codex.sh` - the probe lives at the top
+- `install.sh` - the installer that replaced it needs no Python at all: it
+  copies the committed, drift-checked pack instead of regenerating it
 - `rules/07-codex-pack-is-generated.md` - why the installer checks for drift

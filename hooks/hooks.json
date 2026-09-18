@@ -1,12 +1,15 @@
 {
-  "description": "Akinator SessionStart hook: injects the behavioral contract (creed, loop, non-negotiables) and reports which knowledge entry points the current repo actually has, so station 2 (RESOLVE) starts from facts. Display-only: it emits context and never returns a permission decision.",
+  "description": "Akinator SessionStart hook: injects the always-on contract and reports which knowledge entry points the current repo actually has, so RESOLVE starts from facts. Exec form (command + args), not shell form: the shell form 'sh \"${CLAUDE_PLUGIN_ROOT}/...\"' exits 126 on Claude Code 2.1.154 under Git Bash, so the contract silently never reached CLI sessions on Windows. Display-only: it emits context and never returns a permission decision.",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\""
+            "command": "sh",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"
+            ]
           }
         ]
       }

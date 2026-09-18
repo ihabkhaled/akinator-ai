@@ -1,70 +1,89 @@
-# Skills
+# The skill
 
-The 21 canonical skills. These are the source of truth: the Codex pack in
-`.agents/skills/` is generated from them by `scripts/build_codex_pack.py`.
+Akinator is **one skill and one command** - on every platform.
 
-Every skill carries all six parts - see `rules/02-skills-carry-all-six-parts.md`.
-Written with `templates/skill.md`; see `templates/examples/skill.md` for a fully
-worked example.
-
-## Start here
-
-| Skill | Use when |
-|---|---|
-| [akinator-everything](../skills/akinator-everything/SKILL.md) | **The all-in-one pass.** Every station, every boardroom lens, every mechanical check, looping until the Definition of Done is proven with evidence. This is what `/akinator` runs |
-| [akinator](../skills/akinator/SKILL.md) | Touching a codebase in any way. The creed, the twelve-station loop, the knowledge taxonomy, and the routing table for every other skill. Scales the loop to the size of the change |
-
-The two are deliberately different settings. `akinator` is the always-on default
-and scales down for small work, though stations 6-11 still run and simply
-produce nothing. `akinator-everything`
-is deliberately invoked, assumes the work is worth maximum thoroughness, and does
-not scale down.
-
-## The loop's stations
-
-| Station | Skill | Use when |
+| Platform | The one entry | How it is always on |
 |---|---|---|
-| 1 ASK | [akinator-intake](../skills/akinator-intake/SKILL.md) | Before planning substantive work, at an ambiguity gate, or when implementation forces a product decision no doc answers |
-| 3 AUDIT | [akinator-audit](../skills/akinator-audit/SKILL.md) | Something is claimed to already exist. Returns done / partial / missing, and catches present-but-not-wired |
-| 4 PLAN | [akinator-plan](../skills/akinator-plan/SKILL.md) | Before implementing anything multi-step. Declares the knowledge delta by path, per batch |
-| 6 DOCUMENT | [akinator-document-change](../skills/akinator-document-change/SKILL.md) | In the same batch as the code. Routes the why, the when-not-to, the business meaning and the operational consequence to their homes |
-| 7 SKILLIFY | [akinator-skillify](../skills/akinator-skillify/SKILL.md) | A procedure was worked out that will happen again. Write it the first time |
-| 8 RULE | [akinator-rule-forge](../skills/akinator-rule-forge/SKILL.md) | A constraint was established. Turns it into a numbered rule with a real enforcement mechanism |
-| 9 CONTEXTIFY | [akinator-contextify](../skills/akinator-contextify/SKILL.md) | A structural fact changed. Updates the map and builds the extractor so it regenerates instead of drifting |
-| 10 MEMOIZE | [akinator-memoize](../skills/akinator-memoize/SKILL.md) | A durable fact, preference, surprise or dead end is worth carrying forward |
-| 11 INDEX | [akinator-index-sync](../skills/akinator-index-sync/SKILL.md) | An artifact was created, renamed, moved or deleted. Unindexed means nonexistent |
-| 11 SYNC | [akinator-router-sync](../skills/akinator-router-sync/SKILL.md) | What a router says has changed. All routers update together or truth forks |
-| — | [akinator-adr](../skills/akinator-adr/SKILL.md) | A decision was made between real alternatives that will be questioned later |
+| Claude Code | `/akinator:everything` | the plugin's SessionStart hook |
+| Codex | `$akinator` | a marked block in `AGENTS.md` |
+| Cursor | `/akinator` | an always-applied rule |
 
-## Business, product and operations
+You normally type none of them: the contract applies to every prompt. The
+explicit form is for when you want to say "the full pass" out loud.
+
+## The skill
 
 | Skill | Use when |
 |---|---|
-| [akinator-business-map](../skills/akinator-business-map/SKILL.md) | Work touches money, plans, quotas, entitlements, refunds - anything a customer is charged or granted |
-| [akinator-product-map](../skills/akinator-product-map/SKILL.md) | Building, changing or removing a user-facing feature. Captures intent, acceptance criteria and the edge-case decision log |
-| [akinator-ops-map](../skills/akinator-ops-map/SKILL.md) | A change alters how the system is deployed, migrated, restarted, recovered or rolled back |
+| [everything](../skills/everything/SKILL.md) | Every prompt in a repository. For anything that can change the repository - a feature, a fix, a refactor, docs, onboarding, an audit, a release - it runs the complete pass so the code and the knowledge around it change together. It is also the one command |
 
-## Discipline
+Canonical source: `skills/everything/`. It holds `SKILL.md`, its station
+`references/` and its host-repository tools in `scripts/`. The Codex and Cursor
+copy in `.agents/skills/akinator/` is generated from it by
+`scripts/build_codex_pack.py`.
 
-| Skill | Use when |
+**Why one skill, not twenty-one.** Claude Code lists every skill in its `/` menu,
+Codex has no way to hide a skill from its `$` picker, and Cursor lists every
+folder in `.agents/skills`. Twenty-one skills meant twenty-one entries on every
+platform, for a plugin whose owner asked for exactly one. The stations became
+reference files inside the one skill - loaded on demand, never listed. See
+`docs/adr/0009-one-skill-one-command-one-installer.md`.
+
+## Its station references
+
+Each is opened when the work reaches that station. They carry the full
+procedure of what used to be separate skills, and keep their old names as
+**station ids** - which is how the rest of Akinator refers to them.
+
+### The pass
+
+| Reference | Load when |
 |---|---|
-| [akinator-gate-economy](../skills/akinator-gate-economy/SKILL.md) | Before any lint, typecheck, test or build, and before any commit during multi-step work |
-| [akinator-resource-guard](../skills/akinator-resource-guard/SKILL.md) | Before anything heavy, and at the end of every task. Reduce your own load, never the developer's |
-| [akinator-anti-gaming](../skills/akinator-anti-gaming/SKILL.md) | Reviewing whether documentation work is real, or when tempted to weaken a failing check |
+| [procedure](../skills/everything/references/procedure.md) | Running the complete pass: the five phases, their exit conditions and every tool command |
+| [akinator](../skills/everything/references/akinator.md) | The full creed, the twelve-station loop, the knowledge taxonomy (where each kind of fact lives) and the non-negotiables |
 
-## Installation and audit
+### The loop's stations
 
-| Skill | Use when |
+| Station | Reference | Load when |
+|---|---|---|
+| 1 ASK | [akinator-intake](../skills/everything/references/akinator-intake.md) | Before planning substantive work, at an ambiguity gate, or when implementation forces a product decision no doc answers |
+| 3 AUDIT | [akinator-audit](../skills/everything/references/akinator-audit.md) | Something is claimed to already exist. Returns done / partial / missing, and catches present-but-not-wired |
+| 4 PLAN | [akinator-plan](../skills/everything/references/akinator-plan.md) | Before implementing anything multi-step. Declares the knowledge delta by path, per batch |
+| 6 DOCUMENT | [akinator-document-change](../skills/everything/references/akinator-document-change.md) | In the same batch as the code. Routes the why, the when-not-to, the business meaning and the operational consequence to their homes |
+| 7 SKILLIFY | [akinator-skillify](../skills/everything/references/akinator-skillify.md) | A procedure was worked out that will happen again - the host repository's own skill, written the first time |
+| 8 RULE | [akinator-rule-forge](../skills/everything/references/akinator-rule-forge.md) | A constraint was established. Turns it into a numbered rule with a real enforcement mechanism |
+| 9 CONTEXTIFY | [akinator-contextify](../skills/everything/references/akinator-contextify.md) | A structural fact changed. Updates the map and builds the extractor so it regenerates instead of drifting |
+| 10 MEMOIZE | [akinator-memoize](../skills/everything/references/akinator-memoize.md) | A durable fact, preference, surprise or dead end is worth carrying forward |
+| 11 INDEX | [akinator-index-sync](../skills/everything/references/akinator-index-sync.md) | An artifact was created, renamed, moved or deleted. Unindexed means nonexistent |
+| 11 SYNC | [akinator-router-sync](../skills/everything/references/akinator-router-sync.md) | What a router says has changed. All routers update together or truth forks |
+| 12 VERIFY | [akinator-gate-economy](../skills/everything/references/akinator-gate-economy.md) | Before any lint, typecheck, test or build, and before any commit during multi-step work |
+
+### When the work touches their domain
+
+| Reference | Load when |
 |---|---|
-| [akinator-onboard](../skills/akinator-onboard/SKILL.md) | Installing Akinator into a repository. Detects what exists and adopts it rather than replacing it |
-| [akinator-coverage](../skills/akinator-coverage/SKILL.md) | Auditing whether a knowledge layer is complete, reachable and true. Mechanical invariants plus the newcomer test |
+| [akinator-adr](../skills/everything/references/akinator-adr.md) | A decision was made between real alternatives that will be questioned later |
+| [akinator-business-map](../skills/everything/references/akinator-business-map.md) | Money, plans, quotas, entitlements, refunds - anything a customer is charged or granted |
+| [akinator-product-map](../skills/everything/references/akinator-product-map.md) | Building, changing or removing a user-facing feature |
+| [akinator-ops-map](../skills/everything/references/akinator-ops-map.md) | A change alters how the system is deployed, migrated, restarted, recovered or rolled back |
+| [akinator-onboard](../skills/everything/references/akinator-onboard.md) | The repository has no knowledge layer yet. Detects what exists and adopts it |
+| [akinator-coverage](../skills/everything/references/akinator-coverage.md) | Auditing whether a knowledge layer is complete, reachable and true |
+| [akinator-anti-gaming](../skills/everything/references/akinator-anti-gaming.md) | Reviewing whether documentation work is real, or when tempted to weaken a failing check |
+| [akinator-resource-guard](../skills/everything/references/akinator-resource-guard.md) | Before anything heavy, and at the end of every task |
 
-## Adding or changing a skill
+## Changing the skill
 
-1. Edit or create the skill here - this directory is canonical.
-2. Regenerate the Codex pack **in the same batch**:
-   `python scripts/build_codex_pack.py --write`
-3. Add it to this index and to every router.
+1. Edit `skills/everything/` - it is canonical. A new station is a new file in
+   `references/`, linked from `SKILL.md`, declared in
+   `scripts/extract_components.py`. Never a new skill: every skill is another
+   menu entry on every platform.
+2. Keep `SKILL.md` under 8,000 bytes. Codex truncates an explicitly invoked
+   skill there, so detail belongs in `references/`.
+3. Regenerate the portable pack **in the same batch**:
+   `python scripts/build_codex_pack.py --write`.
+4. Update this index and every router.
 
-CI fails on drift between `skills/` and `.agents/skills/` - see
-`rules/07-codex-pack-is-generated.md`.
+CI fails on drift between `skills/everything/` and `.agents/skills/akinator/` -
+see `rules/07-codex-pack-is-generated.md`. The structural tests fail if a second
+skill, a command file, an unlinked reference or an oversized `SKILL.md` appears -
+see `tests/test_plugin_structure.py`.

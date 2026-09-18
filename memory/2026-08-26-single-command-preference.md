@@ -39,6 +39,7 @@ is the default path anyway.
 
 ## Related
 
-- `commands/everything.md` - the single command
+- `skills/everything/SKILL.md` - the single command since 2026-09-18, when
+  the one skill became the command and `commands/` was removed (ADR 0009)
 - `docs/adr/0005-single-command-surface.md` - the decision record
 - `tests/test_plugin_structure.py::test_there_is_exactly_one_command`

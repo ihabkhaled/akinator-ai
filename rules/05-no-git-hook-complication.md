@@ -39,7 +39,7 @@ enforcement mechanism running with the suite).
 1. No Akinator skill, command, agent or onboarding procedure adds a
    documentation, knowledge, coverage, index, router-sync or memory check to any
    git hook.
-2. `scripts/akinator_coverage.py` is never invoked from a git hook. Its own
+2. `skills/everything/scripts/akinator_coverage.py` is never invoked from a git hook. Its own
    docstring says so, and the `git-hooks` check in it detects the violation.
 3. Onboarding a repository never installs a git hook. If a target repo asks for
    knowledge enforcement, it gets a CI step.
@@ -52,7 +52,7 @@ enforcement mechanism running with the suite).
 ```bash
 # WRONG - .husky/pre-commit
 npm run lint-staged
-python scripts/akinator_coverage.py --strict   # knowledge check in a hook
+python skills/everything/scripts/akinator_coverage.py --strict   # knowledge check in a hook
 ```
 
 ```yaml
@@ -61,7 +61,7 @@ python scripts/akinator_coverage.py --strict   # knowledge check in a hook
   hooks:
     - id: akinator-coverage
       name: Akinator knowledge coverage
-      entry: python scripts/akinator_coverage.py
+      entry: python skills/everything/scripts/akinator_coverage.py
       language: system
 ```
 
@@ -70,7 +70,7 @@ python scripts/akinator_coverage.py --strict   # knowledge check in a hook
 ```yaml
 # RIGHT - .github/workflows/coverage.yml
 - name: Akinator coverage
-  run: python scripts/akinator_coverage.py . --fail-on high
+  run: python skills/everything/scripts/akinator_coverage.py . --fail-on high
 ```
 
 ```bash
@@ -88,7 +88,7 @@ Plus the two non-CI homes:
 
 ## Enforcement
 
-- Mechanism: `scripts/akinator_coverage.py` - the `git-hooks` check scans
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `git-hooks` check scans
   `.git/hooks/`, `.husky/` and `.pre-commit-config.yaml` for knowledge-check
   markers and reports any hit as **critical**.
 - Mechanism: the same script's `rule-enforcement` check reports **critical** for

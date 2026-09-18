@@ -26,12 +26,13 @@ and on what grounds, is knowledge.
 | [0002](0002-codex-pack-generated-from-claude-skills.md) | The Codex pack is generated from the canonical Claude skills | accepted | the Codex skills contract diverges from Claude's beyond a banner |
 | [0003](0003-enforcement-outside-git-hooks.md) | Knowledge enforcement lives outside git hooks | accepted | a pre-commit mechanism appears that is instant and unbypassable - never for "just one fast check" |
 | [0004](0004-gate-receipts-over-hook-bypass.md) | Tree-bound gate receipts, not hook bypass | accepted | git gains native content-addressed check results |
-| [0005](0005-single-command-surface.md) | One command, not one per mode | accepted | the owner asks for a second, or a mode needs a different tool allowlist |
+| [0005](0005-single-command-surface.md) | One command, not one per mode | accepted; mechanism superseded by 0009 | the owner asks for a second, or a mode needs a different tool allowlist |
 | [0006](0006-index-completeness-as-its-own-invariant.md) | Index completeness is a separate invariant, and CI runs at `--strict` | accepted | MEDIUM proves the wrong grade in practice, or the one-level nesting limit produces a real miss |
 | [0007](0007-vendored-artifacts-declare-origin-not-generator.md) | A vendored artifact declares its origin, not a generator | accepted | the pack stops being copied and starts being referenced in place, or a second artifact needs to travel |
+| [0008](0008-always-on-master-contract.md) | Always-on master contract, one explicit command, and a living wiki | accepted; point 5 superseded by 0009 | Claude, Codex or Cursor changes its hook, rules or skill-invocation contract |
+| [0009](0009-one-skill-one-command-one-installer.md) | One skill, one command, one installer - the stations are references inside the one skill | accepted | Codex and Cursor gain a user-facing way to hide a skill, or a station needs its own tool permissions |
 
 ## Adding one
 
-Use `skills/akinator-adr/SKILL.md`, or `/akinator decide <the question>`.
-
-- [ADR 0006 — Always-on master contract and living wiki](0006-always-on-master-contract.md)
+Use `skills/everything/references/akinator-adr.md` - or just ask; Akinator is always on, and
+`/akinator:everything` is the one explicit entry point.

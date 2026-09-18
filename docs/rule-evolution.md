@@ -2,7 +2,7 @@
 
 Stage 3 of the v2 pipeline. Rules are not static text: they acquire scars.
 
-Run by `scripts/akinator_rules.py`.
+Run by `skills/everything/scripts/akinator_rules.py`.
 
 ## The mechanism this exists for
 
@@ -39,10 +39,10 @@ Putting them on the same page is the whole job.
 ## Using it
 
 ```bash
-python scripts/akinator_rules.py graph        # rules, scopes, supersession
-python scripts/akinator_rules.py conflicts    # overlapping scopes, opposed mandates
-python scripts/akinator_rules.py caused 07 <failure-fingerprint>
-python scripts/akinator_rules.py evolve 07    # the brief for a replacement
+python skills/everything/scripts/akinator_rules.py graph        # rules, scopes, supersession
+python skills/everything/scripts/akinator_rules.py conflicts    # overlapping scopes, opposed mandates
+python skills/everything/scripts/akinator_rules.py caused 07 <failure-fingerprint>
+python skills/everything/scripts/akinator_rules.py evolve 07    # the brief for a replacement
 ```
 
 `caused` writes one frontmatter field and leaves the prose byte-for-byte
@@ -86,7 +86,7 @@ forever.
 - Docs: `docs/distil.md` - how a recurrence becomes a rule in the first place
 - Docs: `docs/akinator-v2-design.md` - stage 3, HARDEN
 - Rules: `rules/03-rules-need-live-enforcement.md`
-- Code: `scripts/akinator_rules.py`, `tests/test_rules_evolution.py`
+- Code: `skills/everything/scripts/akinator_rules.py`, `tests/test_rules_evolution.py`
 
 ## Review when
 

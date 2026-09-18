@@ -78,12 +78,12 @@ git stash create > .ai/local/gate-receipt-tree
 
 ## Enforcement
 
-- Mechanism: `skills/akinator-gate-economy/SKILL.md` - session behavior. This is
+- Mechanism: `skills/everything/references/akinator-gate-economy.md` - session behavior. This is
   the primary enforcement: the skill fires before any gate command and before any
   commit during multi-step work.
 - Mechanism: `agents/akinator-pm.md` - reviews completion claims and rejects any
   backed by a summary rather than an exit code.
-- Mechanism: `scripts/akinator_coverage.py` - the `git-hooks` check catches the
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `git-hooks` check catches the
   related failure of loading hooks with slow checks, which is what makes
   per-commit gating painful enough to be bypassed.
 - Type: session behavior and review lens. **Not machine-checkable** - whether a

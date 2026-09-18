@@ -64,5 +64,5 @@ Two concrete habits fall out of it:
   rather than the plan
 - [[checkers-fail-silently-in-both-directions]] - the other lesson from the same
   pass
-- `skills/akinator-plan/SKILL.md` - where the delta is declared, and where a
+- `skills/everything/references/akinator-plan.md` - where the delta is declared, and where a
   wrong declaration originates

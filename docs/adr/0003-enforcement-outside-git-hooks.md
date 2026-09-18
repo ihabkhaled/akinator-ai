@@ -53,7 +53,7 @@ Three homes, each catching the problem at the right moment:
   delta is missing. This fires *before a commit exists*, which is earlier and
   cheaper than any hook, and it can explain what is missing and which skill
   produces it.
-- **CI** - `scripts/akinator_coverage.py` runs on every push, off the
+- **CI** - `skills/everything/scripts/akinator_coverage.py` runs on every push, off the
   developer's machine, and can be made a required status check that genuinely
   cannot be bypassed.
 - **Test invariants** - each rule's own mechanism runs with the normal suite.
@@ -105,5 +105,7 @@ remove the repo's own configuration.
 
 - Rules: `rules/05-no-git-hook-complication.md`
 - Agents: `agents/akinator-librarian.md`
-- Code: `scripts/akinator_coverage.py` - the `git-hooks` check
+- Code: `skills/everything/scripts/akinator_coverage.py` - the `git-hooks` check
 - Docs: `docs/architecture.md` - the three enforcement homes
+
+_Paths updated 2026-09-18: the host-repository tools moved into the one skill (`skills/everything/scripts/`) under ADR 0009; the decision above is unchanged._

@@ -6,13 +6,14 @@ occurrences:
   - 2026-08-26 (self-report)
   - 2026-08-26 (self-report) - prose heredoc failed outright with unexpected EOF - the loud form
   - 2026-08-30 (self-report) - VENDORED_ORIGIN compiled to a pattern containing chr(8); the vendored branch never fired and the target repo stayed dirty
+  - 2026-09-18 (self-report) - an installer help line and a test regex lost their escapes through heredocs; both caught on the next run
 sources:
   - self-report
 ---
 
 # backslash escapes collapsed inside a shell heredoc and silently changed a regex
 
-**Seen 3 time(s):** 2026-08-26 (self-report), 2026-08-26 (self-report) - prose heredoc failed outright with unexpected EOF - the loud form, 2026-08-30 (self-report) - VENDORED_ORIGIN compiled to a pattern containing chr(8); the vendored branch never fired and the target repo stayed dirty
+**Seen 4 time(s):** 2026-08-26 (self-report), 2026-08-26 (self-report) - prose heredoc failed outright with unexpected EOF - the loud form, 2026-08-30 (self-report) - VENDORED_ORIGIN compiled to a pattern containing chr(8); the vendored branch never fired and the target repo stayed dirty, 2026-09-18 (self-report) - an installer help line and a test regex lost their escapes through heredocs; both caught on the next run
 
 ## Symptom
 

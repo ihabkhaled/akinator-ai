@@ -3,6 +3,18 @@
   "items": [
     {
       "in_brief": true,
+      "path": ".ai/ledger/failure/a-generated-artifact-that-travels-named-56871dcd648a.md",
+      "score": 0.855,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x3"
+      ],
+      "title": "a generated artifact that travels named files only its birthplace has (seen 3x)",
+      "tokens": 133
+    },
+    {
+      "in_brief": true,
       "path": ".ai/ledger/failure/checker-silent-false-negative-a1b2c3d4e5f6.md",
       "score": 0.855,
       "section": "failures",
@@ -20,9 +32,9 @@
       "section": "failures",
       "tags": [
         "failure",
-        "x3"
+        "x4"
       ],
-      "title": "backslash escapes collapsed inside a shell heredoc and silently changed a regex (seen 3x)",
+      "title": "backslash escapes collapsed inside a shell heredoc and silently changed a regex (seen 4x)",
       "tokens": 132
     },
     {
@@ -215,6 +227,18 @@
     },
     {
       "in_brief": true,
+      "path": ".ai/ledger/failure/skill-edit-dropped-its-contract-4c1e8a92b7d3.md",
+      "score": 0.598,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x2"
+      ],
+      "title": "an edit to a skill dropped part of its required six-part contract (seen 2x)",
+      "tokens": 129
+    },
+    {
+      "in_brief": true,
       "path": "context/README.md",
       "score": 0.595,
       "section": "map",
@@ -283,15 +307,27 @@
     },
     {
       "in_brief": true,
-      "path": ".ai/ledger/failure/a-generated-artifact-that-travels-named-56871dcd648a.md",
+      "path": ".ai/ledger/failure/adr-number-filed-twice-5c0e93b8a14d.md",
       "score": 0.299,
       "section": "failures",
       "tags": [
         "failure",
         "x1"
       ],
-      "title": "a generated artifact that travels named files only its birthplace has (seen 1x)",
-      "tokens": 133
+      "title": "an ADR was filed under a number another ADR already held (seen 1x)",
+      "tokens": 108
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/byte-compare-test-hid-a-logo-for-7-minutes-e1b6f3a09d27.md",
+      "score": 0.299,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x1"
+      ],
+      "title": "a hand-made logo failed CI after seven minutes of printing a PNG byte diff (seen 1x)",
+      "tokens": 116
     },
     {
       "in_brief": true,
@@ -304,8 +340,44 @@
       ],
       "title": "a generator emitted a reference to a path the same batch deleted (seen 1x)",
       "tokens": 88
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/hook-shell-form-exited-126-8b21c6e0d4f3.md",
+      "score": 0.299,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x1"
+      ],
+      "title": "the SessionStart hook exited 126 on the Claude Code CLI, so always-on silently never started (seen 1x)",
+      "tokens": 142
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/installer-rewrote-line-endings-d7e4a1f09c62.md",
+      "score": 0.299,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x1"
+      ],
+      "title": "the installer rewrote a CRLF AGENTS.md as LF, so uninstall could not restore it (seen 1x)",
+      "tokens": 126
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/failure/slash-menu-listed-every-skill-3f9a0c71e2b5.md",
+      "score": 0.299,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x1"
+      ],
+      "title": "one command file still showed twenty-two entries in the slash menu (seen 1x)",
+      "tokens": 135
     }
   ],
   "tier": "standard",
-  "used": 2031
+  "used": 2823
 }

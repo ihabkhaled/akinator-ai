@@ -8,10 +8,11 @@ See `rules/09-routers-are-rendered-from-one-contract.md`.
 
 # Akinator
 
-Akinator - the knowledge-layer operating system for AI-maintained codebases,
-shipped as a Claude Code plugin and a Codex pack. Installed into a repository,
-it makes it structurally impossible to change code without growing the knowledge
-around it.
+Akinator - the knowledge-layer operating system for AI-maintained codebases.
+**One skill, one command, on every platform**: `/akinator:everything` on Claude
+Code, `$akinator` on Codex, `/akinator` on Cursor - and normally none at all,
+because it is always on. Installed into a repository, it makes it structurally
+impossible to change code without growing the knowledge around it.
 
 **This repo is maintained under its own discipline.** Every change here carries
 its own docs, skills, rules, context and memory delta.
@@ -19,7 +20,7 @@ its own docs, skills, rules, context and memory delta.
 ## Start here
 
 - Rules (constraints you must not break): `rules/README.md`
-- Skills (the loop's stations): `docs/skills.md`
+- The one skill and its station references: `docs/skills.md`
 - Agents (the boardroom lenses): `docs/agents.md`
 - Context (structural facts): `context/README.md`
 - Docs (architecture, decisions, compatibility): `docs/README.md`
@@ -38,25 +39,25 @@ its own docs, skills, rules, context and memory delta.
 - **Every invariant ships with a test that proves it fires** - `rules/11-invariants-ship-with-a-mutation-test.md`
 - **Anything installed elsewhere names no local file** - `rules/12-artifacts-that-travel-name-nothing-local.md`
 
-The full creed, loop and taxonomy live in `skills/akinator/SKILL.md`.
+The one skill is `skills/everything/SKILL.md`; the full creed, loop and taxonomy
+are in its reference `skills/everything/references/akinator.md`.
 
 ## Running this repo
 
 | Task | Command |
 |---|---|
 | Test | `python -m pytest tests/ -q` |
-| Coverage check | `python scripts/akinator_coverage.py .` |
-| Coverage check (strict) | `python scripts/akinator_coverage.py . --strict` - the tier CI uses |
-| Regenerate the Codex pack | `python scripts/build_codex_pack.py --write` |
+| Coverage check | `python skills/everything/scripts/akinator_coverage.py .` |
+| Coverage check (strict) | `python skills/everything/scripts/akinator_coverage.py . --strict` - the tier CI uses |
+| Regenerate the portable pack (Codex, Cursor) | `python scripts/build_codex_pack.py --write` |
 | Regenerate every router | `python scripts/render_routers.py --write` |
-| Regenerate the context brief | `python scripts/build_brief.py --write` |
-| Verify the ledger | `python scripts/akinator_ledger.py verify` |
-| Scope a pass to the change | `python scripts/akinator_scope.py plan` |
-| What recurs and needs a decision | `python scripts/akinator_distil.py detect` |
+| Regenerate the context brief | `python skills/everything/scripts/build_brief.py --write` |
+| Verify the ledger | `python skills/everything/scripts/akinator_ledger.py verify` |
+| Scope a pass to the change | `python skills/everything/scripts/akinator_scope.py plan` |
+| What recurs and needs a decision | `python skills/everything/scripts/akinator_distil.py detect` |
 | Regenerate the component map | `python scripts/extract_components.py --write` |
-| Regenerate the stack map | `python scripts/extract_stack.py --write` |
-| Regenerate the brand assets | `python scripts/generate_assets.py --write` |
-| Install to Codex | `sh scripts/install-codex.sh --user` |
+| Regenerate the stack map | `python skills/everything/scripts/extract_stack.py --write` |
+| Install from this checkout (all platforms) | `sh install.sh` - or `.\install.ps1` on Windows |
 
 Gate once, at the end of the batch, scoped to what you touched. See
 `rules/06-gate-once-scoped-at-the-end.md`.
@@ -65,27 +66,27 @@ Gate once, at the end of the batch, scoped to what you touched. See
 
 | Directory | Holds | Generated? |
 |---|---|---|
-| `skills/` | The canonical skills - the loop's stations | no, canonical |
-| `agents/` | The boardroom review lenses | no |
-| `commands/` | The single `/akinator` command | no |
+| `skills/everything/` | The one skill: `SKILL.md`, its station `references/` and its host-repo tools in `scripts/` | no, canonical |
+| `agents/` | The boardroom review lenses (Claude Code subagents) | no |
 | `hooks/` | SessionStart contract injection | no |
 | `templates/` | What Akinator writes into target repos, with filled examples | no |
-| `scripts/` | Coverage checker, generators, installers | no |
+| `scripts/` | Build scripts that only make sense in this checkout - the pack and router generators, the component map, the eval runner | no |
+| `install.sh`, `install.ps1` | The one installer, for Claude Code, Codex and Cursor | no |
 | `evals/` | Behavioral eval suites and fixture repos | no |
 | `tests/` | Structural and enforcement tests | no |
 | `context/router-contract.md` | This file - the canonical router source | no, canonical |
-| `.agents/skills/` | The Codex pack | **yes** - `scripts/build_codex_pack.py` |
+| `.agents/` | The portable pack: the one skill for Codex and Cursor, the portable contract, the Cursor rule | **yes** - `scripts/build_codex_pack.py` |
 | Every router file | CLAUDE, AGENTS, CODEX, GEMINI and the rest | **yes** - `scripts/render_routers.py` |
 
 <!-- akinator:tool-specific -->
 ## Codex
 
-- Skills are read from `.agents/skills/` - repository scope, walking up from
-  the working directory to the repository root, then `$HOME/.agents/skills`.
-- Akinator is always-on: every prompt enters the standing contract first; repository-changing
-  work loads `$akinator-everything` automatically. Explicit skill invocation is a fallback.
-- Install with `scripts/install-codex.sh` (or `scripts/install-codex.ps1`).
-- The Codex plugin manifest is `.codex-plugin/plugin.json`. Codex validation
-  rejects unsupported manifest fields such as `hooks`, so the SessionStart
-  hook is a Claude-only surface - the same contract reaches Codex through
-  this file. See `docs/compatibility.md`.
+- Akinator is ONE skill, `akinator`, read from `.agents/skills/` - repository
+  scope, walking up from the working directory to the repository root, then
+  `$HOME/.agents/skills`. `$akinator` is its only entry; its stations are
+  reference files inside it, never separate skills.
+- Always on: every prompt enters the standing contract first. Codex has no
+  SessionStart hook, so the installer puts the contract in `AGENTS.md`.
+- Install with `install.sh` (or `install.ps1` on Windows).
+- The Codex plugin manifest is `.codex-plugin/plugin.json`. See
+  `docs/compatibility.md`.

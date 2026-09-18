@@ -61,7 +61,7 @@ refer to them by name:
 Explicitly not built, and why:
 
 - **A document per library.** It restates `package.json` and fails the
-  delete-the-derivable test in `skills/akinator-anti-gaming/SKILL.md`. Replaced
+  delete-the-derivable test in `skills/everything/references/akinator-anti-gaming.md`. Replaced
   by one generated dependency map plus prose only where a choice or a scar
   exists.
 - **A vector store or embedding index.** At this corpus size the brief plus grep
@@ -302,7 +302,7 @@ pointer - it is not dropped, it is demoted.
 ### The retrieval index
 
 .ai/index.json - generated. Per artifact: `section`, `title`, `path`, `score`,
-`tokens`, `tags`, `in_brief` - see `scripts/build_brief.py` for the source of
+`tokens`, `tags`, `in_brief` - see `skills/everything/scripts/build_brief.py` for the source of
 truth. This is what ranks the brief and what a session greps when the brief
 points at something. The field names above are the shipped schema; an earlier
 draft of this paragraph named a different, never-implemented set.
@@ -404,12 +404,12 @@ where it differs from the plan, the difference is noted.
 | Phase | Delivers | Depends on | Shipped as |
 |---|---|---|---|
 | **1** | Router fan-out to eleven targets, all generated and drift-checked | nothing - independent, lowest risk, ships value immediately | `scripts/render_routers.py`, `context/router-contract.md`, `rules/09` |
-| **2** | The ledger: schema, redaction, write path, indexes | nothing | `scripts/akinator_ledger.py`, `rules/10`, `docs/ledger.md` |
-| **3** | The brief: composition, budget enforcement, retrieval index | 2 (needs something to surface) | `scripts/build_brief.py`, `.ai/BRIEF.md`, `.ai/index.json`, `docs/brief.md` |
-| **4** | Distil: fingerprinting, recurrence counting, the stop-and-ask | 2 | `scripts/akinator_distil.py`, `docs/distil.md` |
-| **5** | Harden: rule frontmatter, evolution, conflict detection | 4 | `scripts/akinator_rules.py`, `docs/rule-evolution.md` |
-| **6** | Value-weighted docs: dependency and component maps, value scoring | 3 | `scripts/extract_stack.py`, `scripts/extract_components.py`. **Value scoring did not ship as code** - the formula stayed a judgement aid in the skills rather than becoming a number the tool computes, because a score invites optimising the score |
-| **7** | Change-scoping and the interrupt budget | 1-6 | `scripts/akinator_scope.py`, `docs/scoping.md` |
+| **2** | The ledger: schema, redaction, write path, indexes | nothing | `skills/everything/scripts/akinator_ledger.py`, `rules/10`, `docs/ledger.md` |
+| **3** | The brief: composition, budget enforcement, retrieval index | 2 (needs something to surface) | `skills/everything/scripts/build_brief.py`, `.ai/BRIEF.md`, `.ai/index.json`, `docs/brief.md` |
+| **4** | Distil: fingerprinting, recurrence counting, the stop-and-ask | 2 | `skills/everything/scripts/akinator_distil.py`, `docs/distil.md` |
+| **5** | Harden: rule frontmatter, evolution, conflict detection | 4 | `skills/everything/scripts/akinator_rules.py`, `docs/rule-evolution.md` |
+| **6** | Value-weighted docs: dependency and component maps, value scoring | 3 | `skills/everything/scripts/extract_stack.py`, `scripts/extract_components.py`. **Value scoring did not ship as code** - the formula stayed a judgement aid in the skills rather than becoming a number the tool computes, because a score invites optimising the score |
+| **7** | Change-scoping and the interrupt budget | 1-6 | `skills/everything/scripts/akinator_scope.py`, `docs/scoping.md` |
 
 Phase 1 first is deliberate: it is independent, mechanical, and proves the
 generation pattern that phases 3 and 6 reuse.
@@ -425,7 +425,7 @@ The command rename to `/akinator:everything` rides along with phase 1.
   discipline v2's new invariants must meet
 - `memory/2026-08-26-checkers-fail-silently-in-both-directions.md` - why
   mutation testing is mandatory here
-- `skills/akinator-anti-gaming/SKILL.md` - the test that rules out per-library
+- `skills/everything/references/akinator-anti-gaming.md` - the test that rules out per-library
   docs
 
 ## Review when

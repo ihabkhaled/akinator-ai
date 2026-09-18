@@ -77,7 +77,7 @@ gate-economy eval.
 
 ### Caught mechanically
 
-Verified output of `python scripts/akinator_coverage.py evals/fixtures/rotten`:
+Verified output of `python skills/everything/scripts/akinator_coverage.py evals/fixtures/rotten`:
 
 | Defect | Where | Reported as |
 |---|---|---|

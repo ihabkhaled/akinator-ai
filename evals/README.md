@@ -131,6 +131,6 @@ checks, so an answer delivered with unearned confidence is worse than a refusal.
 
 ## Related
 
-- `skills/akinator-coverage/SKILL.md` - the mechanical half and the newcomer test
+- `skills/everything/references/akinator-coverage.md` - the mechanical half and the newcomer test
 - `tests/` - the structural half
 - `docs/business-case.md` - what "working" means and how it is measured

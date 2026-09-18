@@ -44,7 +44,8 @@ the branch restores prior command documentation and trigger behavior.
 
 ## Knowledge delta
 
-- ADR: `docs/adr/0006-always-on-master-contract.md`
+- ADR: `docs/adr/0008-always-on-master-contract.md` (filed as 0006, which was
+  already taken; renumbered)
 - Wiki: `docs/living-wiki.md`
 - Template: `templates/change-record.md`
 - Skills: master, everything, document-change, rule-forge

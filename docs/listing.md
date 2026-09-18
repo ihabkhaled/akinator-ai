@@ -35,15 +35,17 @@ should do.
 
 What you get:
 
-- 21 skills covering the whole loop - intake questions, claim-vs-code audit,
-  batch planning, documentation routing, skill and rule creation, context
-  extractors, memory, ADRs, index and router sync. Plus business, product and
+- One skill carrying 20 station references plus the full procedure (21 reference files) that cover the whole loop - intake
+  questions, claim-vs-code audit, batch planning, documentation routing, skill
+  and rule creation, context extractors, memory, ADRs, index and router sync. Plus business, product and
   operational mapping, so pricing rules, feature intent and restart-vs-rebuild
   procedures live in the repo instead of in someone's head.
 - 7 boardroom review agents with real vetoes - business owner, CTO, product
   owner, ops, analyst, PM, and a librarian that blocks any batch whose knowledge
   delta is missing.
-- One command, /akinator, that runs everything.
+- One command that runs everything - /akinator:everything in Claude Code,
+  $akinator in Codex, /akinator in Cursor - and nobody has to type it: Akinator
+  is always on.
 - A coverage checker with eleven mechanically verifiable invariants: unreachable
   artifacts, dead links, rules naming enforcement that does not exist, router
   forks, stale generated files, docs describing paths that are not there.
@@ -51,7 +53,9 @@ What you get:
   touched. Never per edit, never per commit.
 - Adopt, never impose - it detects your repo's existing conventions and extends
   them rather than creating a competing structure beside them.
-- Ships for Claude Code and Codex from one source, so the two cannot diverge.
+- Ships for Claude Code, Codex and Cursor from one source, so they cannot
+  diverge. One-line install: the root installer (install.sh / install.ps1)
+  detects every platform on the machine and sets each one up.
 
 Knowledge enforcement never touches your git hooks. Hooks gate code and stay
 fast.
@@ -62,13 +66,13 @@ fast.
 ```
 1. The everything pass, before something expensive
 
-   /akinator
+   /akinator:everything
 
    You inherited a service that takes payments, the person who wrote it left in
    March, and you ship a pricing change on Friday. You do not know what is
    documented, what is true, or what will bite.
 
-   With no arguments, /akinator runs the complete pass:
+   With no arguments, /akinator:everything runs the complete pass:
 
    - Reads whatever knowledge layer exists and cites it, so you can see what it
      actually relied on rather than what it inferred.
@@ -99,7 +103,7 @@ fast.
 
 2. Onboard a repository nobody can navigate
 
-   /akinator onboard
+   /akinator:everything onboard this repository
 
    Detects what you already have - routers, rules, docs, conventions - maps onto
    them instead of replacing them, ranks every gap by severity, and closes them
@@ -109,7 +113,7 @@ fast.
 
 3. Ship a feature whose reasoning survives it
 
-   /akinator add per-team rate limiting to the export endpoint
+   /akinator:everything add per-team rate limiting to the export endpoint
 
    The code, plus the product doc recording why 100/hour and what happens at the
    boundary, plus an ADR for the algorithm chosen over its alternatives, plus the
@@ -118,7 +122,7 @@ fast.
 
 4. Stop an agent guessing on money
 
-   /akinator implement refunds
+   /akinator:everything implement refunds
 
    Refunds force a question your docs do not answer: what happens to quota the
    customer already used? Akinator stops, asks it in business terms, and files
@@ -128,7 +132,7 @@ fast.
 
 5. Find out whether your documentation is actually true
 
-   /akinator audit
+   /akinator:everything is our documentation true?
 
    Ranked findings: docs describing a service you deleted six months ago, rules
    citing a test that no longer exists, twelve runbooks nothing links to, and a
@@ -145,7 +149,7 @@ fast.
 
 7. Make a large refactor cheap to verify
 
-   /akinator rename the Item model to Record across the codebase
+   /akinator:everything rename the Item model to Record across the codebase
 
    Batched on real seams, no gate storms, one scoped verification run at the end,
    docs updated in the same batch - because a rename is a documentation event -
@@ -167,4 +171,6 @@ gate-economy, router-sync
 ## Review when
 
 - The skill count, command surface or invariant count changes.
-- Last verified: 2026-08-30, against plugin version 1.1.0.
+- Examples show the Claude Code entry; in Codex it is `$akinator`, in Cursor
+  `/akinator`. Always-on means the same words work as an ordinary prompt.
+- Last verified: 2026-09-18, against plugin version 1.2.0.

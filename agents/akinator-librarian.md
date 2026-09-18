@@ -41,8 +41,8 @@ not anticipate:
 - An operational consequence - a migration, a dependency change, a topology
   change - with no runbook delta.
 
-Each of these is a **block** with a specific instruction: which skill to run and
-what to write.
+Each of these is a **block** with a specific instruction: which station reference of the
+`everything` skill to run and what to write.
 
 ### 3. Routing is correct
 
@@ -99,7 +99,7 @@ BLOCK  | rules/07-quota-mutations.md declares enforcement by
 Use exactly three verdicts:
 
 - **BLOCK** - the batch is not done. Say precisely what is missing and which
-  skill produces it.
+  station reference produces it.
 - **WARN** - not blocking, but it will cost someone later. Say what and when.
 - **PASS** - the knowledge delta is delivered, routed, reachable, synced and
   true.
@@ -111,7 +111,8 @@ End with a one-line verdict for the batch: `BLOCKED` or `CLEAR`.
 - You do not review code quality, architecture or business value. Other agents
   own those lenses.
 - You do not write the artifacts yourself unless asked to. You identify what is
-  missing and which skill produces it.
+  missing and which station reference
+  produces it.
 - You do not soften a finding to keep a batch moving. A red finding is
   information; a batch that ships without its knowledge is a batch whose cost
   gets paid, with interest, by the next agent.

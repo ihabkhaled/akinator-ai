@@ -111,7 +111,7 @@ result - the layer did not answer, and the agent did not notice.
 Failures are not a disappointment; they are the specification for the next
 improvement batch, and better specified than anything written from imagination.
 
-See `skills/akinator-coverage/SKILL.md` and `evals/newcomer/README.md`.
+See `skills/everything/references/akinator-coverage.md` and `evals/newcomer/README.md`.
 
 ## What would make this fail
 
@@ -119,7 +119,7 @@ Stated plainly, because a business case that names no failure mode is advocacy:
 
 - **Fake compliance.** Vacuous docs, copy-paste skills, rules with no
   enforcement, ticked checklists. Worse than absence, because they are trusted.
-  Countered by `skills/akinator-anti-gaming/SKILL.md`, and by making the
+  Countered by `skills/everything/references/akinator-anti-gaming.md`, and by making the
   coverage checker verify rather than accept claims.
 - **Ceremony cost exceeding value.** If the discipline is applied at full weight
   to typo fixes, it becomes overhead and gets abandoned. Countered by scaling
@@ -135,7 +135,7 @@ Stated plainly, because a business case that names no failure mode is advocacy:
 
 - `README.md` - what it is and how to install it
 - `docs/architecture.md` - how it works
-- `skills/akinator/SKILL.md` - the creed and the loop
+- `skills/everything/references/akinator.md` - the creed and the loop
 - `docs/adr/` - the decisions made building it
 
 ## Review when

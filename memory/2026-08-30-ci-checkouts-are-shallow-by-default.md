@@ -43,7 +43,7 @@ runs are not watched.
 
 ## Date
 
-- 2026-08-30 - recorded after `python scripts/akinator_distil.py detect` (also
+- 2026-08-30 - recorded after `python skills/everything/scripts/akinator_distil.py detect` (also
   a git-log reader) was added to CI in the same release, alongside the
   pre-existing `mine_git` test, and the shallow-clone gap surfaced.
 

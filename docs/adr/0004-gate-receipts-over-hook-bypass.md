@@ -85,7 +85,7 @@ Akinator detects that policy before recommending anything.
 **Debt taken on**
 - Akinator does not currently ship a reference receipt implementation. The
   mechanism is specified in `rules/06-gate-once-scoped-at-the-end.md` and
-  `skills/akinator-gate-economy/SKILL.md`. Pay this down the first time a target
+  `skills/everything/references/akinator-gate-economy.md`. Pay this down the first time a target
   repo needs one, by extracting that implementation into `templates/`.
 
 ## Revisit when
@@ -98,5 +98,7 @@ Akinator detects that policy before recommending anything.
 ## Related
 
 - Rules: `rules/06-gate-once-scoped-at-the-end.md`
-- Skills: `skills/akinator-gate-economy/SKILL.md`
+- Skills: `skills/everything/references/akinator-gate-economy.md`
 - ADR: `docs/adr/0003-enforcement-outside-git-hooks.md`
+
+_Paths updated 2026-09-18: the host-repository tools moved into the one skill (`skills/everything/scripts/`) under ADR 0009; the decision above is unchanged._

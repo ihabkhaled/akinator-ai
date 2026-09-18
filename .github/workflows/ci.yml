@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # fetch-depth: 0 - a shallow (default) checkout gives git log a single
-      # commit, so mine_git() in scripts/akinator_distil.py finds no fix:
+      # commit, so mine_git() in skills/everything/scripts/akinator_distil.py finds no fix:
       # history no matter how much really exists. Full history is what the
       # miner is testing against.
       - uses: actions/checkout@v4
@@ -47,37 +47,32 @@ jobs:
       # Every ledger record parses and carries its required fields. A
       # half-written record is a record that will not be found when it matters.
       - name: Ledger integrity
-        run: python scripts/akinator_ledger.py verify
+        run: python skills/everything/scripts/akinator_ledger.py verify
 
       # The brief is what a new session reads. A stale one is the worst
       # possible artifact to ship, because it is the most trusted.
       - name: Brief drift
-        run: python scripts/build_brief.py --check
+        run: python skills/everything/scripts/build_brief.py --check
 
       # Anything that has happened twice and has no recorded decision needs
       # an answer - rule, skill, or an explicit 'neither'. Exit 1 means a
       # human owes the repository a decision, not that anything is broken.
       - name: Recurring failures awaiting a decision
-        run: python scripts/akinator_distil.py detect
+        run: python skills/everything/scripts/akinator_distil.py detect
 
       # Rules whose scopes overlap and whose mandates disagree. Reported,
       # never auto-resolved - the resolution is a human decision.
       - name: Rule conflicts
-        run: python scripts/akinator_rules.py conflicts
+        run: python skills/everything/scripts/akinator_rules.py conflicts
 
       # Dependencies and modules, extracted rather than described.
       - name: Stack map drift
-        run: python scripts/extract_stack.py --check
+        run: python skills/everything/scripts/extract_stack.py --check
 
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift
         run: python scripts/render_routers.py --check
-
-      # The brand assets Codex validation requires must match their generator,
-      # so the mark keeps its provenance instead of becoming an opaque binary.
-      - name: Asset drift
-        run: python scripts/generate_assets.py --check
 
       # Every behavioral eval must at least be *parseable and runnable*. A suite
       # the runner cannot execute is documentation pretending to be a test.
@@ -94,7 +89,7 @@ jobs:
       # MEDIUM is the right severity for a target repo onboarding gradually; it
       # is not the right bar for the plugin's own repo.
       - name: Coverage invariants
-        run: python scripts/akinator_coverage.py . --strict
+        run: python skills/everything/scripts/akinator_coverage.py . --strict
 
       # The fixture repositories carry planted defects on purpose. Assert the
       # checker still detects them - a checker whose detection has silently
@@ -102,7 +97,7 @@ jobs:
       - name: Fixture defects are still detected
         run: |
           set -e
-          if python scripts/akinator_coverage.py evals/fixtures/rotten; then
+          if python skills/everything/scripts/akinator_coverage.py evals/fixtures/rotten; then
             echo "::error::the rotten fixture passed - the checker's detection has broken"
             exit 1
           fi

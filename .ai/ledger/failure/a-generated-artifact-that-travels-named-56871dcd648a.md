@@ -4,13 +4,16 @@ id: a-generated-artifact-that-travels-named-56871dcd648a
 title: a generated artifact that travels named files only its birthplace has
 occurrences:
   - 2026-08-30 (eval)
+  - 2026-09-18 (self-report) - the README told Cursor users to copy .cursor/rules/akinator.mdc - Akinator's own router, naming 21 paths that exist only here - and the checker never saw it because it did not scan .mdc files
+  - 2026-09-18 (self-report) - the installed skill told agents to run python scripts/akinator_ledger.py and five more tools - paths only an Akinator checkout has - hidden from the body test because they sat in fenced blocks
 sources:
   - eval
+  - self-report
 ---
 
 # a generated artifact that travels named files only its birthplace has
 
-**Seen 1 time(s):** 2026-08-30 (eval)
+**Seen 3 time(s):** 2026-08-30 (eval), 2026-09-18 (self-report) - the README told Cursor users to copy .cursor/rules/akinator.mdc - Akinator's own router, naming 21 paths that exist only here - and the checker never saw it because it did not scan .mdc files, 2026-09-18 (self-report) - the installed skill told agents to run python scripts/akinator_ledger.py and five more tools - paths only an Akinator checkout has - hidden from the body test because they sat in fenced blocks
 
 ## Symptom
 

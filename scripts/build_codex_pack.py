@@ -1,25 +1,41 @@
 #!/usr/bin/env python3
-"""Generate the Codex pack from the canonical Claude skills.
+"""Generate the portable pack - Akinator's one skill, for Codex and Cursor.
 
-The Claude skills in `skills/` are canonical. This script projects them into the
-locations Codex actually reads:
+Akinator is ONE skill. The canonical copy is `skills/everything/` - its
+`SKILL.md`, its station `references/` and its host-repo tools in `scripts/`.
+Claude Code loads it straight from the plugin, where it is `/akinator:everything`.
 
-    .agents/skills/<name>/SKILL.md   the skills, per the Codex skills contract
-    .agents/AGENTS.md                the portable behavioral contract, which the
-                                     installer copies into target repositories
+This script projects that same skill into the places Codex and Cursor read, plus
+the always-on contract each of them needs because neither has Claude's
+SessionStart hook:
+
+    .agents/skills/akinator/          the one skill - SKILL.md, references/,
+                                      scripts/. Codex AND Cursor both load skills
+                                      from .agents/skills (repo) and
+                                      ~/.agents/skills (user), so one folder
+                                      serves both: $akinator on Codex, /akinator
+                                      on Cursor.
+    .agents/AGENTS.md                 the portable always-on contract. The
+                                      installer merges it, as a marked block,
+                                      into ~/.codex/AGENTS.md or a repo's
+                                      AGENTS.md - which Cursor reads too.
+    .agents/cursor/akinator.mdc       the same contract as an alwaysApply Cursor
+                                      rule, for ~/.cursor/rules.
 
 This repository's own AGENTS.md is NOT generated here - it is one of eleven
 routers rendered from context/router-contract.md by scripts/render_routers.py.
 
-Both are build outputs. Editing them by hand is a rule violation - see
-rules/07-codex-pack-is-generated.md - because two hand-maintained copies of one
-behavioral contract diverge invisibly, which is the exact failure Akinator
-exists to prevent.
+**Why one skill, not twenty-one.** Codex has no way to hide a skill from its `$`
+picker (a skill's `allow_implicit_invocation: false` hides it from the model,
+not from the user), and every folder under .agents/skills is also a `/` entry in
+Cursor. Twenty-one skills meant twenty-one entries on every platform, for a
+plugin whose owner asked for exactly one. See
+docs/adr/0009-one-skill-one-command-one-installer.md.
 
-Generation is deterministic: the same `skills/` tree produces byte-identical
-output. No clock, no absolute paths, no unordered iteration. Determinism is what
-makes the drift check meaningful; a generator that emits a timestamp produces a
-diff on every run, so the drift check becomes noise and gets disabled.
+Everything here is a build output. Editing it by hand is a rule violation - see
+rules/07-codex-pack-is-generated.md. Generation is deterministic: the same
+source produces byte-identical output, which is what makes the drift check
+meaningful.
 
 Usage:
     python scripts/build_codex_pack.py            # dry run, report what differs
@@ -27,7 +43,7 @@ Usage:
     python scripts/build_codex_pack.py --check    # exit 1 if the tree is drifted
 
 Exit codes:
-    0  the pack matches the canonical skills (or --write succeeded)
+    0  the pack matches the canonical skill (or --write succeeded)
     1  drift detected (--check), or files would change (default dry run)
     2  the generator could not run
 """
@@ -35,41 +51,40 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
-GENERATOR = "scripts/build_codex_pack.py"
+SKILL_SOURCE = "skills/everything"
+# Outside Claude there is no plugin namespace, so the name has to carry it:
+# `everything` alone would be an ambiguous `$everything` in a shared skills
+# folder. Claude's `/akinator:everything` and this `akinator` are the same skill.
+PORTABLE_NAME = "akinator"
+TARGET = f".agents/skills/{PORTABLE_NAME}"
+CONTRACT = ".agents/AGENTS.md"
+CURSOR_RULE = ".agents/cursor/akinator.mdc"
+PACK_ROOTS = (".agents/skills", ".agents/cursor", CONTRACT)
 
-# Skills that exist only to serve the Claude harness and have no Codex meaning
-# would be listed here. Empty by design: the behavioral contract is identical
-# across platforms, and any divergence must be a documented transformation.
-CLAUDE_ONLY: frozenset[str] = frozenset()
+# Frontmatter keys that mean something to Claude Code only. Codex ignores
+# unknown keys, but a projection that carries dead keys invites someone to rely
+# on them.
+CLAUDE_ONLY_KEYS = ("argument-hint",)
 
 
-def banner(skill_name: str) -> str:
-    """The pack banner. No timestamp - see the module docstring.
+def banner(what: str) -> str:
+    """The pack banner for markdown. No timestamp - see the module docstring.
 
-    Names **no repo-relative paths**, for the same reason `contract_banner`
-    does not - and it took a behavioral eval to notice that only one of the two
-    had been given that treatment. Every file in this pack is copied verbatim
-    into other repositories by the installer, where `scripts/build_codex_pack.py`
-    and `skills/<name>/SKILL.md` do not exist. Naming them made each installed
-    file assert something untrue about its host, and a doc asserting things that
-    are not there is precisely what this plugin rates critical. Installing
-    Akinator used to produce 22 HIGH coverage findings in the target repository
-    on the very first run.
-
-    So the banner gives the two things a vendored file actually owes its reader:
-    where it came from, and how to get a fresh copy. Inside an Akinator checkout
-    the canonical skill is the one of the same name, and the regeneration
-    command lives in the rule that governs it - not stamped as a path into
-    twenty-one copies that travel elsewhere.
+    Names **no path and no filename**. Every file in the pack is copied into
+    other repositories, where a path to the generator, the source or a rule does
+    not exist; naming one made each installed file assert something untrue
+    about its host - the defect rules/12 exists to stop. So the banner gives the
+    two things a vendored file owes its reader: where it came from, and how to
+    get a fresh copy.
     """
     return (
         "<!--\n"
         "DO NOT EDIT BY HAND.\n"
-        f"Installed from the Akinator plugin - the canonical {skill_name} "
-        "skill.\n"
+        f"Installed from the Akinator plugin - {what}.\n"
         "No generator is named by path: this file travels into repositories\n"
         "that do not have one, where naming it would be a false claim.\n"
         "To update: reinstall Akinator, or regenerate inside an Akinator\n"
@@ -78,14 +93,17 @@ def banner(skill_name: str) -> str:
     )
 
 
-def contract_banner() -> str:
-    """Banner for the portable contract.
+def code_banner() -> str:
+    """The same banner for the Python tools, as comments."""
+    return (
+        "# DO NOT EDIT BY HAND. Installed from the Akinator plugin - one of the\n"
+        "# tools of its one skill. To update: reinstall Akinator, or regenerate\n"
+        "# inside an Akinator checkout. Local edits here are replaced.\n"
+    )
 
-    Names **no repo-relative paths** and no generator filename either. The
-    filename was the subtler half: `build_codex_pack.py` is not a path, but it
-    is still a file the target repository does not have, so the coverage check
-    read it as a generator that had gone missing.
-    """
+
+def contract_banner() -> str:
+    """Banner for the portable contract. Names no path and no filename."""
     return "\n".join([
         "<!--",
         "Akinator behavioral contract - DO NOT EDIT BY HAND.",
@@ -113,212 +131,164 @@ def frontmatter_and_body(text: str) -> tuple[str, str]:
     return text[: close + 1], text[close + 1 :]
 
 
-def render_skill(skill_name: str, text: str) -> str:
-    """Project a canonical skill into its Codex form.
+def render_skill(text: str) -> str:
+    """Project the one canonical skill into its portable form.
 
-    The Codex skills contract is the same shape as Claude's - `SKILL.md` with
-    `name` and `description` frontmatter - so the transformation is the banner
-    only. The banner goes *after* the frontmatter: a comment before the opening
-    `---` would stop it being parsed as frontmatter at all.
-
-    It takes the skill's *name*, not its source path, because the rendered file
-    travels: see `banner`.
+    Two transformations, both deliberate and nothing else: the name becomes
+    `akinator` (see PORTABLE_NAME), and Claude-only keys are dropped. The banner
+    goes *after* the frontmatter - a comment before the opening `---` would stop
+    it being parsed as frontmatter at all.
     """
     front, body = frontmatter_and_body(text)
     if not front:
-        return banner(skill_name) + text
-    return front + banner(skill_name) + body
-
-
-def discover(skills_root: Path) -> list[tuple[str, Path]]:
-    """Every canonical skill, as (name, path), in sorted order."""
-    out: list[tuple[str, Path]] = []
-    if not skills_root.is_dir():
-        return out
-    for skill_md in sorted(skills_root.rglob("SKILL.md")):
-        name = skill_md.parent.name
-        if name in CLAUDE_ONLY:
-            continue
-        out.append((name, skill_md))
-    return out
-
-
-def render_contract_md(skills: list[tuple[str, Path]]) -> str:
-    """The **portable** contract, installed into a target repository.
-
-    This is not the same file as Akinator's own root `AGENTS.md`, and confusing
-    the two was a real bug: the installer copied Akinator's router into target
-    repos, giving them five dead links to `rules/README.md`, `docs/skills.md` and
-    friends, plus an instruction to run Akinator's test suite. A doc asserting
-    things that are not there is the failure this plugin rates critical, and it
-    was being installed by the plugin itself.
-
-    So this file names **no repository-specific paths**. It carries the creed,
-    the loop and the non-negotiables - which are true everywhere - and tells the
-    agent to discover the knowledge layer that this particular repo actually has.
-    """
-    lines: list[str] = []
-    lines.append(contract_banner())
-    lines.append("# Akinator — ALWAYS ON")
-    lines.append("")
-    lines.append(
-        "Ask everything. Document everything. Skillify everything. "
-        "Rule everything."
-    )
-    lines.append("")
-    lines.append(
-        "A change is never the code alone. A change is the code plus the "
-        "knowledge that lets"
-    )
-    lines.append("the next agent act on it in seconds. Half a change is no change.")
-    lines.append("")
-    lines.append("## The loop")
-    lines.append("")
-    lines.append("Every user prompt enters this contract first. For repository-changing work, load `akinator-everything` automatically and run all twelve stations:")
-    lines.append("")
-    lines.append("```")
-    lines.append("ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT ->")
-    lines.append("SKILLIFY -> RULE -> CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY")
-    lines.append("```")
-    lines.append("")
-    lines.append("Non-negotiable:")
-    lines.append("")
-    lines.append(
-        "- Stations 6-11 happen in the same batch as station 5. "
-        '"I\'ll document in a'
-    )
-    lines.append('  follow-up" is a prohibited sentence.')
-    lines.append(
-        "- The knowledge delta is declared at PLAN time, **by path**, per batch. "
-        "A batch"
-    )
-    lines.append("  with no knowledge delta states why, explicitly.")
-    lines.append(
-        "- Gate once, at the end, scoped to what was touched. Never per edit, "
-        "never per"
-    )
-    lines.append("  commit, never all-workspace.")
-    lines.append(
-        "- Never add knowledge or documentation checks to git hooks. "
-        "Hooks gate code."
-    )
-    lines.append(
-        "- **Adopt, never impose.** Match this repository's existing conventions "
-        "before"
-    )
-    lines.append(
-        "  creating anything. A parallel structure beside an existing one is "
-        "worse than"
-    )
-    lines.append("  no structure - the agent picks the wrong one half the time.")
-    lines.append(
-        "- Never guess on money, permissions, deletion or public contracts. "
-        "Stop, ask,"
-    )
-    lines.append("  and write the answer down before coding past it.")
-    lines.append("")
-    lines.append("## Station 2 - RESOLVE, before anything")
-    lines.append("")
-    lines.append(
-        "Discover what this repository actually has, then read it in this order,"
-    )
-    lines.append("stopping when your question is answered:")
-    lines.append("")
-    lines.append("```")
-    lines.append("routers   CLAUDE.md, AGENTS.md, CODEX.md, and any per-module ones")
-    lines.append("rules     constraints you may not break")
-    lines.append("skills    runbooks - follow one rather than improvising")
-    lines.append("context   structural facts: ownership, routes, events, permissions")
-    lines.append("memory    durable decisions, preferences, surprises")
-    lines.append("docs      architecture, business, product, ops, decision records")
-    lines.append("```")
-    lines.append("")
-    lines.append(
-        "Those are the conventional homes, not a promise about this repo. Look "
-        "first;"
-    )
-    lines.append(
-        "this repository may use different names, and if it does, **its** names "
-        "win."
-    )
-    lines.append("")
-    lines.append(
-        "If none of them exist, say so rather than inventing a structure, and "
-        "offer to"
-    )
-    lines.append("onboard the repository properly.")
-    lines.append("")
-    lines.append("## Skills")
-    lines.append("")
-    lines.append("Installed under `.agents/skills/`. These are internal implementation skills.")
-    lines.append("Normal prompts must route through `akinator-everything` automatically; explicit `$<name>` invocation is only a fallback.")
-    lines.append("")
-    lines.append("| Skill | Use when |")
-    lines.append("|---|---|")
-    for name, path in skills:
-        lines.append(f"| `{name}` | {_description_of(path)} |")
-    lines.append("")
-    lines.append("`akinator-everything` is the always-on master orchestrator; `akinator` carries the creed and taxonomy. Users should not need to call either for normal prompts.")
-    lines.append("")
-    return "\n".join(lines)
-
-
-def _description_of(skill_md: Path) -> str:
-    """The skill's trigger description, flattened to one table cell."""
-    front, _ = frontmatter_and_body(
-        skill_md.read_text(encoding="utf-8", errors="replace")
-    )
-    collecting = False
-    parts: list[str] = []
+        raise ValueError(f"{SKILL_SOURCE}/SKILL.md has no frontmatter")
+    lines = []
     for line in front.splitlines():
-        if line.startswith("description:"):
-            collecting = True
-            parts.append(line[len("description:") :].strip())
+        if line.startswith("name:"):
+            lines.append(f"name: {PORTABLE_NAME}")
+        elif line.split(":", 1)[0] in CLAUDE_ONLY_KEYS:
             continue
-        if collecting:
-            if not line.startswith((" ", "\t")) or line.strip().endswith(":"):
-                break
-            parts.append(line.strip())
-    text = " ".join(p for p in parts if p).strip().strip("|>").strip()
-    text = text.replace("|", "/")
-    # Trim to the first sentence - the table is an index, not the skill.
-    for stop in (". Runs", ". Turns", ". Produces", ". Writes", ". Routes"):
-        if stop in text:
-            text = text.split(stop, 1)[0] + "."
-            break
-    return text or "(no description)"
+        else:
+            lines.append(line)
+    return ("\n".join(lines) + "\n"
+            + banner("its one skill, which Claude Code calls /akinator:everything")
+            + body)
+
+
+def render_tool(text: str) -> str:
+    """A tool, with the banner as comments - after the shebang, which must stay
+    on line 1 for the file to remain directly executable."""
+    if text.startswith("#!"):
+        first, rest = text.split("\n", 1)
+        return first + "\n" + code_banner() + rest
+    return code_banner() + text
+
+
+def render_contract_body() -> str:
+    """The contract itself, without banner or frontmatter.
+
+    Names **no repository-specific paths**: it is installed into repositories
+    and home directories Akinator has never seen. It carries the creed, the loop
+    and the non-negotiables - true everywhere - and tells the agent to discover
+    the knowledge layer this particular repository actually has.
+    """
+    return "\n".join([
+        "# Akinator — ALWAYS ON",
+        "",
+        "Ask everything. Document everything. Skillify everything. Rule everything.",
+        "",
+        "A change is never the code alone. A change is the code plus the knowledge that lets",
+        "the next agent act on it in seconds. Half a change is no change.",
+        "",
+        "## The loop",
+        "",
+        "Every user prompt enters this contract first. For repository-changing work, load",
+        "Akinator's one skill, `akinator`, and run its complete pass - all twelve stations:",
+        "",
+        "```",
+        "ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT ->",
+        "SKILLIFY -> RULE -> CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY",
+        "```",
+        "",
+        "Each station is a reference file inside that skill, opened when the work reaches",
+        "it, and the skill's tools live in its own `scripts` folder. There is nothing else",
+        "to install and nothing to type: the explicit form - `$akinator` on Codex,",
+        "`/akinator` on Cursor, `/akinator:everything` on Claude Code - is a fallback.",
+        "",
+        "Non-negotiable:",
+        "",
+        "- Stations 6-11 happen in the same batch as station 5. \"I'll document in a",
+        "  follow-up\" is a prohibited sentence.",
+        "- The knowledge delta is declared at PLAN time, **by path**, per batch. A batch",
+        "  with no knowledge delta states why, explicitly.",
+        "- Gate once, at the end, scoped to what was touched. Never per edit, never per",
+        "  commit, never all-workspace.",
+        "- Never add knowledge or documentation checks to git hooks. Hooks gate code.",
+        "- **Adopt, never impose.** Match this repository's existing conventions before",
+        "  creating anything. A parallel structure beside an existing one is worse than",
+        "  no structure - the agent picks the wrong one half the time.",
+        "- Never guess on money, permissions, deletion, security or public contracts.",
+        "  Stop, ask, and write the answer down before coding past it.",
+        "",
+        "## Station 2 - RESOLVE, before anything",
+        "",
+        "Discover what this repository actually has, then read it in this order,",
+        "stopping when your question is answered:",
+        "",
+        "```",
+        "routers   CLAUDE.md, AGENTS.md, CODEX.md, and any per-module ones",
+        "rules     constraints you may not break",
+        "skills    runbooks - follow one rather than improvising",
+        "context   structural facts: ownership, routes, events, permissions",
+        "memory    durable decisions, preferences, surprises",
+        "docs      architecture, business, product, ops, decision records",
+        "```",
+        "",
+        "Those are the conventional homes, not a promise about this repo. Look first;",
+        "this repository may use different names, and if it does, **its** names win.",
+        "",
+        "If none of them exist, say so rather than inventing a structure, and onboard",
+        "the repository properly - the `akinator` skill carries the onboarding station.",
+        "",
+    ])
+
+
+def render_contract_md() -> str:
+    return contract_banner() + render_contract_body()
+
+
+def render_cursor_rule() -> str:
+    """The contract as an always-applied Cursor rule. Frontmatter first - Cursor
+    parses it only at the top of the file - then the banner."""
+    return ("---\n"
+            "description: Akinator - the always-on repository contract\n"
+            "alwaysApply: true\n"
+            "---\n"
+            + contract_banner()
+            + render_contract_body())
+
+
+def _files(directory: Path, pattern: str) -> list[Path]:
+    """Sorted, deterministic, and never a cache directory."""
+    if not directory.is_dir():
+        return []
+    return sorted(p for p in directory.glob(pattern)
+                  if p.is_file() and "__pycache__" not in p.parts)
 
 
 def plan(repo: Path) -> dict[str, str]:
     """The full desired content of the pack, keyed by repo-relative path."""
-    skills = discover(repo / "skills")
+    source = repo / SKILL_SOURCE
+    skill_md = source / "SKILL.md"
+    if not skill_md.is_file():
+        raise FileNotFoundError(f"{SKILL_SOURCE}/SKILL.md is missing")
+
     out: dict[str, str] = {}
-    for name, path in skills:
-        target = f".agents/skills/{name}/SKILL.md"
-        out[target] = render_skill(
-            name, path.read_text(encoding="utf-8", errors="replace")
-        )
-    # NOTE: this repository's own AGENTS.md is NOT generated here. It is one of
-    # eleven routers rendered from context/router-contract.md by
-    # scripts/render_routers.py. Two generators writing one file is a fork with
-    # extra steps.
-    #
-    # What the pack owns is the *portable* contract - the file the installer
-    # copies into OTHER repositories, which names no repo-relative paths.
-    out[".agents/AGENTS.md"] = render_contract_md(skills)
+    out[f"{TARGET}/SKILL.md"] = render_skill(
+        skill_md.read_text(encoding="utf-8"))
+    for ref in _files(source / "references", "*.md"):
+        out[f"{TARGET}/references/{ref.name}"] = (
+            banner(f"a station reference of its one skill ({ref.stem})")
+            + ref.read_text(encoding="utf-8"))
+    for tool in _files(source / "scripts", "*.py"):
+        out[f"{TARGET}/scripts/{tool.name}"] = render_tool(
+            tool.read_text(encoding="utf-8"))
+    out[CONTRACT] = render_contract_md()
+    out[CURSOR_RULE] = render_cursor_rule()
     return out
 
 
 def existing_pack(repo: Path) -> set[str]:
     """Every file currently in the generated pack."""
     found: set[str] = set()
-    agents_skills = repo / ".agents" / "skills"
-    if agents_skills.is_dir():
-        for path in agents_skills.rglob("*"):
-            if path.is_file():
-                found.add(path.relative_to(repo).as_posix())
-    if (repo / ".agents" / "AGENTS.md").is_file():
-        found.add(".agents/AGENTS.md")
+    for root in PACK_ROOTS:
+        path = repo / root
+        if path.is_file():
+            found.add(root)
+        elif path.is_dir():
+            for child in path.rglob("*"):
+                if child.is_file() and "__pycache__" not in child.parts:
+                    found.add(child.relative_to(repo).as_posix())
     return found
 
 
@@ -349,11 +319,8 @@ def write(repo: Path) -> tuple[list[str], list[str]]:
     for rel, content in sorted(desired.items()):
         path = repo / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        current = (
-            path.read_text(encoding="utf-8", errors="replace")
-            if path.is_file()
-            else None
-        )
+        current = (path.read_text(encoding="utf-8", errors="replace")
+                   if path.is_file() else None)
         if current != content:
             path.write_text(content, encoding="utf-8", newline="\n")
             written.append(rel)
@@ -363,11 +330,15 @@ def write(repo: Path) -> tuple[list[str], list[str]]:
         (repo / rel).unlink()
         removed.append(rel)
 
-    # Prune directories the removal emptied, so a renamed skill leaves nothing.
-    agents_skills = repo / ".agents" / "skills"
-    if agents_skills.is_dir():
-        for path in sorted(agents_skills.iterdir(), reverse=True):
-            if path.is_dir() and not any(path.iterdir()):
+    # Prune every directory the removal emptied, deepest first, so a removed
+    # skill - or all twenty of the old per-station ones - leaves nothing behind.
+    for root in PACK_ROOTS:
+        base = repo / root
+        if not base.is_dir():
+            continue
+        for path in sorted((p for p in base.rglob("*") if p.is_dir()),
+                           key=lambda p: len(p.parts), reverse=True):
+            if not any(path.iterdir()):
                 path.rmdir()
 
     return written, removed
@@ -376,7 +347,7 @@ def write(repo: Path) -> tuple[list[str], list[str]]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="build_codex_pack",
-        description="Generate the Codex pack from the canonical Claude skills.",
+        description="Generate the portable pack from Akinator's one skill.",
     )
     parser.add_argument("root", nargs="?", default=".")
     parser.add_argument("--write", action="store_true",
@@ -386,8 +357,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     repo = Path(args.root).resolve()
-    if not (repo / "skills").is_dir():
-        print(f"no skills/ directory under {repo}", file=sys.stderr)
+    if not (repo / SKILL_SOURCE / "SKILL.md").is_file():
+        print(f"no {SKILL_SOURCE}/SKILL.md under {repo}", file=sys.stderr)
         return 2
 
     if args.write:
@@ -410,14 +381,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if changed or missing or extra:
         total = len(changed) + len(missing) + len(extra)
-        print(
-            f"\n{total} file(s) differ from the canonical skills - "
-            "the Codex pack is drifted."
-        )
+        print(f"\n{total} file(s) differ from the canonical skill - "
+              "the portable pack is drifted.")
         print("Fix with: python scripts/build_codex_pack.py --write")
         return 1
 
-    print("Codex pack matches the canonical skills.")
+    print("Portable pack matches the canonical skill.")
     return 0
 
 

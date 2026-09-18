@@ -148,3 +148,5 @@ than two hand-written strings in `scripts/build_codex_pack.py`.
 - Evals: `evals/results/2026-08-30-06-anti-gaming.md`
 - Docs: `docs/adr/0006-index-completeness-as-its-own-invariant.md` - the ADR that
   put CI on `--strict`, which is why MEDIUM was not an acceptable landing place
+
+_Historical note, 2026-09-18: the transcript above shows the paths of the time. The checker now lives at `skills/everything/scripts/akinator_coverage.py`, and the Codex installer was replaced by `install.sh` under ADR 0009._

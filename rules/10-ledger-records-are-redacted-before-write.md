@@ -74,7 +74,7 @@ def write(self, record: Record) -> Path:
 - Mechanism: `tests/test_ledger.py::test_redaction_leaves_ordinary_prose_alone`
   guards the other direction - a redactor that shreds readable text gets turned
   off, and a redactor that is off protects nothing.
-- Mechanism: `scripts/akinator_ledger.py` - `verify` refuses malformed records,
+- Mechanism: `skills/everything/scripts/akinator_ledger.py` - `verify` refuses malformed records,
   so a record cannot be half-written past the redaction path.
 - Type: unit tests, run with the suite and in CI.
 - How it fails: the test names the secret shape that survived.
@@ -94,7 +94,7 @@ bypass, and never a per-record opt-out.
 
 ## Related
 
-- Code: `scripts/akinator_ledger.py` - `redact`, `env_values`, `Ledger.write`
+- Code: `skills/everything/scripts/akinator_ledger.py` - `redact`, `env_values`, `Ledger.write`
 - Docs: `docs/ledger.md` - what the ledger is and how to use it
 - Docs: `docs/akinator-v2-design.md` - stage 1, CAPTURE
 - Rules: `rules/01-knowledge-delta-per-batch.md` - the ledger is where a batch's

@@ -19,9 +19,9 @@ from conftest import frontmatter
 
 KEBAB = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
-# The twelve loop stations, and the skill each one routes to. Station 2
-# (RESOLVE) and station 5 (IMPLEMENT) are handled by the master skill and by
-# domain skills respectively, so they map to the master skill.
+# The twelve loop stations, and the station reference each one routes to
+# inside the one skill. Station 2 (RESOLVE) and station 5 (IMPLEMENT) are
+# carried by the creed reference, `akinator`.
 LOOP_STATIONS = {
     "ASK": "akinator-intake",
     "RESOLVE": "akinator",
@@ -60,7 +60,9 @@ def test_plugin_manifest_is_valid(plugin_manifest: dict) -> None:
 def test_manifest_lives_in_claude_plugin_dir(repo: Path) -> None:
     """The manifest must be in .claude-plugin/, components at plugin root."""
     assert (repo / ".claude-plugin" / "plugin.json").is_file()
-    for component in ("skills", "commands", "agents", "hooks"):
+    # No commands/: the one skill is the one command. See
+    # test_there_are_no_command_files.
+    for component in ("skills", "agents", "hooks"):
         assert (repo / component).is_dir(), f"{component}/ must be at plugin root"
         assert not (repo / ".claude-plugin" / component).exists(), (
             f"{component}/ must not be nested inside .claude-plugin/"
@@ -88,9 +90,19 @@ def test_hooks_json_uses_the_plugin_format(repo: Path) -> None:
     assert "hooks" in data, "plugin hooks.json requires the `hooks` wrapper"
     assert "SessionStart" in data["hooks"]
 
-    entries = data["hooks"]["SessionStart"]
-    command = entries[0]["hooks"][0]["command"]
-    assert "${CLAUDE_PLUGIN_ROOT}" in command, "hook paths must be portable"
+    hook = data["hooks"]["SessionStart"][0]["hooks"][0]
+    # Exec form - `command` plus `args` - not shell form. The shell form
+    # `sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"` exits 126 on Claude
+    # Code 2.1.154 under Git Bash ("cannot execute binary file"), so the
+    # always-on contract silently never reached CLI sessions on Windows.
+    assert hook.get("command") == "sh", "the hook runs sh directly (exec form)"
+    args = hook.get("args") or []
+    assert args and "${CLAUDE_PLUGIN_ROOT}" in args[0], (
+        "the script path must be an exec-form argument built on ${CLAUDE_PLUGIN_ROOT}"
+    )
+    assert "${CLAUDE_PLUGIN_ROOT}" not in hook["command"], (
+        "a placeholder inside a shell-form command string is the form that broke"
+    )
 
     script = repo / "hooks" / "session-start.sh"
     assert script.is_file(), "the hook command must point at a script that exists"
@@ -103,72 +115,148 @@ def test_no_hardcoded_paths_in_hooks(repo: Path) -> None:
 
 
 # --------------------------------------------------------------------------
-# Skills
+# One skill, one command
+#
+# The owner's requirement, stated three times: exactly one Akinator entry in the
+# "/" menu of Claude Code, Codex and Cursor. It was broken while commands/ held
+# one file, because Claude lists every skill in "/" too - 21 skills plus the
+# command made 22 entries. Codex cannot hide a skill from its "$" picker at all,
+# and Cursor lists every folder in .agents/skills. So the only design that gives
+# one entry everywhere is one skill: the stations are reference files inside it.
+# See docs/adr/0009-one-skill-one-command-one-installer.md.
 # --------------------------------------------------------------------------
 
-def test_skills_exist(skill_paths: list[Path]) -> None:
-    assert len(skill_paths) >= 20, "the Part 8 catalog is the minimum set"
+SKILL_DIR = Path("skills") / "everything"
+
+# Codex injects an explicitly invoked skill's SKILL.md truncated at this many
+# bytes (codex-rs ext/skills render.rs MAX_SKILL_PROMPT_BYTES). A bigger file
+# is cut off mid-procedure on `$akinator`.
+CODEX_SKILL_PROMPT_BYTES = 8000
 
 
-@pytest.mark.parametrize("station,skill_name", sorted(LOOP_STATIONS.items()))
-def test_every_loop_station_has_a_skill(
-    repo: Path, station: str, skill_name: str
-) -> None:
-    """Enforcement for rules/01: the knowledge delta always has somewhere to go.
-
-    If a station has no skill, the delta for that station cannot be routed, and
-    it will be silently dropped instead of visibly declared.
-    """
-    assert (repo / "skills" / skill_name / "SKILL.md").is_file(), (
-        f"loop station {station} routes to '{skill_name}', which does not exist"
+def test_there_is_exactly_one_skill(repo: Path, skill_paths: list[Path]) -> None:
+    rel = [p.relative_to(repo).as_posix() for p in skill_paths]
+    assert rel == ["skills/everything/SKILL.md"], (
+        f"Akinator ships exactly one skill; found {rel}. Every SKILL.md is an "
+        "entry in the / menu on Claude Code and in the $ picker on Codex."
+    )
+    assert frontmatter(skill_paths[0]).get("name") == "everything", (
+        "the skill must be named 'everything' - the plugin namespace supplies "
+        "'akinator', making it /akinator:everything"
     )
 
 
-def test_every_skill_has_six_parts(skill_paths: list[Path]) -> None:
-    """Enforcement for rules/02.
+def test_there_are_no_command_files(repo: Path) -> None:
+    """The skill IS the command. A commands/ file named `everything` would be a
+    second /akinator:everything entry; any other name would be a second command."""
+    commands = repo / "commands"
+    assert not (commands.is_dir() and any(commands.glob("*.md"))), (
+        "commands/ must not exist - the one skill is the one command"
+    )
 
-    The plugin must not ship a skill it would reject in a target repository.
-    """
+
+def test_the_one_skill_has_six_parts(skill_paths: list[Path]) -> None:
+    """Enforcement for rules/02 - the plugin must not ship a skill it would
+    reject in a target repository."""
     failures: list[str] = []
     for path in skill_paths:
         meta = frontmatter(path)
         text = path.read_text(encoding="utf-8").lower()
-
-        if not meta.get("name"):
-            failures.append(f"{path}: frontmatter has no name")
-        elif not KEBAB.match(meta["name"]):
-            failures.append(f"{path}: name '{meta['name']}' is not kebab-case")
+        if not meta.get("name") or not KEBAB.match(meta["name"]):
+            failures.append(f"{path}: name missing or not kebab-case")
         elif meta["name"] != path.parent.name:
-            failures.append(
-                f"{path}: name '{meta['name']}' != directory '{path.parent.name}'"
-            )
-
+            failures.append(f"{path}: name != directory '{path.parent.name}'")
         description = meta.get("description", "")
-        if not description:
-            failures.append(f"{path}: frontmatter has no description")
-        elif not description.lower().startswith("use "):
-            failures.append(
-                f"{path}: description must be a trigger ('Use when ...'), "
-                f"got '{description[:60]}'"
-            )
-
+        if not description.lower().startswith("use "):
+            failures.append(f"{path}: description must be a 'Use ...' trigger")
+        if len(description) > 1024:
+            failures.append(f"{path}: description is {len(description)} chars; "
+                            "Codex and the Agent Skills spec cap it at 1024")
         for section in REQUIRED_SKILL_SECTIONS:
             if section not in text:
                 failures.append(f"{path}: missing the '{section}' section")
-
         if "failure mode" not in text:
             failures.append(f"{path}: missing a failure-modes section")
-
     assert not failures, "\n".join(failures)
 
 
-def test_skill_directory_names_are_unique(skill_paths: list[Path]) -> None:
-    names = [p.parent.name for p in skill_paths]
-    assert len(names) == len(set(names))
+def test_the_skill_fits_codex_explicit_invocation(repo: Path) -> None:
+    """Codex truncates an explicitly invoked SKILL.md at 8,000 bytes. The full
+    procedure lives in a reference for exactly this reason."""
+    import build_codex_pack as pack
+
+    for label, text in (
+        ("canonical", (repo / SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")),
+        ("projected", pack.plan(repo)[f"{pack.TARGET}/SKILL.md"]),
+    ):
+        size = len(text.encode("utf-8"))
+        assert size <= CODEX_SKILL_PROMPT_BYTES, (
+            f"the {label} SKILL.md is {size} bytes; Codex would cut it at "
+            f"{CODEX_SKILL_PROMPT_BYTES}. Move detail into references/."
+        )
+
+
+@pytest.mark.parametrize("station,station_id", sorted(LOOP_STATIONS.items()))
+def test_every_loop_station_has_a_reference(
+    repo: Path, station: str, station_id: str
+) -> None:
+    """Enforcement for rules/01: the knowledge delta always has somewhere to go,
+    and the skill can reach it."""
+    reference = repo / SKILL_DIR / "references" / f"{station_id}.md"
+    assert reference.is_file(), f"station {station} -> {station_id} has no reference"
+    skill = (repo / SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+    assert f"(references/{station_id}.md)" in skill, (
+        f"the skill never links {station_id}; an unlinked station is never opened"
+    )
+
+
+def test_every_reference_is_reachable_from_the_skill(repo: Path) -> None:
+    """A reference nothing links to is a station nobody will ever open."""
+    base = repo / SKILL_DIR
+    linked = (base / "SKILL.md").read_text(encoding="utf-8")
+    missing = sorted(p.name for p in (base / "references").glob("*.md")
+                     if f"(references/{p.name})" not in linked)
+    assert not missing, f"references not linked from SKILL.md: {missing}"
+
+
+def test_no_reference_can_be_discovered_as_a_skill(repo: Path) -> None:
+    """A reference with skill frontmatter, or a stray SKILL.md below the skill,
+    is one step from becoming a second / entry again."""
+    base = repo / SKILL_DIR
+    nested = sorted(p.relative_to(base).as_posix() for p in base.rglob("SKILL.md")
+                    if p != base / "SKILL.md")
+    assert not nested, f"SKILL.md files inside the one skill: {nested}"
+    fronted = sorted(p.name for p in (base / "references").glob("*.md")
+                     if p.read_text(encoding="utf-8").startswith("---"))
+    assert not fronted, f"references carrying skill frontmatter: {fronted}"
+
+
+def test_the_skill_runs_its_tools_from_its_own_folder(repo: Path) -> None:
+    """Every tool the skill tells an agent to run must travel with it.
+
+    The pre-consolidation skill said `python scripts/akinator_ledger.py ...` -
+    a path that exists only in Akinator's own checkout, so in every repository
+    Akinator was installed into, the procedure's commands failed.
+    """
+    base = repo / SKILL_DIR
+    texts = [base / "SKILL.md", *sorted((base / "references").glob("*.md"))]
+    bad: list[str] = []
+    used: set[str] = set()
+    for path in texts:
+        text = path.read_text(encoding="utf-8")
+        for match in re.finditer(r"python3? (\S+\.py)", text):
+            command = match.group(1)
+            if not command.startswith("<skill>/scripts/"):
+                bad.append(f"{path.name}: python {command}")
+            else:
+                used.add(command.split("/")[-1])
+    assert not bad, "tools named outside <skill>/scripts/:\n" + "\n".join(bad)
+    absent = sorted(t for t in used if not (base / "scripts" / t).is_file())
+    assert not absent, f"the skill runs tools it does not ship: {absent}"
 
 
 # --------------------------------------------------------------------------
-# Agents and commands
+# Agents
 # --------------------------------------------------------------------------
 
 def test_boardroom_agents_exist(repo: Path) -> None:
@@ -185,46 +273,6 @@ def test_every_agent_has_name_and_description(agent_paths: list[Path]) -> None:
         meta = frontmatter(path)
         assert meta.get("name") == path.stem, f"{path}: name must match filename"
         assert meta.get("description"), f"{path}: no description"
-
-
-def test_there_is_exactly_one_command(command_paths: list[Path]) -> None:
-    """One command does everything - see docs/adr/0005-single-command-surface.md."""
-    assert len(command_paths) == 1, (
-        "Akinator ships a single unified command; found: "
-        f"{[p.name for p in command_paths]}"
-    )
-    assert command_paths[0].stem == "everything", (
-        "the command is /akinator:everything - the plugin namespace supplies "
-        "the 'akinator' half"
-    )
-
-
-def test_command_declares_description_and_argument_hint(
-    command_paths: list[Path],
-) -> None:
-    meta = frontmatter(command_paths[0])
-    assert meta.get("description")
-    assert meta.get("argument-hint")
-
-
-def test_command_routes_to_components_that_exist(
-    repo: Path, command_paths: list[Path]
-) -> None:
-    """Every component the command names must exist, or a mode silently no-ops.
-
-    The command routes to both skills and agents, so a name resolves if either
-    exists. A typo resolves to neither and fails here.
-    """
-    text = command_paths[0].read_text(encoding="utf-8")
-    referenced = sorted(set(re.findall(r"`(akinator[a-z-]*)`", text)))
-    assert referenced, "the command must route to named components"
-
-    for name in referenced:
-        skill = (repo / "skills" / name / "SKILL.md").is_file()
-        agent = (repo / "agents" / f"{name}.md").is_file()
-        assert skill or agent, (
-            f"command references '{name}', which is neither a skill nor an agent"
-        )
 
 
 # --------------------------------------------------------------------------
@@ -468,14 +516,20 @@ def test_required_asset_is_a_square_png(
     assert depth == 8 and colour == 6, f"{value} must be 8-bit RGBA"
 
 
-def test_assets_are_generated_not_committed_by_hand(repo: Path) -> None:
-    """The assets must match their generator, so the mark has provenance."""
-    import generate_assets
+def test_adr_numbers_are_unique(repo: Path) -> None:
+    """Two records once shared 0006: the always-on ADR was filed under a number
+    `0006-index-completeness-...` already held, by an agent that never listed the
+    directory. Nothing noticed - both files were reachable, both were indexed
+    (one as a loose bullet under the table), and every check stayed green.
 
-    for rel, content in generate_assets.plan(repo).items():
-        path = repo / rel
-        assert path.is_file(), f"{rel} is missing - run generate_assets.py --write"
-        assert path.read_bytes() == content, (
-            f"{rel} does not match scripts/generate_assets.py. "
-            "Edit the generator, then regenerate."
-        )
+    ADR numbers are cited by number alone ("the tier ADR 0006 put CI on"), so a
+    collision makes every such citation ambiguous.
+    """
+    from collections import Counter
+
+    numbers = Counter(
+        path.name.split("-", 1)[0]
+        for path in (repo / "docs" / "adr").glob("[0-9][0-9][0-9][0-9]-*.md")
+    )
+    duplicated = sorted(n for n, count in numbers.items() if count > 1)
+    assert not duplicated, f"ADR numbers used more than once: {duplicated}"

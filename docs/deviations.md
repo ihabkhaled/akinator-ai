@@ -23,6 +23,12 @@ described.
   words narrow the target, never the depth. The scaled behavior remains in the
   auto-triggered `akinator` skill, which is the right default when nobody typed
   a command at all.
+- **Superseded 2026-09-18 (1.2.0).** The above is history. Akinator is now one
+  skill and one command on every platform - `/akinator:everything` in Claude
+  Code (the skill is the command; there is no command file), `$akinator` in
+  Codex, `/akinator` in Cursor - with the former skills kept as station
+  references inside it, and no mode words. See
+  `docs/adr/0009-one-skill-one-command-one-installer.md`.
 - **Recorded in:** `docs/adr/0005-single-command-surface.md`,
   `memory/2026-08-26-single-command-preference.md`.
 
@@ -52,7 +58,7 @@ described.
   asserts the content is actually there rather than assumed.
 - **Recorded in:** `docs/compatibility.md`.
 
-## 4. Brand assets are generated, not drawn ~~No image assets in the Codex manifest~~
+## 4. Brand assets ~~are generated, not drawn~~ ~~No image assets in the Codex manifest~~
 
 **Corrected 2026-08-26.** The original entry claimed `composerIcon` and `logo`
 were optional and omitted them. That was **wrong**: Codex validation requires
@@ -61,9 +67,14 @@ because the correction is the useful part - see
 `memory/2026-08-26-codex-plugin-validation-surprises.md`.
 
 - **Shipped:** `assets/akinator-icon.png` and `assets/akinator-logo.png`, both
-  512x512, both declared in `.codex-plugin/plugin.json`.
-- **The actual deviation:** the assets are **generated from code**
-  (`scripts/generate_assets.py`) rather than authored in a design tool. The mark
+  declared in `.codex-plugin/plugin.json`.
+- **Reversed 2026-09-18.** The owner committed designed artwork (1254x1254) in
+  place of the generated mark - the exact exit this entry named in advance. The
+  generator was retired and `test_assets_are_generated_not_committed_by_hand`
+  dropped, as the cost line below said to. The squareness test stays; that one is
+  the Codex contract. Kept below as the record of what was shipped before.
+- **The original deviation:** the assets were **generated from code**
+  (a script since retired) rather than authored in a design tool. The mark
   is drawn from a signed distance field and the PNG encoded with the standard
   library - no dependencies, no binary blob without provenance.
 - **Why:** a committed binary nobody can regenerate is a fact with no history.
@@ -110,7 +121,7 @@ because the correction is the useful part - see
 - **Brief, Part 12.2:** "Implement a tree-bound gate receipt".
 - **Shipped:** the mechanism is specified in
   `rules/06-gate-once-scoped-at-the-end.md` and
-  `skills/akinator-gate-economy/SKILL.md`; no reference implementation ships.
+  `skills/everything/references/akinator-gate-economy.md`; no reference implementation ships.
 - **Why:** hook stacks differ too much between repositories for one
   implementation to be correct, and a wrong one would be trusted. This is
   recorded as debt with a payoff condition rather than left implicit.

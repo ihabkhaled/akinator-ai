@@ -87,7 +87,7 @@ true of `reachability` since it was written and was never noticed.
 
 **Debt taken on**
 - `index-completeness` looks one level deep and compares case-insensitively on
-  Windows. Both limits are stated in `skills/akinator-coverage/SKILL.md` and
+  Windows. Both limits are stated in `skills/everything/references/akinator-coverage.md` and
   tested. Pay down if a repository grows nested category directories.
 
 ## Revisit when
@@ -100,8 +100,10 @@ true of `reachability` since it was written and was never noticed.
 
 ## Related
 
-- Code: `scripts/akinator_coverage.py` - `check_index_completeness`, `_indexed_paths`
+- Code: `skills/everything/scripts/akinator_coverage.py` - `check_index_completeness`, `_indexed_paths`
 - Tests: `tests/test_coverage_checker.py`
 - Docs: `docs/architecture.md` - enforcement homes and the tier rationale
 - Memory: `memory/2026-08-26-checkers-fail-silently-in-both-directions.md`
 - Rules: `rules/03-rules-need-live-enforcement.md`
+
+_Paths updated 2026-09-18: the host-repository tools moved into the one skill (`skills/everything/scripts/`) under ADR 0009; the decision above is unchanged._

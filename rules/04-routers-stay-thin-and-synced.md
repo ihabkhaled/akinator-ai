@@ -78,7 +78,7 @@ Skills are read from `.agents/skills/`.
 
 ## Enforcement
 
-- Mechanism: `scripts/akinator_coverage.py` - the `router-sync` check compares
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `router-sync` check compares
   the knowledge each root router references and reports **high** for any router
   omitting what the others carry, unless that router is marked
   `<!-- akinator:tool-specific -->`. The `module-routers` check reports modules

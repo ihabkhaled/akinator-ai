@@ -65,32 +65,34 @@ class Adapter:
 
 
 CODEX_SPECIFICS = (
-    "- Skills are read from `.agents/skills/` - repository scope, walking up from",
-    "  the working directory to the repository root, then `$HOME/.agents/skills`.",
-    "- Akinator is always-on: every prompt enters the standing contract first; repository-changing",
-    "  work loads `$akinator-everything` automatically. Explicit skill invocation is a fallback.",
-    "- Install with `scripts/install-codex.sh` (or `scripts/install-codex.ps1`).",
-    "- The Codex plugin manifest is `.codex-plugin/plugin.json`. Codex validation",
-    "  rejects unsupported manifest fields such as `hooks`, so the SessionStart",
-    "  hook is a Claude-only surface - the same contract reaches Codex through",
-    "  this file. See `docs/compatibility.md`.",
+    "- Akinator is ONE skill, `akinator`, read from `.agents/skills/` - repository",
+    "  scope, walking up from the working directory to the repository root, then",
+    "  `$HOME/.agents/skills`. `$akinator` is its only entry; its stations are",
+    "  reference files inside it, never separate skills.",
+    "- Always on: every prompt enters the standing contract first. Codex has no",
+    "  SessionStart hook, so the installer puts the contract in `AGENTS.md`.",
+    "- Install with `install.sh` (or `install.ps1` on Windows).",
+    "- The Codex plugin manifest is `.codex-plugin/plugin.json`. See",
+    "  `docs/compatibility.md`.",
 )
 
 CLAUDE_SPECIFICS = (
-    "- Skills load from `skills/`, agents from `agents/`, the command from",
-    "  `commands/`, and the SessionStart hook from `hooks/hooks.json`.",
+    "- The one skill loads from `skills/everything/`, the review lenses from",
+    "  `agents/`, and the SessionStart hook from `hooks/hooks.json`.",
     "- Akinator is always-on from SessionStart; normal prompts require no command.",
-    "- The sole explicit command is `/akinator:everything`; there are no subcommands or modes.",
-    "- Install with `/plugin marketplace add` then `/plugin install`.",
+    "- The skill is also the only command: `/akinator:everything`. There is no",
+    "  `commands/` directory, so nothing else appears in the `/` menu.",
+    "- Install with `install.sh` / `install.ps1`, or `claude plugin marketplace add`",
+    "  then `claude plugin install akinator@akinator`.",
 )
 
 GENERIC_SPECIFICS = (
     "- Akinator is always-on for normal repository prompts; no slash command is required.",
     "- This file is one of several AI entry points in this repository. They are",
     "  all rendered from `context/router-contract.md` and state the same facts.",
-    "- If your tool reads skills from a directory, point it at `skills/` (the",
-    "  canonical source) or `.agents/skills/` (the generated pack). They cannot",
-    "  diverge - a drift check fails the build if they do.",
+    "- If your tool reads skills from a directory, point it at `.agents/skills/`",
+    "  - Akinator's one skill, generated from `skills/everything/`. They cannot",
+    "  diverge: a drift check fails the build if they do.",
 )
 
 ADAPTERS: tuple[Adapter, ...] = (

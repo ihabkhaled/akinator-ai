@@ -7,7 +7,7 @@ committed record of failures, questions, decisions and surprises. It feeds the
 recurrence detection that turns a repeated failure into a rule, and it is the
 raw material the context brief is composed from.
 
-Managed by `scripts/akinator_ledger.py`. Stored under `.ai/ledger/`.
+Managed by `skills/everything/scripts/akinator_ledger.py`. Stored under `.ai/ledger/`.
 
 ## Why it is committed
 
@@ -82,7 +82,7 @@ not record it.
 
 ```bash
 # record a failure the first time it is understood
-python scripts/akinator_ledger.py add failure \
+python skills/everything/scripts/akinator_ledger.py add failure \
   --title "the export served stale data after a restart" \
   --field symptom="exports contained rows from before the migration" \
   --field trigger="a restart instead of a rebuild" \
@@ -91,14 +91,14 @@ python scripts/akinator_ledger.py add failure \
   --field module="services/exports" --field operation="deploy"
 
 # record another sighting - the note is what distinguishes same-day events
-python scripts/akinator_ledger.py occurred <fingerprint> --source git \
+python skills/everything/scripts/akinator_ledger.py occurred <fingerprint> --source git \
   --note "revert commit on the same file"
 
 # what has happened more than once, and should become a rule
-python scripts/akinator_ledger.py list --recurring
+python skills/everything/scripts/akinator_ledger.py list --recurring
 
 # every record parses and carries its required fields
-python scripts/akinator_ledger.py verify
+python skills/everything/scripts/akinator_ledger.py verify
 ```
 
 ## What is in this repository's ledger
@@ -133,7 +133,7 @@ exists to remove.
 
 - Rules: `rules/10-ledger-records-are-redacted-before-write.md`
 - Docs: `docs/akinator-v2-design.md` - stage 1 CAPTURE, stage 2 DISTIL
-- Code: `scripts/akinator_ledger.py`, `tests/test_ledger.py`
+- Code: `skills/everything/scripts/akinator_ledger.py`, `tests/test_ledger.py`
 
 ## Review when
 

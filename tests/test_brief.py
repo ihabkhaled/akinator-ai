@@ -240,7 +240,7 @@ def test_brief_is_not_drifted(repo: Path) -> None:
         path = repo / rel
         assert path.is_file(), f"{rel} is missing - run build_brief.py --write"
         assert path.read_text(encoding="utf-8") == content, (
-            f"{rel} is drifted. Fix with: python scripts/build_brief.py --write"
+            f"{rel} is drifted. Fix with: python skills/everything/scripts/build_brief.py --write"
         )
 
 

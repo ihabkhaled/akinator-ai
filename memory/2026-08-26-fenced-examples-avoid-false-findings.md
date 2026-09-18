@@ -48,6 +48,6 @@ Neither is a claim about this repository. Both now sit inside fences.
 
 ## Related
 
-- `scripts/akinator_coverage.py` - `prose_of()` implements the exemption
+- `skills/everything/scripts/akinator_coverage.py` - `prose_of()` implements the exemption
 - `tests/test_coverage_checker.py::test_fenced_code_blocks_are_not_treated_as_claims`
 - `templates/examples/README.md` - why the filled examples name a fictional product

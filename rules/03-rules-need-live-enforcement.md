@@ -58,7 +58,7 @@ until someone violates the rule and nothing happens.
 ```markdown
 ## Enforcement
 
-- Mechanism: `scripts/akinator_coverage.py` - the `rule-enforcement` check
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `rule-enforcement` check
   opens every path named in an Enforcement section and fails if it is absent.
 - Type: script check in CI.
 - How it fails: the report prints the rule path and the missing mechanism.
@@ -70,7 +70,7 @@ visible.
 
 ## Enforcement
 
-- Mechanism: `scripts/akinator_coverage.py` - the `rule-enforcement` check
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `rule-enforcement` check
   reports **high** for a rule with no Enforcement section, **critical** for one
   naming only paths that do not exist, and **critical** for one naming a git
   hook.

@@ -27,7 +27,7 @@ wrong **three times**, each fix producing the next failure:
 
 The rule that works is not a pattern at all: **resolve the reference** and
 compare repo-relative paths. `_indexed_paths()` in
-`scripts/akinator_coverage.py`.
+`skills/everything/scripts/akinator_coverage.py`.
 
 ## Why
 
@@ -75,13 +75,13 @@ protect nothing.
 
 ## Related
 
-- `scripts/akinator_coverage.py` - `_indexed_paths` and `check_index_completeness`
+- `skills/everything/scripts/akinator_coverage.py` - `_indexed_paths` and `check_index_completeness`
 - `tests/test_coverage_checker.py` - a regression test for each failure above,
   plus one for the taxonomy homes that were silently exempt
 - [[fenced-examples-avoid-false-findings]] - the mirror image: that entry records
   a false **positive** problem in the same checker. Together they are the pair:
   false positives train people to ignore the checker, false negatives make it
   lie. Both end with nobody protected.
-- `skills/akinator-anti-gaming/SKILL.md` - "Never weaken a check to make it
+- `skills/everything/references/akinator-anti-gaming.md` - "Never weaken a check to make it
   pass"; this is the adjacent failure, where a check is weak by accident and
   nobody notices.

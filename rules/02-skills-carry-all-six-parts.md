@@ -74,7 +74,7 @@ a fully worked example with parallel-vs-sequential steps and real failure modes.
 
 ## Enforcement
 
-- Mechanism: `scripts/akinator_coverage.py` - the `skill-format` check parses
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `skill-format` check parses
   every `SKILL.md`, requires `name` and `description` in frontmatter
   (**critical** if absent) and requires the When-to-use, When-NOT-to-use,
   Procedure and Definition-of-done sections.

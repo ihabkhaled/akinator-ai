@@ -26,67 +26,130 @@ refactor the authentication flow
 Akinator is the standing contract. For repository-changing work it runs the full
 loop automatically.
 
-There is exactly **one explicit command**:
+## One skill, one command
 
-```
-/akinator:everything [what you want done]
-```
+Akinator ships as **one skill** on every platform. Its stations (intake, audit,
+plan, document-change, rule-forge and the rest) are references inside that
+skill, not separate skills, so your `/` or `$` menu shows one Akinator entry.
 
-No onboard/audit/status/sync/question/decide commands. No command tree. Internal
-skills are implementation details used by the one orchestrator.
+| Platform | Entry | Normally needed? |
+|---|---|---|
+| Claude Code | `/akinator:everything [what you want done]` | No - always on |
+| Codex | `$akinator` (`$akinator:everything` if installed as a Codex plugin) | No - always on |
+| Cursor | `/akinator` | No - always on |
 
-## Install from GitHub
+No onboard/audit/status/sync/question/decide commands. No modes, no command tree.
 
-Until marketplace distribution is available, install directly from the GitHub
-repository.
+## Install
 
-### Claude Code
+### One line (recommended)
 
-```bash
-git clone https://github.com/ihabkhaled/akinator-ai.git
-cd akinator-ai
-claude --plugin-dir .
-```
-
-For development, keep the checkout and start Claude with `--plugin-dir`. The
-plugin's `SessionStart` hook injects the always-on contract before the first
-prompt. The only explicit command is `/akinator:everything`.
-
-If you use a Claude plugin marketplace that accepts Git repositories, add this
-repository as the marketplace source and install Akinator from it.
-
-### Codex
+macOS / Linux - installs for every platform it detects (Claude Code, Codex, Cursor):
 
 ```bash
-git clone https://github.com/ihabkhaled/akinator-ai.git
-cd akinator-ai
-sh scripts/install-codex.sh --user
-# or install into one repository
-sh scripts/install-codex.sh --repo /path/to/your/repo
+curl -fsSL https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.sh | sh
 ```
 
-Windows:
+Windows (PowerShell 5.1+):
 
 ```powershell
-git clone https://github.com/ihabkhaled/akinator-ai.git
-cd akinator-ai
-.\scripts\install-codex.ps1 -Scope Repo -Repo C:\src\your-project
+irm https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.ps1 | iex
 ```
 
-Codex does not expose Claude's SessionStart hook surface. Akinator therefore
-installs an always-on `AGENTS.md` contract plus the generated master skill.
-Normal prompts are routed through that contract; `$akinator-everything` remains
-an explicit fallback, not another Akinator command.
-
-### Cursor
+Into one repository instead of your user profile:
 
 ```bash
-git clone https://github.com/ihabkhaled/akinator-ai.git
-cp akinator-ai/.cursor/rules/akinator.mdc /path/to/your/repo/.cursor/rules/akinator.mdc
+curl -fsSL https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.sh | sh -s -- --repo /path/to/your/repo
 ```
 
-The Cursor rule is `alwaysApply: true`, so normal prompts receive the same
-Akinator contract. You do not need a slash command.
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.ps1))) -Repo C:\src\your-project
+```
+
+Flags: `--claude` `--codex` `--cursor` (default: every platform detected),
+`--repo PATH`, `--ref REF`, `--uninstall`. PowerShell: `-Claude` `-Codex`
+`-Cursor` `-Repo` `-Ref` `-Uninstall`.
+
+- **Update:** re-run the same line.
+- **Uninstall:** add `--uninstall` (or `-Uninstall`). A host repository is
+  restored byte for byte.
+
+The installer removes the per-station `akinator-*` skill folders earlier
+versions installed (only folders carrying the Akinator banner), never touches
+anything without the banner, and preserves your line endings.
+
+### Prefer to read before you run
+
+Download `install.sh` or `install.ps1`, read it, then run it:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.sh
+sh install.sh --repo /path/to/your/repo
+```
+
+```powershell
+irm https://raw.githubusercontent.com/ihabkhaled/akinator-ai/main/install.ps1 -OutFile install.ps1
+.\install.ps1 -Repo C:\src\your-project
+```
+
+### Manual routes, per platform
+
+**Claude Code CLI**
+
+```bash
+claude plugin marketplace add https://github.com/ihabkhaled/akinator-ai.git
+claude plugin install akinator@akinator
+```
+
+Use the https URL: the `owner/repo` shorthand clones over SSH and fails without
+a GitHub SSH key. To update: `claude plugin marketplace update akinator && claude
+plugin update akinator@akinator` (updates arrive only when the version is bumped).
+
+**Claude Code VS Code extension** - the terminal `/plugin` panel is not
+available there. Type `/plugins`, open **Marketplaces**, add
+`https://github.com/ihabkhaled/akinator-ai.git`, then install Akinator.
+
+**Try without installing** (this session only; verified on Claude Code 2.1.154):
+
+```bash
+claude --plugin-url https://github.com/ihabkhaled/akinator-ai/archive/refs/heads/main.zip
+```
+
+**Codex plugin route** - taken from the Codex docs and source, not run here:
+
+```bash
+codex plugin marketplace add ihabkhaled/akinator-ai
+codex plugin add akinator@akinator
+```
+
+This gives the skill as `$akinator:everything` but **not** the always-on
+`AGENTS.md` block, and plugins are not supported in the Codex IDE extension.
+The installer is the recommended Codex route.
+
+**Cursor** - use the installer. Cursor plugins need their own marketplace
+manifest, which Akinator does not ship.
+
+### What gets installed where
+
+| Platform | User scope | `--repo` scope |
+|---|---|---|
+| Claude Code | plugin `akinator@akinator`, user scope | same plugin, project scope |
+| Codex + Cursor skill | `~/.agents/skills/akinator` | `<repo>/.agents/skills/akinator` |
+| Codex always-on | marked block in `~/.codex/AGENTS.md` (or `$CODEX_HOME/AGENTS.md`) | marked block in `<repo>/AGENTS.md` |
+| Cursor always-on | `~/.cursor/rules/akinator.mdc` | `<repo>/.cursor/rules/akinator.mdc` |
+
+Codex and Cursor both read skills from `.agents/skills` (repo) and
+`~/.agents/skills` (user), so one folder serves both. If an
+`AGENTS.override.md` would shadow the block - any override in a repository, a
+non-empty one in `~/.codex` - the installer warns: Codex reads it instead.
+
+### How always-on works
+
+| Platform | Mechanism |
+|---|---|
+| Claude Code | The plugin's SessionStart hook injects the contract before the first prompt. |
+| Codex | The marked `AGENTS.md` block. |
+| Cursor | An `alwaysApply` rule; Cursor also reads a repo's root `AGENTS.md`. The user-rule file format under `~/.cursor/rules` is inferred from Cursor's project-rule format - Cursor's docs name the folder, not the format. |
 
 ## The living wiki
 
@@ -172,9 +235,9 @@ master orchestrator. "Everything" means every station is evaluated, every
 applicable knowledge lens is loaded, and every applicable check is completed.
 It does **not** mean writing irrelevant files or inventing facts.
 
-The one-command surface is intentionally separate from the internal skill
-library. Skills such as documentation, ADR, business mapping and rule forging
-remain composable internals; users do not need to learn or call them.
+The stations - documentation, ADR, business mapping, rule forging and the
+rest - are references inside the one skill, loaded as the pass needs them;
+users do not need to learn or call them.
 
 ## Knowledge laws
 
@@ -196,16 +259,17 @@ remain composable internals; users do not need to learn or call them.
 
 ```bash
 python -m pytest tests/ -q
-python scripts/akinator_coverage.py . --strict
-python scripts/akinator_ledger.py verify
-python scripts/akinator_rules.py conflicts
+python skills/everything/scripts/akinator_coverage.py . --strict
+python skills/everything/scripts/akinator_ledger.py verify
+python skills/everything/scripts/akinator_rules.py conflicts
 python scripts/build_codex_pack.py --check
 python scripts/render_routers.py --check
-python scripts/build_brief.py --check
+python skills/everything/scripts/build_brief.py --check
 ```
 
-Canonical Claude skills live in `skills/`. The Codex pack in
-`.agents/skills/` is generated from them. AI routers are generated from
+The one canonical skill lives in `skills/everything/` (its host-repo tools in
+`skills/everything/scripts/`). The portable pack in `.agents/` is generated
+from it by `scripts/build_codex_pack.py`. AI routers are generated from
 `context/router-contract.md`; do not hand-edit generated routers.
 
 ## Documentation

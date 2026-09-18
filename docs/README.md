@@ -31,15 +31,18 @@ Every non-obvious choice, with its rejected alternatives and their costs.
 | [0002](adr/0002-codex-pack-generated-from-claude-skills.md) | The Codex pack is generated from the Claude skills, not maintained by hand or symlinked |
 | [0003](adr/0003-enforcement-outside-git-hooks.md) | Knowledge enforcement lives in session behavior, CI and tests - never in a git hook |
 | [0004](adr/0004-gate-receipts-over-hook-bypass.md) | Tree-bound gate receipts rather than hook bypass, because a receipt is auditable |
-| [0005](adr/0005-single-command-surface.md) | One command dispatching every mode, not one command per mode |
+| [0005](adr/0005-single-command-surface.md) | One command, not one per mode - its command-file mechanism superseded by ADR 0009 |
 | [0006](adr/0006-index-completeness-as-its-own-invariant.md) | Index completeness is its own invariant, and CI runs at `--strict` |
+| [0007](adr/0007-vendored-artifacts-declare-origin-not-generator.md) | Vendored artifacts declare their origin, not their generator |
+| [0008](adr/0008-always-on-master-contract.md) | Akinator is always on; the master contract runs without a command |
+| [0009](adr/0009-one-skill-one-command-one-installer.md) | One skill, one command, one installer on every platform |
 
 See [the ADR index](adr/README.md) for the full list and the conventions.
 
 ## Related
 
 - `rules/README.md` - the constraints this repository holds itself to
-- [Skills index](skills.md) - the 21 skills and what triggers each
+- [Skills index](skills.md) - the one skill and its station references
 - [Agents index](agents.md) - the seven boardroom lenses and what each vetoes
 - `context/README.md` - generated structural maps
 - `memory/index.md` - durable decisions and surprises
@@ -54,3 +57,4 @@ See [the ADR index](adr/README.md) for the full list and the conventions.
 Meaningful changes are indexed here so their provenance remains reachable instead of becoming orphaned documentation.
 
 - [2026-09-18 — Always-on, one-command Akinator](changes/2026-09-18-always-on-one-command.md) — records the move to automatic repository behavior, the single explicit command surface, living-wiki expansion, and the reasoning/provenance behind the change.
+- [2026-09-18 - One skill, one command, one installer](changes/2026-09-18-one-skill-one-installer.md) - records collapsing Akinator into one skill per platform, the one-line installer, the Windows hook fix, and what the always-on change got wrong.

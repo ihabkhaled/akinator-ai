@@ -14,7 +14,7 @@ veto at verify time costs the batch.
 | [akinator-librarian](../agents/akinator-librarian.md) - checks the knowledge delta against the tree: routing, index reachability, router sync, staleness, anti-gaming | **every batch, without exception** | any batch whose declared knowledge delta is missing, misplaced or untrue |
 
 The librarian fires before a commit exists, which is earlier and cheaper than
-any hook, and it reports which skill produces the missing artifact rather than
+any hook, and it reports which station reference produces the missing artifact rather than
 just an exit code. Never call a batch done over a `BLOCKED`.
 
 ## The dimension lenses
@@ -36,7 +36,7 @@ Claude Code loads them from `agents/` as subagents. Codex has no equivalent
 subagent surface, so the same lenses are applied inline there - the review
 questions are the same, only the dispatch differs.
 
-`skills/akinator-everything/SKILL.md` names which lens applies to which kind of
+`skills/everything/SKILL.md` names which lens applies to which kind of
 work - phase 2 for the plan-time review, step 22 inside phase 4 for verify.
 
 ## Adding a lens

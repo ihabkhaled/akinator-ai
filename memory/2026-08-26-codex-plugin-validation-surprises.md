@@ -56,6 +56,7 @@ The index now lives at `docs/skills.md`.
   test as its enforcement
 - `docs/compatibility.md` - the corrected contract table
 - `docs/deviations.md` - item 4, kept and corrected rather than rewritten
-- `scripts/generate_assets.py` - how the required assets are produced
+- `assets/akinator-icon.png`, `assets/akinator-logo.png` - the required assets;
+  hand-designed since 2026-09-18, when the drawing script was retired
 - [[verify-contracts-from-installed-plugins]] - the same lesson from the Claude
   side: the artifact beats the documentation

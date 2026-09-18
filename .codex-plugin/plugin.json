@@ -1,12 +1,12 @@
 {
   "name": "akinator",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Ask everything, document everything, skillify everything, rule everything. A behavioral operating system that makes it structurally impossible to change code without growing the knowledge layer around it.",
   "author": {
     "name": "Ihab Khaled"
   },
-  "homepage": "https://github.com/ihabkhaled/akinator",
-  "repository": "https://github.com/ihabkhaled/akinator",
+  "homepage": "https://github.com/ihabkhaled/akinator-ai",
+  "repository": "https://github.com/ihabkhaled/akinator-ai",
   "license": "MIT",
   "keywords": [
     "documentation",
@@ -35,7 +35,7 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/ihabkhaled/akinator",
+    "websiteURL": "https://github.com/ihabkhaled/akinator-ai",
     "composerIcon": "./assets/akinator-icon.png",
     "logo": "./assets/akinator-logo.png",
     "defaultPrompt": [

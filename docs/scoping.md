@@ -7,7 +7,7 @@ If a full pass costs the same on a comment typo as on a release, people stop
 running it. That is how this discipline dies in every repository where it dies -
 not by being rejected, but by being too expensive to be worth invoking.
 
-Run by `scripts/akinator_scope.py`.
+Run by `skills/everything/scripts/akinator_scope.py`.
 
 ## "Everything" means every station, not every file
 
@@ -25,7 +25,7 @@ Two stations are never scoped away:
 - **VERIFY** - a pass that skips it has no evidence.
 
 ```bash
-python scripts/akinator_scope.py plan --against HEAD~1
+python skills/everything/scripts/akinator_scope.py plan --against HEAD~1
 ```
 
 ```
@@ -64,7 +64,7 @@ still runs, and the batch states the empty delta explicitly.
 ## The interrupt budget
 
 ```bash
-python scripts/akinator_scope.py questions
+python skills/everything/scripts/akinator_scope.py questions
 ```
 
 At most **5 questions per session** by default, batched into one grouped ask and
@@ -98,7 +98,7 @@ Configure in `.ai/config.json`:
 - Docs: `docs/distil.md` - where the recurrence questions come from
 - Docs: `docs/akinator-v2-design.md` - cost control
 - Rules: `rules/06-gate-once-scoped-at-the-end.md` - the same principle for gates
-- Code: `scripts/akinator_scope.py`, `tests/test_scope.py`
+- Code: `skills/everything/scripts/akinator_scope.py`, `tests/test_scope.py`
 
 ## Review when
 

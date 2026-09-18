@@ -1,6 +1,6 @@
 # ADR 0005 - One command, not one per mode
 
-- **Status:** accepted
+- **Status:** accepted; mechanism superseded by ADR 0009 (2026-09-18)
 - **Date:** 2026-08-26
 - **Deciders:** Ihab Khaled (owner)
 
@@ -60,7 +60,8 @@ get invoked; it is how a user asks for a specific mode deliberately.
 
 ## Decision
 
-Akinator ships exactly one command: `commands/everything.md`.
+Akinator ships exactly one command: a file named `everything` in `commands/`
+(removed in 2026-09 by ADR 0009, which made the one skill the command).
 
 **It runs everything by default.** With no arguments, or with free text, it loads
 `akinator-everything` and runs the complete pass - every station, every
@@ -70,7 +71,7 @@ of Done is proven with evidence. The mode words `onboard`, `audit`, `status`,
 
 A second command is not added without the owner asking for one.
 
-**Renamed 2026-08-26.** The command file moved to `commands/everything.md` from
+**Renamed 2026-08-26.** The command file moved to `commands/` as `everything` from
 its original name, so it is invoked as `/akinator:everything` - the plugin
 namespace supplies the `akinator` half, and the file name supplies the rest.
 Still exactly one command; the name now says what it does.
@@ -110,7 +111,7 @@ which is the right default when no one typed a command at all.
 
 ## Related
 
-- Code: `commands/everything.md`
+- Code: `skills/everything/SKILL.md` - the one skill, which is also the command since ADR 0009 removed `commands/`
 - Memory: `memory/2026-08-26-single-command-preference.md`
 - Test: `tests/test_plugin_structure.py::test_there_is_exactly_one_command`
 - Docs: `docs/deviations.md` - every deviation from the build brief
@@ -118,7 +119,15 @@ which is the right default when no one typed a command at all.
 
 ## Superseded interface detail — 2026-09-18
 
-ADR 0006 supersedes the mode-dispatch portion of this decision. The invariant
+ADR 0008 (`0008-always-on-master-contract.md`) supersedes the mode-dispatch
+portion of this decision. The invariant
 that Akinator exposes exactly one explicit command remains. The command is
 `/akinator:everything`; mode words are no longer a user-facing API, and normal
 prompts activate the standing contract automatically.
+
+## Superseded mechanism - 2026-09-18 (ADR 0009)
+
+The invariant stands - exactly one explicit command - but a file in `commands/`
+did not deliver it: Claude Code lists every skill in its `/` menu as well, so the
+owner saw twenty-two entries. `docs/adr/0009-one-skill-one-command-one-installer.md`
+made the one skill the one command and removed `commands/` entirely.

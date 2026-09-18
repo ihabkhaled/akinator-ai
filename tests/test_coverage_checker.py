@@ -24,7 +24,8 @@ import pytest
 
 import akinator_coverage as cov
 
-SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "akinator_coverage.py"
+SCRIPT = (Path(__file__).resolve().parent.parent / "skills" / "everything"
+          / "scripts" / "akinator_coverage.py")
 
 
 # --------------------------------------------------------------------------
@@ -129,7 +130,7 @@ def rotten(tmp_path: Path) -> Path:
 
     # A knowledge check wired into a git hook.
     write(root, ".husky/pre-commit",
-          "#!/bin/sh\npython scripts/akinator_coverage.py --strict\n")
+          "#!/bin/sh\npython skills/everything/scripts/akinator_coverage.py --strict\n")
     return root
 
 
@@ -752,3 +753,38 @@ def test_claiming_vendored_status_does_not_excuse_a_dead_generator_path(
         "vendored wording must not suppress a claim about a local file"
     )
     assert "no_such_extractor.py" in hits[0].message
+
+
+# --------------------------------------------------------------------------
+# Cursor rules (.mdc)
+#
+# The scanner collected .md and .mdx only. Cursor's rule format is .mdc, so every
+# Cursor rule was invisible: never recognised as a router, never link-checked,
+# and a banner parser written specifically for .mdc frontmatter could not be
+# reached by any file. Found when Akinator's own router - 21 paths that exist only
+# in Akinator's checkout - was being copied into target repos as their Cursor rule
+# and the checker reported "no knowledge layer detected".
+# --------------------------------------------------------------------------
+
+CURSOR_RULE = (
+    "---\ndescription: house rules\nalwaysApply: true\n---\n\n"
+    "# House rules\n\n- See [the index](../../docs/README.md).\n"
+)
+
+
+def test_a_cursor_rule_counts_as_a_router(tmp_path: Path) -> None:
+    root = tmp_path / "cursor-only"
+    write(root, ".cursor/rules/house.mdc", CURSOR_RULE)
+    write(root, "docs/README.md", "# Docs\n")
+
+    repo = cov.Repo(root)
+    assert [repo.rel(p) for p in repo.routers()] == [".cursor/rules/house.mdc"]
+    assert repo.has_knowledge_layer()
+
+
+def test_a_dead_link_in_a_cursor_rule_is_flagged(tmp_path: Path) -> None:
+    root = tmp_path / "cursor-dead"
+    write(root, ".cursor/rules/house.mdc", CURSOR_RULE)   # docs/README.md absent
+
+    hits = by_check(root, "dead-links")
+    assert [f.path for f in hits] == [".cursor/rules/house.mdc"]

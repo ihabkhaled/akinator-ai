@@ -63,7 +63,7 @@ Batch 2 - refund handling
 - Mechanism: `agents/akinator-librarian.md` - runs at the end of every batch,
   compares the declared delta against the tree, and blocks completion. This is
   the primary enforcement and it fires before a commit exists.
-- Mechanism: `scripts/akinator_coverage.py` - the `reachability`, `doc-truth`
+- Mechanism: `skills/everything/scripts/akinator_coverage.py` - the `reachability`, `doc-truth`
   and `staleness` checks catch delivered-but-unindexed and
   delivered-but-untrue artifacts in CI.
 - Mechanism: `tests/test_plugin_structure.py::test_every_loop_station_has_a_skill`
