@@ -2,14 +2,6 @@
 name: akinator-rule-forge
 description: Use when a change establishes a constraint others must not break - an invariant, a forbidden pattern, a required call path, a boundary. Turns it into a numbered rule that carries a real enforcement mechanism, never prose alone.
 ---
-<!--
-DO NOT EDIT BY HAND.
-Installed from the Akinator plugin - the canonical akinator-rule-forge skill.
-No generator is named by path: this file travels into repositories
-that do not have one, where naming it would be a false claim.
-To update: reinstall Akinator, or regenerate inside an Akinator
-checkout. Local edits here are replaced either way.
--->
 
 # Akinator Rule Forge - station 8
 
@@ -21,9 +13,19 @@ who was not in the original conversation.
 **A rule without a live enforcement mechanism is not a rule.** That is the single
 law of this station, and `akinator-coverage` fails any rule that violates it.
 
+## Failure-to-rule path
+
+Every failure encountered during work is recorded in the failure/lesson ledger
+with symptom, root cause, fix and verification. Then ask: **would a reusable
+constraint prevent this class of failure from recurring?** If yes, this station
+is mandatory: forge that constraint into an enforced rule and link the failure
+record. If no, keep the failure record and state why a permanent rule would be
+incorrect. Never turn a transient outage or one-off external failure into a fake
+invariant.
+
 ## When to use
 
-The change established something that must hold from now on:
+The change or a failure established something that must hold from now on:
 
 - An invariant ("quota may only be mutated through `applyQuota`").
 - A forbidden pattern ("no direct `process.env` reads outside `config/`").
