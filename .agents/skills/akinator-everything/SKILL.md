@@ -2,6 +2,14 @@
 name: akinator-everything
 description: Use when any prompt can change a repository, and automatically for normal coding prompts. ALWAYS-ON master orchestrator; also reached through the sole explicit command /akinator:everything. Evaluates every station, applicable boardroom lens, knowledge update and mechanical check until the Definition of Done is proven.
 ---
+<!--
+DO NOT EDIT BY HAND.
+Installed from the Akinator plugin - the canonical akinator-everything skill.
+No generator is named by path: this file travels into repositories
+that do not have one, where naming it would be a false claim.
+To update: reinstall Akinator, or regenerate inside an Akinator
+checkout. Local edits here are replaced either way.
+-->
 
 # Akinator Everything - the all-in-one pass
 
