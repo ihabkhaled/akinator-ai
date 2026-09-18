@@ -2,6 +2,14 @@
 name: akinator-rule-forge
 description: Use when a change establishes a constraint others must not break - an invariant, a forbidden pattern, a required call path, a boundary. Turns it into a numbered rule that carries a real enforcement mechanism, never prose alone.
 ---
+<!--
+DO NOT EDIT BY HAND.
+Installed from the Akinator plugin - the canonical akinator-rule-forge skill.
+No generator is named by path: this file travels into repositories
+that do not have one, where naming it would be a false claim.
+To update: reinstall Akinator, or regenerate inside an Akinator
+checkout. Local edits here are replaced either way.
+-->
 
 # Akinator Rule Forge - station 8
 
