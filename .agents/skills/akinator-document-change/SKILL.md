@@ -2,6 +2,14 @@
 name: akinator-document-change
 description: Use in the same batch as any code change, before the batch is called done. Routes the change's why, its when-not-to, its business meaning and its operational consequence to their canonical homes in the knowledge taxonomy, and verifies each doc against the tree it describes.
 ---
+<!--
+DO NOT EDIT BY HAND.
+Installed from the Akinator plugin - the canonical akinator-document-change skill.
+No generator is named by path: this file travels into repositories
+that do not have one, where naming it would be a false claim.
+To update: reinstall Akinator, or regenerate inside an Akinator
+checkout. Local edits here are replaced either way.
+-->
 
 # Akinator Document Change - station 6
 
