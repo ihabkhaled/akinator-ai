@@ -20,6 +20,7 @@ Numbered, never renumbered. Written with `templates/rule.md`.
 | 10 | [Ledger records are redacted before they are written](10-ledger-records-are-redacted-before-write.md) - the ledger is committed, so a credential written into it is in git history forever | `tests/test_ledger.py` |
 | 11 | [Every invariant ships with a test that proves it fires](11-invariants-ship-with-a-mutation-test.md) - zero findings is exactly what a broken checker produces, so a clean run is not evidence | `tests/test_coverage_checker.py::test_every_invariant_has_a_test_that_proves_it_fires` |
 | 12 | [An artifact that travels names nothing only its birthplace has](12-artifacts-that-travel-name-nothing-local.md) - a generated file copied into another repository must not name its generator, its source or a rule; every such name is a claim about a tree it has never seen | `tests/test_codex_pack.py::test_the_installed_pack_leaves_a_target_repo_clean`, `tests/test_installer.py`, `tests/test_plugin_structure.py::test_the_skill_runs_its_tools_from_its_own_folder`, `skills/everything/scripts/akinator_coverage.py` (`generated`) |
+| 13 | [Every prompt is documented everywhere it lands](13-every-prompt-is-documented.md) - the wiki, requirements, drift and library pages update in the same batch as the change, generated facts stay exact and curated sections stay honest about gaps | `tests/test_wiki.py`, `tests/test_libraries.py`, `skills/everything/scripts/akinator_wiki.py check`, `skills/everything/scripts/extract_libraries.py --check`, `agents/akinator-librarian.md` |
 
 ## Adding a rule
 

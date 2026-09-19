@@ -32,6 +32,10 @@ about Akinator itself.
 | [ops-runbook.md](ops-runbook.md) | `templates/ops-runbook.md` | Migration procedure with a point of no return |
 | [router.md](router.md) | `templates/router.md` | A thin root router that indexes rather than mirrors |
 | [onboarding-mapping.md](onboarding-mapping.md) | `templates/onboarding-mapping.md` | Adopt-never-impose recorded as a contract |
+| [change-record.md](change-record.md) | `templates/change-record.md` | Before, change and now for one fix, with intent and verification |
+| [library-page.md](library-page.md) | `templates/library-page.md` | A library's generated facts beside its curated why, pitfalls and an honest gap |
+| [requirement.md](requirement.md) | `templates/requirement.md` | A changed requirement with its source, append-only history and a missing sibling |
+| [business-drift.md](business-drift.md) | `templates/business-drift.md` | A change of direction, the requirements it moved and the pages it corrected |
 
 ## How to read them
 
@@ -45,3 +49,6 @@ filled - particularly the sections that are usually left thin:
 - **The decision log** in a product doc - dated rows, appended, never edited.
 - **Point of no return** in a runbook - the sentence that matters at 3am.
 - **Reversal conditions** in a memory entry - what makes it prunable.
+- **The gap marker** in a library page - an unknown written as one, never guessed.
+- **The change history** in a requirement - the old wording kept, not overwritten.
+- **Decided by** in a drift entry - the field that matters most a year later.

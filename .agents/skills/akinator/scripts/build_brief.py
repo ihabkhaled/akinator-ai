@@ -61,14 +61,20 @@ DEFAULT_TIER = "standard"
 
 # Section budgets as a share of the tier. They sum to 1.0; the composer asserts
 # it, because a section table that quietly does not add up is a cap that slips.
+#
+# Requirements and drift were carved out of the other sections rather than added
+# on top: the tier did not grow, so every token they carry is a token something
+# else no longer does. Failures and constraints still hold the largest shares.
 SECTIONS: tuple[tuple[str, str, float], ...] = (
     ("identity", "What this system is", 0.05),
-    ("constraints", "Constraints that must not break", 0.21),
-    ("failures", "Recurring failures and their fixes", 0.25),
-    ("business", "Business rules with numbers", 0.17),
-    ("questions", "Open questions blocking work", 0.08),
-    ("map", "Where to look for what", 0.12),
-    ("pointers", "Everything else, by pointer", 0.12),
+    ("constraints", "Constraints that must not break", 0.19),
+    ("failures", "Recurring failures and their fixes", 0.21),
+    ("business", "Business rules with numbers", 0.14),
+    ("requirements", "Requirements - current, changed and missing", 0.10),
+    ("drift", "Business and product drift", 0.07),
+    ("questions", "Open questions blocking work", 0.07),
+    ("map", "Where to look for what", 0.08),
+    ("pointers", "Everything else, by pointer", 0.09),
 )
 
 
@@ -234,6 +240,81 @@ def collect_questions(repo: Path) -> list[Item]:
     return out
 
 
+# A requirement's place in the brief is decided by its status, and nothing else
+# may outrank that order: what is missing blocks work, what changed invalidates
+# work already done, what is current is the contract, and what was dropped is
+# listed only so it is not rebuilt. Strictly decreasing, so the score sort in
+# compose() reproduces the order exactly.
+REQUIREMENT_WEIGHT = {
+    "missing": value(1.0, 0.9, 0.9),
+    "changed": value(0.9, 0.9, 0.9),
+    "current": value(0.8, 0.8, 0.8),
+    "dropped": value(0.6, 0.6, 0.6),
+}
+# A status the ledger would reject still reaches the index - never dropped - but
+# ranks below every valid one. `akinator_ledger.py verify` is what flags it.
+UNKNOWN_REQUIREMENT_WEIGHT = value(0.5, 0.5, 0.5)
+
+
+def collect_requirements(repo: Path) -> list[Item]:
+    """What the product must do - missing first, then changed, then current."""
+    ledger = led.Ledger(repo)
+    out: list[Item] = []
+    for record in ledger.all("requirement"):
+        status = record.fields.get("status", "").strip() or "no status"
+        statement = " ".join(record.fields.get("statement", "").split())
+        source = " ".join(record.fields.get("source", "").split())
+        parts = [_clip(statement, 200) or led.MISSING]
+        for key in ("acceptance", "priority", "owner"):
+            extra = " ".join(record.fields.get(key, "").split())
+            if extra:
+                parts.append(f"**{key.title()}:** {_clip(extra, 120)}")
+        parts.append(f"**Source:** {_clip(source, 100) or led.MISSING}")
+        out.append(Item(
+            section="requirements",
+            title=f"{record.title} ({status})",
+            body=" ".join(parts),
+            path=f"{led.LEDGER_DIR}/requirement/{record.id}.md",
+            score=REQUIREMENT_WEIGHT.get(status, UNKNOWN_REQUIREMENT_WEIGHT),
+            tags=["requirement", status.replace(" ", "-")],
+        ))
+    return out
+
+
+# Drift that touches money or what is sold does the most damage when a session
+# builds on the old fact, so it carries the widest blast radius.
+DRIFT_BLAST = {
+    "business": 1.0,
+    "pricing": 1.0,
+    "product": 0.9,
+    "requirement": 0.9,
+    "scope": 0.9,
+    "architecture": 0.85,
+}
+
+
+def collect_drift(repo: Path) -> list[Item]:
+    """Facts that moved - so a session does not build on the old one."""
+    ledger = led.Ledger(repo)
+    out: list[Item] = []
+    for record in ledger.all("drift"):
+        area = " ".join(record.fields.get("area", "").split()) or "unspecified"
+        parts = []
+        for key in ("before", "after", "why", "impact"):
+            text = _clip(" ".join(record.fields.get(key, "").split()), 140)
+            if text or key != "impact":
+                parts.append(f"**{key.title()}:** {text or led.MISSING}")
+        out.append(Item(
+            section="drift",
+            title=f"{record.title} ({area})",
+            body=" ".join(parts),
+            path=f"{led.LEDGER_DIR}/drift/{record.id}.md",
+            score=value(0.9, 0.8, DRIFT_BLAST.get(area.lower(), 0.8)),
+            tags=["drift", area.lower()],
+        ))
+    return out
+
+
 def collect_map(repo: Path) -> list[Item]:
     """Where to look for what - the retrieval hops, not the content."""
     candidates = (
@@ -306,6 +387,8 @@ def compose(repo: Path) -> tuple[str, dict]:
         "constraints": collect_constraints,
         "failures": collect_failures,
         "business": collect_business,
+        "requirements": collect_requirements,
+        "drift": collect_drift,
         "questions": collect_questions,
         "map": collect_map,
     }

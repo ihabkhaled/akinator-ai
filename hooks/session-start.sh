@@ -14,6 +14,12 @@ command - it is the same skill.
 ASK -> RESOLVE -> AUDIT -> PLAN -> IMPLEMENT -> DOCUMENT -> SKILLIFY -> RULE ->
 CONTEXTIFY -> MEMOIZE -> INDEX+SYNC -> VERIFY
 
+Every prompt is documented everywhere it lands, in the same batch: the living
+wiki (product, business, market, requirements, drift, architecture, libraries,
+stack, infra, testing, UX, project, decisions, changes), README and install docs,
+every agent router, rules, memory, context and the ledger. Ask a grouped battery
+of questions with recommended defaults; honest gaps only, never invented facts.
+
 Code + knowledge is the change. Preserve WHAT, WHY, WHO/agent when knowable,
 WHEN, BEFORE, NOW, NEXT, business/product intent, technical reasoning, decisions,
 failures, constraints and consequences. Record failures; reusable prevention

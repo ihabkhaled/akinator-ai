@@ -124,9 +124,10 @@ def test_a_real_change_alongside_a_lockfile_is_not_trivial(
 # The interrupt budget
 # --------------------------------------------------------------------------
 
-def test_default_budget_is_five() -> None:
-    """Twenty questions in one session means zero answers by session three."""
-    assert sc.DEFAULT_INTERRUPT_BUDGET == 5
+def test_default_budget_is_fifteen() -> None:
+    """The owner wants many questions per prompt (ADR 0010) - grouped into one
+    message, ranked, each with a recommended default."""
+    assert sc.DEFAULT_INTERRUPT_BUDGET == 15
 
 
 def test_budget_is_configurable(tmp_path: Path) -> None:

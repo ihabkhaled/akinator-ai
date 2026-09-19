@@ -35,11 +35,22 @@ should do.
 
 What you get:
 
-- One skill carrying 20 station references plus the full procedure (21 reference files) that cover the whole loop - intake
+- One skill carrying 21 station references plus the full procedure (23 reference files) that cover the whole loop - intake
   questions, claim-vs-code audit, batch planning, documentation routing, skill
   and rule creation, context extractors, memory, ADRs, index and router sync. Plus business, product and
   operational mapping, so pricing rules, feature intent and restart-vs-rebuild
   procedures live in the repo instead of in someone's head.
+- A living wiki, at `docs/wiki/index.md` - one canonical home per kind of
+  corporate knowledge (product, business, market, requirements, drift,
+  architecture, libraries, stack, infra, testing/UAT, UX, project, decisions),
+  adopted from whatever home the repository already has. Facts are generated
+  so they cannot rot; the why beside them is curated by hand; an unknown is
+  written as an honest gap, never a guess.
+- Up to 15 questions per prompt, asked once in a single ranked message, each
+  with a recommended default - and decision superpowers that decide the
+  reversible outright and bring the owner 2-4 costed options with one
+  recommendation for anything touching money, permissions, deletion, security
+  or a public contract.
 - 7 boardroom review agents with real vetoes - business owner, CTO, product
   owner, ops, analyst, PM, and a librarian that blocks any batch whose knowledge
   delta is missing.
@@ -171,6 +182,8 @@ gate-economy, router-sync
 ## Review when
 
 - The skill count, command surface or invariant count changes.
+- The station reference count, the wiki category count, or the question
+  budget (15) changes.
 - Examples show the Claude Code entry; in Codex it is `$akinator`, in Cursor
   `/akinator`. Always-on means the same words work as an ordinary prompt.
-- Last verified: 2026-09-18, against plugin version 1.2.0.
+- Last verified: 2026-09-19, against plugin version 2.0.0.

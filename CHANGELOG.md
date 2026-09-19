@@ -4,6 +4,56 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
+## [2.0.0] - 2026-09-19
+
+Every prompt documented: the repository becomes its own living wiki. Still one
+skill, one command, always on. Major because the behavioral contract changed -
+the question budget and what a batch owes the knowledge layer both moved.
+Decision record: `docs/adr/0010-every-prompt-documented-living-wiki.md`. Change
+record: `docs/changes/2026-09-19-living-wiki.md`.
+
+### Added
+
+- **The living-wiki mandate**, a new station reference
+  `skills/everything/references/akinator-wiki.md`: document every prompt
+  everywhere it lands - product, business, market, requirements, drift,
+  architecture, libraries, stack, infra, testing/UAT, UX, project management,
+  decisions - one home per kind of knowledge under `docs/wiki/`, adopted from
+  an existing home where the repository already has one.
+- **Decision superpowers**, a new station reference
+  `skills/everything/references/akinator-decide.md`: with the full context
+  loaded, decide the reversible and recommend the rest, with options,
+  trade-offs and a recommendation.
+- **`skills/everything/scripts/extract_libraries.py`** - a page per dependency
+  under `docs/wiki/libraries`, generated facts (version, kind, manifests, files
+  that use it) between `<!-- akinator:generated:begin/end -->` markers, curated
+  why/how/pitfalls/upgrade sections that survive regeneration byte for byte.
+- **`skills/everything/scripts/akinator_wiki.py`** - `init | index | gaps |
+  check`: builds the wiki home at `docs/wiki/index.md`, adopts existing homes
+  instead of duplicating them, and turns every gap and homeless category into a
+  question.
+- **Two new ledger record kinds**, surfaced in the context brief:
+  `requirement` (statement, status current/changed/missing/dropped, source)
+  and `drift` (area, before, after, why).
+- **Three templates**: `templates/examples/library-page.md`,
+  `templates/examples/requirement.md`, `templates/examples/business-drift.md`.
+- **`rules/13-every-prompt-is-documented.md`**.
+- Akinator's own `docs/wiki/`, built under its own discipline.
+
+### Changed
+
+- **The question budget rose from five to fifteen per prompt**, delivered as
+  one grouped, ranked message, each question carrying a recommended default -
+  see `docs/scoping.md`. "Go with recommendations" is always a complete answer.
+- **The SessionStart contract and every rendered router now carry the
+  every-prompt-documented rule.**
+- **2.0.0, not 1.3.0**, because the behavioral contract changed: what a batch
+  is required to produce, and how many questions a prompt may ask, are both
+  part of the contract target repositories depend on.
+
+See `docs/adr/0010-every-prompt-documented-living-wiki.md` for the full
+reasoning, including the two earlier decisions this reverses in part.
+
 ## [1.2.0] - 2026-09-18
 
 One skill, one command, one installer - and the always-on work from PR #1, which

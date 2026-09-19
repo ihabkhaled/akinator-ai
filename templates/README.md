@@ -1,6 +1,6 @@
 # Templates
 
-What Akinator writes into target repositories. Eleven templates, each with a filled
+What Akinator writes into target repositories. Fourteen templates, each with a filled
 example in `examples/`.
 
 A template is a skeleton with placeholders. The example is the same document
@@ -19,8 +19,11 @@ filled in properly - particularly the sections that are usually left thin.
 | [router.md](router.md) | Thin CLAUDE.md / AGENTS.md / CODEX.md index skeletons | [example](examples/router.md) |
 | [onboarding-mapping.md](onboarding-mapping.md) | Adopt-never-impose, recorded as a contract | [example](examples/onboarding-mapping.md) |
 | [change-record.md](change-record.md) | Durable before → change → now provenance, intent and verification | [example](examples/change-record.md) |
+| [library-page.md](library-page.md) | One load-bearing dependency: generated facts, plus why we use it, how, what bit us and how to upgrade | [example](examples/library-page.md) |
+| [requirement.md](requirement.md) | One requirements-register entry - current, changed, missing or dropped - with its source and append-only history | [example](examples/requirement.md) |
+| [business-drift.md](business-drift.md) | One change of direction: before, after, why, who decided, impact, and every page it made untrue | [example](examples/business-drift.md) |
 
-All eleven examples are written against **one** fictional product, so they
+All fourteen examples are written against **one** fictional product, so they
 cross-reference each other the way real artifacts do. See
 [examples/README.md](examples/README.md).
 

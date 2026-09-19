@@ -57,6 +57,8 @@ procedure of what used to be separate skills, and keep their old names as
 | 11 INDEX | [akinator-index-sync](../skills/everything/references/akinator-index-sync.md) | An artifact was created, renamed, moved or deleted. Unindexed means nonexistent |
 | 11 SYNC | [akinator-router-sync](../skills/everything/references/akinator-router-sync.md) | What a router says has changed. All routers update together or truth forks |
 | 12 VERIFY | [akinator-gate-economy](../skills/everything/references/akinator-gate-economy.md) | Before any lint, typecheck, test or build, and before any commit during multi-step work |
+| ALWAYS | [akinator-wiki](../skills/everything/references/akinator-wiki.md) | After every prompt that changes or decides anything - even with no code change. The repository is its own wiki; fans the update out to every home it affects (product, business, market, requirements, drift, architecture, libraries, stack, infra, testing, UX, project, decisions, changes, glossary, onboarding), in the same batch |
+| 1 ASK / 4 PLAN | [akinator-decide](../skills/everything/references/akinator-decide.md) | A choice must be made - forced by implementation, asked by the owner, or a prompt contradicts a recorded decision. Classifies decide-and-record versus recommend-and-ask, builds costed options, recommends one, and records the outcome |
 
 ### When the work touches their domain
 
@@ -70,6 +72,17 @@ procedure of what used to be separate skills, and keep their old names as
 | [akinator-coverage](../skills/everything/references/akinator-coverage.md) | Auditing whether a knowledge layer is complete, reachable and true |
 | [akinator-anti-gaming](../skills/everything/references/akinator-anti-gaming.md) | Reviewing whether documentation work is real, or when tempted to weaken a failing check |
 | [akinator-resource-guard](../skills/everything/references/akinator-resource-guard.md) | Before anything heavy, and at the end of every task |
+
+### Templates these stations write
+
+`akinator-wiki` and `akinator-decide` write against three templates added for
+the living wiki, each with a filled example in `templates/examples/`:
+[library-page.md](../templates/library-page.md) (generated facts plus curated
+why/how/pitfalls/upgrade - written by `extract_libraries.py`, curated by hand),
+[requirement.md](../templates/requirement.md) (one requirements-register entry:
+current, changed, missing or dropped, with its source and append-only
+history), and [business-drift.md](../templates/business-drift.md) (one change
+of direction: before, after, why, who decided, impact).
 
 ## Changing the skill
 

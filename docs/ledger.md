@@ -3,9 +3,9 @@
 What happened, so the next session does not rediscover it.
 
 The ledger is the **capture** stage of the v2 pipeline: an append-only,
-committed record of failures, questions, decisions and surprises. It feeds the
-recurrence detection that turns a repeated failure into a rule, and it is the
-raw material the context brief is composed from.
+committed record of failures, questions, decisions, surprises, requirements and
+drift. It feeds the recurrence detection that turns a repeated failure into a
+rule, and it is the raw material the context brief is composed from.
 
 Managed by `skills/everything/scripts/akinator_ledger.py`. Stored under `.ai/ledger/`.
 
@@ -19,17 +19,44 @@ The cost is that error text goes into git history, which is why
 `rules/10-ledger-records-are-redacted-before-write.md` exists and why redaction
 is not optional.
 
-## The four record types
+## The six record types
 
-| Type | Captures | Required fields | Why it is not derivable from the tree |
-|---|---|---|---|
-| `failure` | a thing that broke, fingerprinted | symptom, trigger, root cause, fix | The symptom and the cause are different facts, and only whoever debugged it holds both |
-| `question` | something asked and answered | asked, answer, answered by | The answer exists only in a conversation that is about to be discarded |
-| `decision` | a choice between real alternatives | what, alternatives, why | Rejected options never appear in a diff |
-| `surprise` | non-obvious behavior | behavior, misleading symptom, why | The thing that cost three hours and looks obvious afterwards |
+| Type | Captures | Required fields | Optional fields | Why it is not derivable from the tree |
+|---|---|---|---|---|
+| `failure` | a thing that broke, fingerprinted | symptom, trigger, root cause, fix | module, operation, any other | The symptom and the cause are different facts, and only whoever debugged it holds both |
+| `question` | something asked and answered | asked, answer, answered by | any | The answer exists only in a conversation that is about to be discarded |
+| `decision` | a choice between real alternatives | what, alternatives, why | any | Rejected options never appear in a diff |
+| `surprise` | non-obvious behavior | behavior, misleading symptom, why | any | The thing that cost three hours and looks obvious afterwards |
+| `requirement` | what the product must do, and where that stands | statement, status, source | priority, acceptance, owner | Code shows what was built, never what was asked for, what changed, or what is still missing |
+| `drift` | a business, product or scope fact that moved | area, before, after, why | impact, decided_by | A diff shows the new fact and hides the old one; the reason it moved lives only in a meeting |
 
 A record missing a required field is **malformed**, because the missing field is
-always the one that made the record worth writing.
+always the one that made the record worth writing. The `_not recorded_`
+placeholder the renderer writes for an unsupplied field never satisfies
+`verify` - but the honest gap marker
+`_Unknown - ask the owner and record the answer._` does, because it states an
+unknown instead of hiding one. A drift whose reason nobody knows is exactly the
+drift worth recording.
+
+### Requirement status is a closed set
+
+| Status | Means | Brief order |
+|---|---|---|
+| `missing` | needed, not built - blocks work | first |
+| `changed` | built against an older version - invalidates work already done | second |
+| `current` | the contract as it stands | third |
+| `dropped` | deliberately abandoned - listed so it is not rebuilt | last |
+
+Anything else - `done`, `in-progress`, `Current` - makes the record **malformed**,
+and `add` refuses it before anything is written. A free-text status lets
+"done-ish" in, and a status nobody can sort on is a status nobody reads.
+
+### Drift areas are examples, not a closed set
+
+`business`, `pricing`, `product`, `scope`, `requirement` and `architecture` are
+the usual ones, and the brief ranks money-touching areas (`business`,
+`pricing`) highest. Any other area is accepted: a closed list would push real
+drift into the wrong bucket rather than keep it out.
 
 ### symptom-as-first-observed
 
@@ -94,6 +121,22 @@ python skills/everything/scripts/akinator_ledger.py add failure \
 python skills/everything/scripts/akinator_ledger.py occurred <fingerprint> --source git \
   --note "revert commit on the same file"
 
+# record a requirement - status is one of missing | changed | current | dropped
+python skills/everything/scripts/akinator_ledger.py add requirement \
+  --title "exports finish in under 30 seconds" \
+  --field statement="an export of 10k rows completes in under 30 seconds" \
+  --field status=missing --field source="product review" \
+  --field acceptance="p95 under 30s on the staging dataset"
+
+# record drift - the old fact, the new fact, and why it moved
+python skills/everything/scripts/akinator_ledger.py add drift \
+  --title "the free tier export quota was cut" \
+  --field area=pricing --field before="10 exports a day" \
+  --field after="3 exports a day" --field why="storage cost per row tripled"
+
+# every requirement (or every drift) as JSON
+python skills/everything/scripts/akinator_ledger.py list --type requirement --json
+
 # what has happened more than once, and should become a rule
 python skills/everything/scripts/akinator_ledger.py list --recurring
 
@@ -138,5 +181,6 @@ exists to remove.
 ## Review when
 
 - The record schema gains a field, or a new record type is added.
+- The requirement statuses change, or a drift area earns its own weight in the brief.
 - A fingerprint collision is reported and the discriminator is split.
-- Last verified: 2026-08-26.
+- Last verified: 2026-09-19.

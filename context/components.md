@@ -26,7 +26,7 @@ command. Codex and Cursor read the generated copy in `.agents/skills/`.
 |---|---|---|---|
 | `everything` (`skills/everything/SKILL.md`) | `/akinator:everything` | `$akinator` | `/akinator` |
 
-## Station references - 21
+## Station references - 23
 
 Inside the one skill, opened when the work reaches that station. None is
 a skill of its own, so none is an entry in any menu.
@@ -39,10 +39,11 @@ a skill of its own, so none is an entry in any menu.
 | `akinator-business-map` | 6 DOCUMENT | work touches money, plans, pricing, quotas, entitlements, limits, trials, refunds, proration, discounts, taxes or anything a customer is... |
 | `akinator-contextify` | 9 CONTEXTIFY | a change alters a structural fact about the system - ownership, module boundaries, routes, ports, events, permissions, environment... |
 | `akinator-coverage` | 12 VERIFY | to audit whether a repository's knowledge layer is complete, reachable and true - before claiming onboarding is done, when docs are... |
+| `akinator-decide` | 4 PLAN / 12 VERIFY - decide or recommend with evidence | a choice has to be made - forced by implementation, asked for by the owner, raised by a prompt that contradicts a recorded decision, or... |
 | `akinator-document-change` | 6 DOCUMENT | in the same batch as any code change, before the batch is called done. |
 | `akinator-gate-economy` | 12 VERIFY | before running any lint, typecheck, test or build, and before any commit or push during multi-step work. |
 | `akinator-index-sync` | 11 INDEX | whenever a knowledge artifact is created, renamed, moved or deleted - a rule, skill, doc, context map, ADR or memory entry. |
-| `akinator-intake` | 1 ASK | before planning any substantive work, and whenever a request has two readings that lead to materially different work, or when... |
+| `akinator-intake` | 1 ASK | at the start of every prompt that can change the repository, whenever a request has two readings that lead to materially different work,... |
 | `akinator-memoize` | 10 MEMOIZE | a session produces a durable fact worth carrying forward - a decision made without an ADR, an owner preference, a surprise, a dead end, a... |
 | `akinator-onboard` | install | installing Akinator's standing behavior into a repository for the first time, when a repo has no knowledge layer and an agent keeps... |
 | `akinator-ops-map` | 6 DOCUMENT | a change alters how the system is deployed, migrated, restarted, rebuilt, recovered or rolled back - schema changes, dependency changes,... |
@@ -52,6 +53,7 @@ a skill of its own, so none is an entry in any menu.
 | `akinator-router-sync` | 11 SYNC | whenever a change alters what an AI entry-point file should say - CLAUDE.md, AGENTS.md, CODEX.md, GEMINI.md, cursor rules, or any... |
 | `akinator-rule-forge` | 8 RULE | a change establishes a constraint others must not break - an invariant, a forbidden pattern, a required call path, a boundary. |
 | `akinator-skillify` | 7 SKILLIFY | a procedure was worked out during a task - a debugging path, a deployment sequence, a migration recipe, a setup dance, a diagnostic order. |
+| `akinator-wiki` | every - document every prompt everywhere it lands | after every prompt that changes or decides anything - code, scope, a requirement, a business rule, a library, a priority, a plan - and at... |
 | `akinator` | 2 RESOLVE - creed, loop, taxonomy | you need the full creed, the twelve-station loop, the knowledge taxonomy (where each kind of fact lives) or the non-negotiables in detail. |
 | `procedure` | all - the full pass, step by step |  |
 
@@ -80,7 +82,7 @@ same contract as an `AGENTS.md` block and an always-applied rule.
 |---|---|
 | `SessionStart` | `sh ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh` |
 
-## Tools - 7
+## Tools - 9
 
 Inside the skill, so they travel with it to every platform and run in
 whatever repository it is installed into.
@@ -92,7 +94,9 @@ whatever repository it is installed into.
 | `skills/everything/scripts/akinator_ledger.py` | The Akinator ledger - what happened, so the next session does not rediscover it. |
 | `skills/everything/scripts/akinator_rules.py` | Harden - rule evolution and conflict detection. |
 | `skills/everything/scripts/akinator_scope.py` | Scope a pass to what actually changed, and budget the questions. |
+| `skills/everything/scripts/akinator_wiki.py` | The living wiki - the repository as its own Confluence. |
 | `skills/everything/scripts/build_brief.py` | Compose the context brief - what a new session actually reads. |
+| `skills/everything/scripts/extract_libraries.py` | Generate the library wiki - one page per declared dependency. |
 | `skills/everything/scripts/extract_stack.py` | Generate the stack map - dependencies and modules, extracted from the tree. |
 
 ## Build scripts - 4
@@ -115,7 +119,7 @@ One installer for Claude Code, Codex and Cursor, in both shells.
 | `install.sh` | Akinator installer - Claude Code, Codex and Cursor, straight from GitHub. |
 | `install.ps1` | Akinator installer for Windows - Claude Code, Codex and Cursor, from GitHub. |
 
-## Templates - 11
+## Templates - 14
 
 What Akinator writes into target repositories. Every template ships a
 filled example.
@@ -123,13 +127,16 @@ filled example.
 | Template | Filled example |
 |---|---|
 | `templates/adr.md` | `templates/examples/adr.md` |
+| `templates/business-drift.md` | `templates/examples/business-drift.md` |
 | `templates/business-logic.md` | `templates/examples/business-logic.md` |
 | `templates/change-record.md` | `templates/examples/change-record.md` |
 | `templates/context-map.md` | `templates/examples/context-map.md` |
+| `templates/library-page.md` | `templates/examples/library-page.md` |
 | `templates/memory.md` | `templates/examples/memory.md` |
 | `templates/onboarding-mapping.md` | `templates/examples/onboarding-mapping.md` |
 | `templates/ops-runbook.md` | `templates/examples/ops-runbook.md` |
 | `templates/product-feature.md` | `templates/examples/product-feature.md` |
+| `templates/requirement.md` | `templates/examples/requirement.md` |
 | `templates/router.md` | `templates/examples/router.md` |
 | `templates/rule.md` | `templates/examples/rule.md` |
 | `templates/skill.md` | `templates/examples/skill.md` |

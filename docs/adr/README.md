@@ -31,6 +31,7 @@ and on what grounds, is knowledge.
 | [0007](0007-vendored-artifacts-declare-origin-not-generator.md) | A vendored artifact declares its origin, not a generator | accepted | the pack stops being copied and starts being referenced in place, or a second artifact needs to travel |
 | [0008](0008-always-on-master-contract.md) | Always-on master contract, one explicit command, and a living wiki | accepted; point 5 superseded by 0009 | Claude, Codex or Cursor changes its hook, rules or skill-invocation contract |
 | [0009](0009-one-skill-one-command-one-installer.md) | One skill, one command, one installer - the stations are references inside the one skill | accepted | Codex and Cursor gain a user-facing way to hide a skill, or a station needs its own tool permissions |
+| [0010](0010-every-prompt-documented-living-wiki.md) | Every prompt documented - the repository is its own wiki; generated facts, curated why, honest gaps, many questions with defaults | accepted | owners answer most questions with the defaults, or curated library sections stay gaps for months |
 
 ## Adding one
 

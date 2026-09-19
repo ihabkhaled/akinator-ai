@@ -1,5 +1,5 @@
 {
   "_comment": "Akinator configuration. Hand-maintained - not generated. The brief tier sets how many tokens .ai/BRIEF.md may spend: lean 4000, standard 12000, deep 25000. Override the tier's default with brief_budget if you need a specific number.",
   "brief_tier": "standard",
-  "interrupt_budget": 5
+  "interrupt_budget": 15
 }

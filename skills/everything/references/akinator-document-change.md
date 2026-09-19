@@ -12,7 +12,9 @@ about itself.**
 ## When to use
 
 In the same batch as station 5, every time, before the batch is called done. Also
-when deleting behavior - deletion is a documentation event.
+when deleting behavior - deletion is a documentation event. A prompt that
+decides something with no code change - a requirement dropped, a scope cut - is
+documented too, through [akinator-wiki](akinator-wiki.md).
 
 ## When NOT to use
 
@@ -47,6 +49,10 @@ Record, when applicable:
 - **Future implications / follow-ups**, clearly labeled as future rather than done.
 - **Stale when** — what event would make the record's current-state claims stale.
 
+A field nobody knows is written as the exact gap marker line
+`_Unknown - ask the owner and record the answer._`, never guessed - the wiki's
+gap list turns it into the next intake question.
+
 History is not the same as current truth: keep the change record immutable enough
 to explain the past, while current product/business/architecture docs describe
 the resulting present.
@@ -73,7 +79,7 @@ justified empty delta, not a skipped station.
 
 | Answer | Home | Skill |
 |---|---|---|
-| Why this shape, with alternatives rejected | `docs/adr/` | `akinator-adr` |
+| Why this shape, with alternatives rejected | `docs/adr/` | `akinator-adr`, after `akinator-decide` |
 | Why this shape, no real alternatives | inline in the relevant `docs/` page | this station |
 | When not to do this | the rule, if it is a constraint; otherwise the doc | `akinator-rule-forge` |
 | Business meaning, numbers, money semantics | `docs/business/` | `akinator-business-map` |
@@ -81,8 +87,20 @@ justified empty delta, not a skipped station.
 | Deployment, migration, restart, recovery, rollback | `docs/ops/` | `akinator-ops-map` |
 | A structural fact that changed | `context/` | `akinator-contextify` |
 | A surprise, a preference, a decision worth remembering | `memory/` | `akinator-memoize` |
+| A requirement added, reworded, found missing or dropped | the requirements register | `akinator-wiki` |
+| A change of direction - business, product, scope, architecture | the drift log, and every page it made untrue | `akinator-wiki` |
+| A dependency added, removed, upgraded, or one that bit | its library page: regenerated facts, curated why | `akinator-wiki` |
+| Anything a wiki category holds - architecture, infra, testing and UAT, UX, project status, market, glossary, onboarding | the wiki category page, or the home it indexes | `akinator-wiki` |
+| A command, prerequisite, setup step or user-visible feature | the README and every install page | this station |
+| Anything an agent must know to act here | every router together - `CLAUDE.md`, `AGENTS.md`, `CODEX.md`, `GEMINI.md`, every other agent entry file, the Cursor rules, the Copilot instructions | `akinator-router-sync` |
 
 Never write the same fact into two homes. The second one is a link.
+
+This table covers the code change. The full per-prompt fan-out - every home a
+prompt can move, including decisions made with no diff at all - is
+[akinator-wiki](akinator-wiki.md). Walk it too: a change that is documented in
+its code docs and nowhere in the wiki, the README or the routers is half
+documented.
 
 ### 4. Write it so it earns its bytes
 
@@ -101,9 +119,14 @@ Each doc change states:
 When behavior is removed:
 
 1. Find every doc that described it - grep the removed symbols, routes, flags and
-   feature names across `docs/`, `rules/`, `context/`, `memory/` and the routers.
+   feature names across `docs/`, `rules/`, `context/`, `memory/`, the wiki, the
+   README and install docs, and every router.
 2. Delete or correct each one **in this batch**.
-3. If the behavior was removed for a reason worth knowing, that reason is an ADR
+3. Mark every requirement it satisfied as **dropped**, with why and who decided,
+   and add a drift log entry if the product changed direction
+   ([akinator-wiki](akinator-wiki.md)). Deleting the requirement instead invites
+   someone to rebuild it.
+4. If the behavior was removed for a reason worth knowing, that reason is an ADR
    or a memory entry - the knowledge outlives the code.
 
 A doc describing deleted behavior is a **critical** finding in
@@ -139,6 +162,11 @@ This verification is what separates documentation from fiction.
 - [ ] The four questions were asked for this change, and answered or explicitly
       dismissed.
 - [ ] Every answer is written into exactly one canonical home.
+- [ ] The wiki fan-out was walked: requirements register, drift log, library
+      pages and wiki categories are current where the change affected them, or
+      stated unaffected.
+- [ ] The README, the install docs and every agent router say the same thing
+      as the change.
 - [ ] Every doc touched states what would make it stale.
 - [ ] Every path, symbol and command named in a touched doc exists in the tree.
 - [ ] If behavior was deleted, every doc describing it was found and corrected in

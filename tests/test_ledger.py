@@ -13,6 +13,7 @@ than by reading the code:
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -263,3 +264,164 @@ def test_this_repo_ledger_is_well_formed(repo: Path) -> None:
     """Akinator must not ship a malformed ledger it would reject elsewhere."""
     problems = led.Ledger(repo).verify()
     assert not problems, problems
+
+
+# --------------------------------------------------------------------------
+# Requirements and drift - the product and business half of the ledger
+# --------------------------------------------------------------------------
+
+def _requirement(status: str = "current", **extra: str) -> led.Record:
+    fields = {
+        "statement": "an export finishes in under 30 seconds for 10k rows",
+        "status": status,
+        "source": "product review, 2026-09-01",
+    }
+    fields.update(extra)
+    return led.Record(
+        kind="requirement", id=f"export-under-30s-{status}",
+        title="exports finish in under 30 seconds", fields=fields,
+    )
+
+
+def _drift(**extra: str) -> led.Record:
+    fields = {
+        "area": "pricing",
+        "before": "the free tier allowed 10 exports a day",
+        "after": "the free tier allows 3 exports a day",
+        "why": "export cost per row tripled after the storage migration",
+    }
+    fields.update(extra)
+    return led.Record(
+        kind="drift", id="free-tier-export-quota-cut",
+        title="the free tier export quota was cut", fields=fields,
+    )
+
+
+def test_the_new_kinds_are_registered() -> None:
+    assert {"requirement", "drift"} <= set(led.TYPES)
+    assert led.REQUIRED["requirement"] == ("statement", "status", "source")
+    assert led.REQUIRED["drift"] == ("area", "before", "after", "why")
+    assert set(led.REQUIREMENT_STATUSES) == {"current", "changed", "missing", "dropped"}
+
+
+@pytest.mark.parametrize("record", [
+    _requirement("missing", priority="p1", acceptance="p95 under 30s", owner="exports team"),
+    _drift(impact="free users hit the cap by noon", decided_by="pricing council"),
+], ids=["requirement", "drift"])
+def test_new_kinds_round_trip(ledger: led.Ledger, record: led.Record) -> None:
+    fields = dict(record.fields)
+    ledger.write(record)
+    parsed = led.parse(ledger.path_for(record.kind, record.id))
+    assert parsed.kind == record.kind
+    assert parsed.id == record.id
+    assert parsed.title == record.title
+    assert parsed.fields == fields, "every required and optional field must survive"
+    assert ledger.verify() == []
+
+
+@pytest.mark.parametrize("status", led.REQUIREMENT_STATUSES)
+def test_every_valid_requirement_status_verifies(
+    ledger: led.Ledger, status: str,
+) -> None:
+    """The healthy case: the checker must stay silent on each allowed status."""
+    ledger.write(_requirement(status))
+    assert ledger.verify() == []
+
+
+@pytest.mark.parametrize("kind,missing", [
+    (kind, field)
+    for kind in ("requirement", "drift")
+    for field in led.REQUIRED[kind]
+])
+def test_a_new_kind_missing_a_required_field_is_malformed(
+    ledger: led.Ledger, kind: str, missing: str,
+) -> None:
+    record = _requirement() if kind == "requirement" else _drift()
+    del record.fields[missing]
+    ledger.write(record)
+    problems = ledger.verify()
+    assert any(f"missing required field '{missing}'" in p for p in problems), problems
+
+
+@pytest.mark.parametrize("status", ["done", "in-progress", "Current", "maybe"])
+def test_an_invalid_requirement_status_is_malformed(
+    ledger: led.Ledger, status: str,
+) -> None:
+    """A free-text status lets "done-ish" in, and a status nobody can sort on
+    is a status nobody reads."""
+    ledger.write(_requirement(status))
+    problems = ledger.verify()
+    assert len(problems) == 1, problems
+    assert "invalid status" in problems[0] and status in problems[0]
+
+
+def test_an_honest_gap_marker_is_not_a_missing_field(ledger: led.Ledger) -> None:
+    """A drift whose reason nobody knows is exactly the drift worth recording.
+    The gap marker states the unknown honestly; the placeholder the renderer
+    writes for an unsupplied field must still fail."""
+    ledger.write(_drift(why="_Unknown - ask the owner and record the answer._"))
+    assert ledger.verify() == []
+
+
+@pytest.mark.parametrize("record", [
+    _requirement(source="ticket pasted with AKIAIOSFODNN7EXAMPLE in it"),
+    _drift(before="postgres://admin:hunter2pass@db.internal:5432/app",
+           impact="leaked sk-abcdefghijklmnopqrstuvwxyz0123456789"),
+], ids=["requirement", "drift"])
+def test_new_kinds_are_redacted_before_write(
+    tmp_path: Path, record: led.Record,
+) -> None:
+    (tmp_path / ".env").write_text("TOKEN=supersecretvalue123\n", encoding="utf-8")
+    record.title = record.title + " supersecretvalue123"
+    written = led.Ledger(tmp_path).write(record).read_text(encoding="utf-8")
+    for secret in ("supersecretvalue123", "AKIAIOSFODNN7EXAMPLE",
+                   "hunter2pass", "sk-abcdefghijklmnopqrstuvwxyz0123456789"):
+        assert secret not in written, f"{secret} survived redaction"
+    assert "[redacted:" in written
+
+
+def test_cli_adds_and_lists_the_new_kinds(tmp_path: Path, capsys) -> None:
+    root = str(tmp_path)
+    assert led.main([
+        "--root", root, "add", "requirement", "--title", "Exports under 30s",
+        "--field", "statement=exports finish in under 30 seconds",
+        "--field", "status=changed", "--field", "source=product review",
+    ]) == 0
+    assert led.main([
+        "--root", root, "add", "drift", "--title", "Free tier quota cut",
+        "--field", "area=pricing", "--field", "before=10 a day",
+        "--field", "after=3 a day", "--field", "why=storage cost",
+    ]) == 0
+    assert (tmp_path / ".ai/ledger/requirement/exports-under-30s.md").is_file()
+    assert (tmp_path / ".ai/ledger/drift/free-tier-quota-cut.md").is_file()
+    capsys.readouterr()
+
+    for kind, record_id in (("requirement", "exports-under-30s"),
+                            ("drift", "free-tier-quota-cut")):
+        assert led.main(["--root", root, "list", "--type", kind, "--json"]) == 0
+        listed = json.loads(capsys.readouterr().out)
+        assert [(r["kind"], r["id"]) for r in listed] == [(kind, record_id)]
+
+    assert led.main(["--root", root, "verify"]) == 0
+
+
+def test_cli_refuses_an_invalid_status_and_writes_nothing(
+    tmp_path: Path, capsys,
+) -> None:
+    code = led.main([
+        "--root", str(tmp_path), "add", "requirement", "--title", "Vague",
+        "--field", "statement=something", "--field", "status=done-ish",
+        "--field", "source=chat",
+    ])
+    assert code == 1
+    assert "invalid status 'done-ish'" in capsys.readouterr().err
+    assert not (tmp_path / ".ai/ledger/requirement").exists()
+
+
+def test_cli_refuses_a_drift_missing_its_why(tmp_path: Path, capsys) -> None:
+    code = led.main([
+        "--root", str(tmp_path), "add", "drift", "--title", "Unexplained",
+        "--field", "area=scope", "--field", "before=a", "--field", "after=b",
+    ])
+    assert code == 1
+    assert "missing: why" in capsys.readouterr().err

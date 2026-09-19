@@ -57,6 +57,8 @@ STATIONS: dict[str, str] = {
     "akinator-resource-guard": "discipline",
     "akinator-anti-gaming": "discipline",
     "akinator-onboard": "install",
+    "akinator-wiki": "every - document every prompt everywhere it lands",
+    "akinator-decide": "4 PLAN / 12 VERIFY - decide or recommend with evidence",
 }
 
 

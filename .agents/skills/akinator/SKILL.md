@@ -17,6 +17,14 @@ Ask everything. Document everything. Skillify everything. Rule everything.
 A change is the code **plus** the knowledge that lets the next agent act on it
 in seconds. Half a change is no change.
 
+**Every prompt is documented.** Whatever a prompt changes or decides lands in
+the repository's living wiki in the same batch - product, business, market,
+requirements, drift, architecture, libraries, stack, infra, testing, UX, project,
+decisions, changes - plus README, install docs, every agent router, rules,
+memory, context and the ledger. Any AI that reads the repo then knows it from
+the needle to the rocket, and can decide or recommend with evidence. See
+[akinator-wiki](references/akinator-wiki.md).
+
 **This is Akinator's only skill and its only command.** Normal prompts enter it
 automatically. The explicit form is a fallback: `/akinator:everything` on Claude
 Code, `$akinator` on Codex, `/akinator` on Cursor. Each station is a reference
@@ -56,8 +64,10 @@ stations; `<skill>/scripts/` holds the tools. Both travel with the skill.
 | 10 | MEMOIZE | [akinator-memoize](references/akinator-memoize.md) |
 | 11 | INDEX+SYNC | [akinator-index-sync](references/akinator-index-sync.md), [akinator-router-sync](references/akinator-router-sync.md) |
 | 12 | VERIFY | [akinator-gate-economy](references/akinator-gate-economy.md) |
+| every | WIKI - document every prompt everywhere it lands | [akinator-wiki](references/akinator-wiki.md) |
 
-Open when the work touches their domain: decisions
+Open when the work touches their domain: deciding or recommending
+[akinator-decide](references/akinator-decide.md) · decision records
 [akinator-adr](references/akinator-adr.md) · money
 [akinator-business-map](references/akinator-business-map.md) · user-facing
 behavior [akinator-product-map](references/akinator-product-map.md) · operations
@@ -73,6 +83,10 @@ behavior [akinator-product-map](references/akinator-product-map.md) · operation
   follow-up" is a prohibited sentence.
 - Declare the knowledge delta **by path** at PLAN time, or say
   `knowledge delta: none - <reason>`.
+- Ask a lot: one grouped battery per prompt (up to 15, plus every wiki gap),
+  ranked, each with a recommended default. Write every answer down at once.
+- Honest gaps only: `_Unknown - ask the owner and record the answer._`, never
+  an invented fact.
 - Adopt the repository's conventions; one canonical home per fact.
 - Never guess on money, permissions, deletion, security or public contracts.
 - Never weaken a check to pass it. Never put knowledge checks in git hooks.
@@ -90,8 +104,10 @@ The complete pass, with every tool command, is in
 2. **Plan** - batches on real seams, knowledge delta by path, every relevant
    review lens (business, CTO, product, ops, analyst, PM) at plan time.
 3. **Build batch by batch** - implement, then DOCUMENT, SKILLIFY, RULE,
-   CONTEXTIFY, MEMOIZE, the ledger, decisions, INDEX+SYNC; librarian review on
-   every batch.
+   CONTEXTIFY, MEMOIZE, the ledger (requirements and drift too), decisions,
+   the wiki (`python <skill>/scripts/akinator_wiki.py index`, library pages with
+   `python <skill>/scripts/extract_libraries.py --write`), INDEX+SYNC; librarian
+   review on every batch.
 4. **Prove it** - gate once, run every check the repository has plus
    `python <skill>/scripts/akinator_coverage.py . --strict`, anti-gaming on your
    own output, clean up, regenerate the brief.

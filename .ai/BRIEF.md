@@ -46,6 +46,8 @@ its own docs, skills, rules, context and memory delta.
   `rules/11-invariants-ship-with-a-mutation-test.md`
 - **Rule 12 - An artifact that travels names nothing only its birthplace has** - Akinator's whole premise is that a document asserting things that are not there is a critical defect. It was shipping 22 of them per install.
   `rules/12-artifacts-that-travel-name-nothing-local.md`
+- **Rule 13 - Every prompt is documented everywhere it lands** - A repository that is "exhaustively documented" as of the last audit and silent about the last ten prompts is not exhaustively documented - it is a snapshot with a caption that lied the moment work resumed. The owner's requirement is corpora...
+  `rules/13-every-prompt-is-documented.md`
 
 ## Recurring failures and their fixes
 
@@ -75,6 +77,44 @@ its own docs, skills, rules, context and memory delta.
 ## Business rules with numbers
 
 _nothing recorded yet_
+
+## Requirements - current, changed and missing
+
+- **Listing refreshed for the living-wiki release (missing)** - The plugin-directory listing mentions the living wiki, the 15-question budget and akinator-decide/akinator-wiki. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/listing-refreshed-for-the-living-wiki-release.md`
+- **Live verification of Codex and Cursor routes (missing)** - Codex and Cursor install/run routes are confirmed live, not only from docs and source. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/live-verification-of-codex-and-cursor-routes.md`
+- **Quantified AI-cost-reduction figure (missing)** - A measured dollar or token figure backs the AI-cost-reduction claim (capped brief, generated facts). **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/quantified-ai-cost-reduction-figure.md`
+- **Stated revenue or pricing model (missing)** - A revenue or pricing model beyond free/MIT is stated. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/stated-revenue-or-pricing-model.md`
+- **Always on, no command normally typed (current)** - Akinator is always on; normal prompts require no command. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/always-on-no-command-normally-typed.md`
+- **Every prompt documented everywhere it lands (current)** - Every prompt and every change is documented, product to project, so any AI reading the repository knows it. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/every-prompt-documented-everywhere-it-lands.md`
+- **Generated facts, curated why, honest gaps (current)** - Facts are generated and cannot rot; why is curated and preserved; unknowns are marked honestly rather than filled with filler. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/generated-facts-curated-why-honest-gaps.md`
+- **Many questions with recommended defaults (current)** - Many questions per prompt, grouped and ranked in one message, each with a recommended default. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/many-questions-with-recommended-defaults.md`
+- **One-line install with no marketplace (current)** - Install in one line, with no marketplace required. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/one-line-install-with-no-marketplace.md`
+- **One skill, one command on every platform (current)** - Exactly one skill and one command surface on every platform - /akinator:everything (Claude Code), $akinator (Codex), /akinator (Cursor). **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/one-skill-one-command-on-every-platform.md`
+- **Tools travel with the skill (current)** - Host-repo tools travel with the skill; nothing installed elsewhere names a path that exists only in this checkout. **Source:** owner, 2026-09-18/19 sessions
+  `.ai/ledger/requirement/tools-travel-with-the-skill.md`
+
+## Business and product drift
+
+- **Generated logo replaced by hand-designed artwork (business)** - **Before:** A generated logo, produced by a script in the repository **After:** Hand-designed 1254x1254 artwork; the generator script removed **Why:** The owner replaced the generated mark with commissioned artwork; a later byte-compare CI test against it then failed on every run until remo...
+  `.ai/ledger/drift/generated-logo-replaced-by-hand-designed-artwork.md`
+- **No document per library becomes a generated page per library (requirement)** - **Before:** The stack map explicitly refused a page per dependency, because a page restating package.json rots **After:** A generated page per dependency under docs/wiki/libraries/, facts regenerated between markers, curated sections preserved **Why:** The owner's corporate-scale requirement includes libraries and why they were chosen; generated/curated split answers the original rot object...
+  `.ai/ledger/drift/no-document-per-library-becomes-a-generated-page-per-library.md`
+- **Question budget raised from five to fifteen (product)** - **Before:** Five-question interrupt budget per session (docs/scoping.md) **After:** Up to fifteen questions per prompt, grouped and ranked, each with a recommended default **Why:** Corporate-scale knowledge needs many answers captured; ranking, grouping and defaults fix interrupt fatigue instead of a low cap that leaves...
+  `.ai/ledger/drift/question-budget-raised-from-five-to-fifteen.md`
+- **Six commands collapsed to one command (scope)** - **Before:** Six planned commands: onboard, audit, status, sync, question, decide (build brief Part 9) **After:** One command, /akinator:everything, with mode dispatch by argument **Why:** Owner stated directly: only one command should do everything.
+  `.ai/ledger/drift/six-commands-collapsed-to-one-command.md`
+- **Command file replaced by one skill as the command (architecture)** - **Before:** One command file plus twenty separate station skills still listed individually in the menu **After:** One skill (skills/everything/) whose stations are references, opened on demand; the skill is the command **Why:** A live Claude Code session showed 22 entries in the / menu, not one; Codex and Cursor cannot hide a skill from their pickers at all.
+  `.ai/ledger/drift/command-file-replaced-by-one-skill-as-the-command.md`
 
 ## Open questions blocking work
 

@@ -39,13 +39,15 @@ condition that lets you leave it.
 
     ```bash
     python <skill>/scripts/akinator_scope.py plan --against HEAD
-    python <skill>/scripts/akinator_scope.py questions   # the batched ask, budget 5
+    python <skill>/scripts/akinator_scope.py questions   # the batched ask, budget 15
     ```
 
     This **never skips a station**. It reports which have work, so a quiet one
     is run and finds nothing rather than being silently dropped. Ask the
-    budgeted questions in **one grouped message**; twenty questions in a session
-    means zero answers by the third.
+    budgeted questions - up to 15, plus every gap from
+    `python <skill>/scripts/akinator_wiki.py gaps` - in **one grouped message**,
+    ranked, each with a recommended default so "go with recommendations" is a
+    complete answer. Write every answer into its home immediately.
 
 **Exit when:** the layer has been read, the conventions are named, the open
 questions are asked or explicitly assumed, and every claim has a status.

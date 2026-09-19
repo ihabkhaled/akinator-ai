@@ -69,6 +69,15 @@ jobs:
       - name: Stack map drift
         run: python skills/everything/scripts/extract_stack.py --check
 
+      # One page per dependency: generated facts must match the manifests and
+      # the imports. Curated sections are never checked, only preserved.
+      - name: Library pages drift
+        run: python skills/everything/scripts/extract_libraries.py --check
+
+      # The wiki home must list every category and its current gap count.
+      - name: Wiki index drift
+        run: python skills/everything/scripts/akinator_wiki.py check
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift

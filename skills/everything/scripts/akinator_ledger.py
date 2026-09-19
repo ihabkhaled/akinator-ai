@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 """The Akinator ledger - what happened, so the next session does not rediscover it.
 
-Four kinds of record, all committed to the repository:
+Six kinds of record, all committed to the repository:
 
-    failure   a thing that broke, fingerprinted so recurrence can be counted
-    question  something asked and answered, so it is never asked twice
-    decision  a choice between real alternatives, and what it cost
-    surprise  non-obvious behavior, and the symptom that misled
+    failure      a thing that broke, fingerprinted so recurrence can be counted
+    question     something asked and answered, so it is never asked twice
+    decision     a choice between real alternatives, and what it cost
+    surprise     non-obvious behavior, and the symptom that misled
+    requirement  what the product must do - current, changed, missing or dropped
+    drift        a business, product or scope fact that moved: before, after, why
+
+The last two exist because the most expensive thing a session can get wrong is
+not a stack trace - it is building yesterday's requirement, or re-deriving a
+business rule that quietly changed. Neither is visible in a diff.
 
 A gitignored local cache would defeat the entire purpose: a new clone, a new
 teammate or a fresh CI agent would get nothing. The ledger is committed.
@@ -19,8 +25,10 @@ leaks a credential into git history is worse than no ledger.
 Usage:
     python skills/everything/scripts/akinator_ledger.py add failure --title "..." [--field k=v ...]
     python skills/everything/scripts/akinator_ledger.py add question --title "..." --field answer="..."
+    python skills/everything/scripts/akinator_ledger.py add requirement --title "..." --field statement="..." --field status=missing --field source="..."
+    python skills/everything/scripts/akinator_ledger.py add drift --title "..." --field area=pricing --field before="..." --field after="..." --field why="..."
     python skills/everything/scripts/akinator_ledger.py occurred <fingerprint> [--source git]
-    python skills/everything/scripts/akinator_ledger.py list [--type failure] [--recurring]
+    python skills/everything/scripts/akinator_ledger.py list [--type requirement] [--recurring]
     python skills/everything/scripts/akinator_ledger.py show <id>
     python skills/everything/scripts/akinator_ledger.py verify
 
@@ -43,7 +51,7 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 LEDGER_DIR = ".ai/ledger"
-TYPES = ("failure", "question", "decision", "surprise")
+TYPES = ("failure", "question", "decision", "surprise", "requirement", "drift")
 
 # Rendered in place of a required field that was not supplied. Honest in the
 # document - "not recorded" beats silently omitting the section - but it must
@@ -59,7 +67,39 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     "question": ("asked", "answer", "answered_by"),
     "decision": ("what", "alternatives", "why"),
     "surprise": ("behavior", "misleading_symptom", "why"),
+    # Optional: priority, acceptance, owner.
+    "requirement": ("statement", "status", "source"),
+    # Optional: impact, decided_by.
+    "drift": ("area", "before", "after", "why"),
 }
+
+# The only statuses a requirement may carry, in the order a session must read
+# them: what is missing blocks work, what changed invalidates work already done,
+# what is current is the contract, and what was dropped must not be rebuilt. A
+# free-text status would let "done-ish" in, and a status nobody can sort on is
+# a status nobody reads - so anything else makes the record malformed.
+REQUIREMENT_STATUSES = ("missing", "changed", "current", "dropped")
+
+# Examples, not a closed set: drift is wherever a fact moved, and a closed list
+# would push real drift into the wrong bucket rather than keep it out.
+DRIFT_AREAS = (
+    "architecture", "business", "pricing", "product", "requirement", "scope",
+)
+
+
+def status_problem(record: "Record") -> str | None:
+    """Why a requirement's status is unusable, or None when it is fine."""
+    if record.kind != "requirement":
+        return None
+    status = record.fields.get("status", "").strip()
+    if not status or status == MISSING:
+        return None  # reported as a missing required field, not twice
+    if status not in REQUIREMENT_STATUSES:
+        return (
+            f"invalid status '{status}' - expected one of: "
+            f"{' | '.join(REQUIREMENT_STATUSES)}"
+        )
+    return None
 
 
 # --------------------------------------------------------------------------
@@ -345,6 +385,9 @@ class Ledger:
                         problems.append(f"{rel}: missing required field '{required}'")
                 if sub == "failure" and not record.occurrences:
                     problems.append(f"{rel}: a failure with no occurrences")
+                problem = status_problem(record)
+                if problem:
+                    problems.append(f"{rel}: {problem}")
         return problems
 
 
@@ -406,6 +449,12 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 1
+        if args.kind == "requirement":
+            problem = status_problem(Record(kind="requirement", id="", title="",
+                                            fields=fields))
+            if problem:
+                print(f"a requirement record has an {problem}", file=sys.stderr)
+                return 1
 
         record_id = args.id
         if not record_id:
@@ -455,7 +504,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             for r in records:
                 seen = f" x{len(r.occurrences)}" if r.occurrences else ""
-                print(f"{r.kind:9} {r.id:52}{seen}  {r.title[:60]}")
+                print(f"{r.kind:11} {r.id:52}{seen}  {r.title[:60]}")
             print(f"\n{len(records)} record(s)")
         return 0
 

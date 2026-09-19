@@ -17,9 +17,11 @@ Two budgets, both enforced, because both have a hard human limit:
     token budget      the brief's cap - see skills/everything/scripts/build_brief.py
     interrupt budget  at most N questions per session, batched and ranked
 
-Twenty questions in one session means zero answers by session three. The
-interrupt budget is as real a constraint as the token one, and v1 had no concept
-of it.
+The owner asked for MANY questions every prompt (ADR 0010): the default budget
+is 15, asked as ONE grouped message, ranked, each with a recommended default so
+"go with recommendations" is always a valid answer. The budget still exists -
+it is what keeps fifteen questions one message instead of fifteen interruptions -
+and a repository can lower it in .ai/config.json.
 
 Usage:
     python skills/everything/scripts/akinator_scope.py plan [--against HEAD]
@@ -44,7 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import akinator_ledger as led  # noqa: E402
 
-DEFAULT_INTERRUPT_BUDGET = 5
+DEFAULT_INTERRUPT_BUDGET = 15
 CONFIG = ".ai/config.json"
 
 

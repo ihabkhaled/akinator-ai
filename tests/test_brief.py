@@ -293,3 +293,116 @@ def test_a_truncated_failure_field_ends_with_a_marker(tmp_path: Path) -> None:
     assert items[0].body.rstrip().endswith("..."), (
         "a truncated field reached the brief with no ellipsis"
     )
+
+
+# --------------------------------------------------------------------------
+# Requirements and drift - the product and business half of the brief
+# --------------------------------------------------------------------------
+
+def _requirement(ledger: led.Ledger, record_id: str, status: str) -> None:
+    ledger.write(led.Record(
+        kind="requirement", id=record_id, title=f"requirement {record_id}",
+        fields={"statement": f"the {status} one", "status": status,
+                "source": "product review"},
+    ))
+
+
+def test_requirements_and_drift_sections_are_declared_in_order() -> None:
+    keys = [key for key, _, _ in bb.SECTIONS]
+    headings = dict((key, heading) for key, heading, _ in bb.SECTIONS)
+    assert headings["requirements"] == "Requirements - current, changed and missing"
+    assert headings["drift"] == "Business and product drift"
+    assert keys.index("business") < keys.index("requirements") < keys.index("drift")
+    assert keys[-1] == "pointers", "the overflow section must stay last"
+    assert all(share > 0 for _, _, share in bb.SECTIONS)
+
+
+def test_requirements_render_missing_then_changed_then_current(tmp_path: Path) -> None:
+    """What is missing blocks work, what changed invalidates work already done,
+    and what is current is the contract - so that is the reading order. The ids
+    are chosen so that an alphabetical sort would produce the opposite order."""
+    root = tmp_path / "requirements"
+    root.mkdir()
+    ledger = led.Ledger(root)
+    _requirement(ledger, "a-dropped", "dropped")
+    _requirement(ledger, "b-current", "current")
+    _requirement(ledger, "c-changed", "changed")
+    _requirement(ledger, "d-missing", "missing")
+
+    brief, index = bb.compose(root)
+    heading = "## Requirements - current, changed and missing"
+    assert heading in brief
+    section = brief.split(heading, 1)[1].split("\n## ", 1)[0]
+
+    positions = [section.index(f"requirement/{rid}.md")
+                 for rid in ("d-missing", "c-changed", "b-current", "a-dropped")]
+    assert positions == sorted(positions), section
+    assert "(missing)" in section and "the missing one" in section
+
+    ranked = [i for i in index["items"] if i["section"] == "requirements"]
+    assert len(ranked) == 4, "the index must carry every requirement"
+    assert all(i["in_brief"] for i in ranked)
+
+
+def test_an_invalid_requirement_status_still_reaches_the_index(tmp_path: Path) -> None:
+    """Demoted, never dropped: a malformed record ranks below every valid one
+    but is still carried, so `verify` and a reader can both find it."""
+    root = tmp_path / "invalid-status"
+    root.mkdir()
+    ledger = led.Ledger(root)
+    _requirement(ledger, "a-vague", "done-ish")
+    _requirement(ledger, "z-dropped", "dropped")
+    items = sorted(bb.collect_requirements(root), key=lambda i: -i.score)
+    assert [i.path.rsplit("/", 1)[1] for i in items] == ["z-dropped.md", "a-vague.md"]
+
+
+def test_drift_renders_before_after_and_why(tmp_path: Path) -> None:
+    root = tmp_path / "drift"
+    root.mkdir()
+    led.Ledger(root).write(led.Record(
+        kind="drift", id="free-tier-quota-cut",
+        title="the free tier export quota was cut",
+        fields={"area": "pricing", "before": "10 exports a day",
+                "after": "3 exports a day", "why": "storage cost tripled",
+                "impact": "free users hit the cap by noon"},
+    ))
+    brief, index = bb.compose(root)
+    heading = "## Business and product drift"
+    assert heading in brief
+    section = brief.split(heading, 1)[1].split("\n## ", 1)[0]
+    for fact in ("(pricing)", "**Before:** 10 exports a day",
+                 "**After:** 3 exports a day", "**Why:** storage cost tripled",
+                 "**Impact:** free users hit the cap by noon",
+                 "drift/free-tier-quota-cut.md"):
+        assert fact in section, fact
+    assert [i["section"] for i in index["items"]] == ["drift"]
+
+
+def test_money_drift_outranks_other_drift(tmp_path: Path) -> None:
+    root = tmp_path / "drift-rank"
+    root.mkdir()
+    ledger = led.Ledger(root)
+    for rid, area in (("a-arch", "architecture"), ("b-price", "pricing")):
+        ledger.write(led.Record(
+            kind="drift", id=rid, title=rid,
+            fields={"area": area, "before": "x", "after": "y", "why": "z"},
+        ))
+    by_area = {i.tags[1]: i.score for i in bb.collect_drift(root)}
+    assert by_area["pricing"] > by_area["architecture"]
+
+
+def test_every_named_drift_area_has_a_weight() -> None:
+    """The ledger names the usual areas and the brief weights them; a new area
+    added to one and not the other would silently rank at the default."""
+    assert set(bb.DRIFT_BLAST) == set(led.DRIFT_AREAS)
+
+
+def test_empty_requirements_and_drift_say_so(tmp_path: Path) -> None:
+    """No records is stated, never papered over with invented requirements."""
+    root = tmp_path / "empty"
+    root.mkdir()
+    brief, _ = bb.compose(root)
+    for heading in ("Requirements - current, changed and missing",
+                    "Business and product drift"):
+        section = brief.split(f"## {heading}", 1)[1].split("\n## ", 1)[0]
+        assert "_nothing recorded yet_" in section

@@ -33,6 +33,7 @@ its own docs, skills, rules, context and memory delta.
 - The brief (what a new session reads first): `.ai/BRIEF.md`
 - The ledger (what happened, and what recurs): `docs/ledger.md`
 - Templates (what Akinator ships to target repos): `templates/README.md`
+- The wiki home (product, business, requirements, drift, libraries, and the rest): `docs/wiki/index.md`
 
 ## Before you change anything
 
@@ -43,6 +44,7 @@ its own docs, skills, rules, context and memory delta.
 - **Ledger records are redacted before write** - `rules/10-ledger-records-are-redacted-before-write.md`
 - **Every invariant ships with a test that proves it fires** - `rules/11-invariants-ship-with-a-mutation-test.md`
 - **Anything installed elsewhere names no local file** - `rules/12-artifacts-that-travel-name-nothing-local.md`
+- **Every prompt is documented everywhere it lands** - wiki, README, routers, rules, memory, context, ledger - `docs/adr/0010-every-prompt-documented-living-wiki.md`
 
 The one skill is `skills/everything/SKILL.md`; the full creed, loop and taxonomy
 are in its reference `skills/everything/references/akinator.md`.
@@ -62,6 +64,8 @@ are in its reference `skills/everything/references/akinator.md`.
 | What recurs and needs a decision | `python skills/everything/scripts/akinator_distil.py detect` |
 | Regenerate the component map | `python scripts/extract_components.py --write` |
 | Regenerate the stack map | `python skills/everything/scripts/extract_stack.py --write` |
+| Regenerate the library pages | `python skills/everything/scripts/extract_libraries.py --write` |
+| Rebuild the wiki index / list its gaps | `python skills/everything/scripts/akinator_wiki.py index` / `gaps` |
 | Install from this checkout (all platforms) | `sh install.sh` - or `.\install.ps1` on Windows |
 
 Gate once, at the end of the batch, scoped to what you touched. See

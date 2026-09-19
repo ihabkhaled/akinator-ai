@@ -67,12 +67,15 @@ still runs, and the batch states the empty delta explicitly.
 python skills/everything/scripts/akinator_scope.py questions
 ```
 
-At most **5 questions per session** by default, batched into one grouped ask and
-ranked. The rest are deferred to the next session, not discarded.
+Up to **15 questions per prompt** by default (ADR 0010 raised it from 5 at the
+owner's request), batched into ONE grouped ask, ranked, each with a recommended
+default so "go with recommendations" is a complete answer. The rest are deferred
+to the next prompt, not discarded. Lower it per repository with
+`interrupt_budget` in `.ai/config.json`.
 
-Twenty questions in one session means zero answers by session three. The
-interrupt budget is as real a constraint as the token budget, and v1 had no
-concept of it.
+The budget still matters: it is what keeps fifteen questions one message instead
+of fifteen interruptions. Scattered questions get ignored; one ranked battery
+with defaults gets answered.
 
 Ranking, highest first:
 

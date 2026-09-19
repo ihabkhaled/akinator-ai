@@ -73,15 +73,35 @@ shape the whole corpus:
 | Section | Share | Content |
 |---|---|---|
 | What this system is | 5% | Two paragraphs, from the router contract. Never more |
-| Constraints that must not break | 21% | Rules, enforced ones ranked above prose-only ones |
-| Recurring failures and their fixes | 25% | From the ledger, symptom-first |
-| Business rules with numbers | 17% | Money, quotas, entitlements |
-| Open questions blocking work | 8% | Asked and answered, so neither is asked again |
-| Where to look for what | 12% | The retrieval hops |
-| Everything else, by pointer | 12% | Demoted items, then a summarized count |
+| Constraints that must not break | 19% | Rules, enforced ones ranked above prose-only ones |
+| Recurring failures and their fixes | 21% | From the ledger, symptom-first |
+| Business rules with numbers | 14% | Money, quotas, entitlements |
+| Requirements - current, changed and missing | 10% | `requirement` records from the ledger: **missing first, then changed, then current**, then dropped |
+| Business and product drift | 7% | `drift` records from the ledger: before, after, why, and impact when recorded |
+| Open questions blocking work | 7% | Asked and answered, so neither is asked again |
+| Where to look for what | 8% | The retrieval hops |
+| Everything else, by pointer | 9% | Demoted items, then a summarized count |
 
 The shares sum to 1.0, and a test asserts it - a section table that quietly does
-not add up is a cap that silently slips.
+not add up is a cap that silently slips. Requirements and drift were carved out
+of the other sections rather than added on top: the tier did not grow, so every
+token they carry is one something else no longer does.
+
+### Requirements and drift
+
+A requirement's rank is set by its status alone, strictly decreasing, so the
+section always reads in the order a session needs: what is **missing** blocks
+work, what **changed** invalidates work already done, what is **current** is the
+contract, and what was **dropped** is listed so it is not rebuilt. A record with
+a status the ledger rejects still reaches the index - demoted, never dropped -
+ranked below every valid one, and `akinator_ledger.py verify` flags it.
+
+Drift is ranked by area: `business` and `pricing` carry the widest blast radius,
+because building on an old money fact is the most expensive mistake, then
+`product`, `requirement` and `scope`, then `architecture`, then anything else.
+
+An empty section says `_nothing recorded yet_`. The brief never invents a
+requirement to fill one.
 
 ## Using it
 
@@ -96,12 +116,13 @@ prints every candidate with its score, token cost and whether it made the cut.
 
 ## Related
 
-- Docs: `docs/ledger.md` - where the recurring failures come from
+- Docs: `docs/ledger.md` - where the recurring failures, requirements and drift come from
 - Docs: `docs/akinator-v2-design.md` - stage 5, SURFACE
 - Code: `skills/everything/scripts/build_brief.py`, `tests/test_brief.py`
 
 ## Review when
 
 - A section share changes, or a new section is added.
+- The requirement statuses or the drift area weights change.
 - The token estimate proves badly calibrated against a real tokenizer.
-- Last verified: 2026-08-26.
+- Last verified: 2026-09-19.

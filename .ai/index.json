@@ -39,6 +39,54 @@
     },
     {
       "in_brief": true,
+      "path": ".ai/ledger/requirement/listing-refreshed-for-the-living-wiki-release.md",
+      "score": 0.81,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "missing"
+      ],
+      "title": "Listing refreshed for the living-wiki release (missing)",
+      "tokens": 74
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/live-verification-of-codex-and-cursor-routes.md",
+      "score": 0.81,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "missing"
+      ],
+      "title": "Live verification of Codex and Cursor routes (missing)",
+      "tokens": 67
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/quantified-ai-cost-reduction-figure.md",
+      "score": 0.81,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "missing"
+      ],
+      "title": "Quantified AI-cost-reduction figure (missing)",
+      "tokens": 66
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/stated-revenue-or-pricing-model.md",
+      "score": 0.81,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "missing"
+      ],
+      "title": "Stated revenue or pricing model (missing)",
+      "tokens": 52
+    },
+    {
+      "in_brief": true,
       "path": "rules/01-knowledge-delta-per-batch.md",
       "score": 0.81,
       "section": "constraints",
@@ -171,6 +219,29 @@
     },
     {
       "in_brief": true,
+      "path": "rules/13-every-prompt-is-documented.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 13 - Every prompt is documented everywhere it lands",
+      "tokens": 88
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/drift/generated-logo-replaced-by-hand-designed-artwork.md",
+      "score": 0.72,
+      "section": "drift",
+      "tags": [
+        "drift",
+        "business"
+      ],
+      "title": "Generated logo replaced by hand-designed artwork (business)",
+      "tokens": 109
+    },
+    {
+      "in_brief": true,
       "path": "rules/README.md",
       "score": 0.7,
       "section": "map",
@@ -193,6 +264,42 @@
     },
     {
       "in_brief": true,
+      "path": ".ai/ledger/drift/no-document-per-library-becomes-a-generated-page-per-library.md",
+      "score": 0.648,
+      "section": "drift",
+      "tags": [
+        "drift",
+        "requirement"
+      ],
+      "title": "No document per library becomes a generated page per library (requirement)",
+      "tokens": 142
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/drift/question-budget-raised-from-five-to-fifteen.md",
+      "score": 0.648,
+      "section": "drift",
+      "tags": [
+        "drift",
+        "product"
+      ],
+      "title": "Question budget raised from five to fifteen (product)",
+      "tokens": 114
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/drift/six-commands-collapsed-to-one-command.md",
+      "score": 0.648,
+      "section": "drift",
+      "tags": [
+        "drift",
+        "scope"
+      ],
+      "title": "Six commands collapsed to one command (scope)",
+      "tokens": 92
+    },
+    {
+      "in_brief": true,
       "path": "docs/README.md",
       "score": 0.63,
       "section": "map",
@@ -212,6 +319,18 @@
       ],
       "title": "What happened, and what recurs",
       "tokens": 15
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/drift/command-file-replaced-by-one-skill-as-the-command.md",
+      "score": 0.612,
+      "section": "drift",
+      "tags": [
+        "drift",
+        "architecture"
+      ],
+      "title": "Command file replaced by one skill as the command (architecture)",
+      "tokens": 127
     },
     {
       "in_brief": true,
@@ -258,6 +377,90 @@
       ],
       "title": "Durable decisions and surprises",
       "tokens": 16
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/always-on-no-command-normally-typed.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Always on, no command normally typed (current)",
+      "tokens": 56
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/every-prompt-documented-everywhere-it-lands.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Every prompt documented everywhere it lands (current)",
+      "tokens": 72
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/generated-facts-curated-why-honest-gaps.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Generated facts, curated why, honest gaps (current)",
+      "tokens": 75
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/many-questions-with-recommended-defaults.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Many questions with recommended defaults (current)",
+      "tokens": 67
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/one-line-install-with-no-marketplace.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "One-line install with no marketplace (current)",
+      "tokens": 54
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/one-skill-one-command-on-every-platform.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "One skill, one command on every platform (current)",
+      "tokens": 77
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/tools-travel-with-the-skill.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Tools travel with the skill (current)",
+      "tokens": 66
     },
     {
       "in_brief": true,
@@ -379,5 +582,5 @@
     }
   ],
   "tier": "standard",
-  "used": 2823
+  "used": 4237
 }

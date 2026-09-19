@@ -354,7 +354,8 @@ def test_routers_stay_thin(repo: Path) -> None:
 EXPECTED_TEMPLATES = (
     "rule.md", "skill.md", "context-map.md", "memory.md", "adr.md",
     "business-logic.md", "product-feature.md", "ops-runbook.md", "router.md",
-    "onboarding-mapping.md",
+    "onboarding-mapping.md", "library-page.md", "requirement.md",
+    "business-drift.md",
 )
 
 

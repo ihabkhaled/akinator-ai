@@ -1,6 +1,6 @@
 {
   "name": "akinator",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Ask everything, document everything, skillify everything, rule everything. A behavioral operating system that makes it structurally impossible to change code without growing the knowledge layer around it.",
   "author": {
     "name": "Ihab Khaled"

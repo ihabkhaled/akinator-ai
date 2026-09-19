@@ -175,6 +175,39 @@ random notes. It resolves and maintains the homes that apply to the project:
 Akinator **adopts the repository's existing conventions**. It does not create a
 parallel wiki if the project already has one.
 
+## Every prompt, documented
+
+The wiki home is [`docs/wiki/index.md`](docs/wiki/index.md) - one canonical page
+per kind of knowledge (product, business, market, requirements, drift,
+architecture, libraries, stack, infra, testing, UX, project, decisions,
+changes, glossary, onboarding), adopted from whatever home the repository
+already has for it, never a parallel copy. Every prompt that changes or
+decides anything fans out to every home it affects, in the same batch - not
+just the one that felt closest. A fact nobody knows yet is written as the
+exact line `_Unknown - ask the owner and record the answer._`, so it can be
+counted and turned into a question instead of guessed.
+
+**Questions, with defaults.** Up to 15 questions per prompt, asked once, in one
+grouped and ranked message, each carrying a recommended default - so "go with
+recommendations" is always a complete answer.
+
+**Decide, or recommend.** Reversible, no-blast-radius choices are decided and
+recorded without asking. Money, permissions, deletion, security and public
+contracts always go to the owner, as 2-4 costed options with one clear
+recommendation. See `skills/everything/references/akinator-decide.md`.
+
+Two tools keep the generated half of the wiki honest - facts are generated so
+they cannot rot, and the why beside them is curated by hand:
+
+```bash
+python skills/everything/scripts/extract_libraries.py --write   # one page per dependency, under docs/wiki/libraries/
+python skills/everything/scripts/akinator_wiki.py index         # rebuild the wiki index at docs/wiki/index.md
+python skills/everything/scripts/akinator_wiki.py gaps          # every unknown, as a question for the owner
+```
+
+See `skills/everything/references/akinator-wiki.md` and
+[ADR 0010](docs/adr/0010-every-prompt-documented-living-wiki.md).
+
 ### Mandatory change record
 
 Every meaningful behavioral, business, product, architecture, data, API,
@@ -265,6 +298,8 @@ python skills/everything/scripts/akinator_rules.py conflicts
 python scripts/build_codex_pack.py --check
 python scripts/render_routers.py --check
 python skills/everything/scripts/build_brief.py --check
+python skills/everything/scripts/extract_libraries.py --check
+python skills/everything/scripts/akinator_wiki.py check
 ```
 
 The one canonical skill lives in `skills/everything/` (its host-repo tools in
@@ -286,6 +321,7 @@ from it by `scripts/build_codex_pack.py`. AI routers are generated from
 - [Ledger](docs/ledger.md)
 - [Templates](templates/README.md)
 - [Living wiki contract](docs/living-wiki.md)
+- [The wiki home](docs/wiki/index.md)
 
 ## License
 
