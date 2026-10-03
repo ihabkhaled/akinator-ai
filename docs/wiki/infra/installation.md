@@ -29,10 +29,7 @@ Nothing detected.
 
 | Section | Where |
 |---|---|
-| Install | [README.md:43](README.md#L43) |
-| Prefer to read before you run | [README.md:81](README.md#L81) |
-| What gets installed where | [README.md:132](README.md#L132) |
-| Repository development | [README.md:322](README.md#L322) |
+| Install - 30 seconds | [README.md:13](README.md#L13) |
 
 Regenerate with: `python <skill>/scripts/extract_operations.py --write`
 <!-- akinator:generated:end -->
