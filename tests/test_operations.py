@@ -139,3 +139,10 @@ def test_used_by_capped_at_three(tmp_path: Path) -> None:
         _w(tmp_path, f"m{i}.py", "import os\nos.getenv('MANY')\n")
     env = _gen(tmp_path)["environment-variables.md"]
     assert "+2 more" in env
+
+
+def test_readme_links_climb_back_to_the_repository_root(tmp_path: Path) -> None:
+    """A page under docs/wiki/infra/ must link `../../../README.md`, not `README.md`."""
+    _tree(tmp_path)
+    inst = _gen(tmp_path)["installation.md"]
+    assert "(../../../README.md#L" in inst and "(README.md#L" not in inst

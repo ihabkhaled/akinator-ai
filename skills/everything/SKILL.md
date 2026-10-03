@@ -86,11 +86,12 @@ behavior [akinator-product-map](references/akinator-product-map.md) · operation
 - Adopt the repository's conventions; one canonical home per fact.
 - Never guess on money, permissions, deletion, security or public contracts.
 - Never weaken a check to pass it. Never put knowledge checks in git hooks.
+- A shipped change bumps the version: `akinator_version.py next`, `bump`, `check`.
 - Before writing text that quotes config or logs: `akinator_sensitive.py guard`.
   A repeat (`akinator_distil.py repeats`) is a question: skill, rule or neither.
-- Gate once, late and scoped. Report failures and evidence truthfully.
-- A meaningful change records its provenance: before, change, now, why, who or
-  which agent, intent, alternatives, verification, what would make it stale.
+- Gate once, late and scoped. Report evidence truthfully.
+- A meaningful change records provenance: before, change, now, why, who, intent,
+  alternatives, verification, what would make it stale.
 
 ## Procedure
 
@@ -117,8 +118,8 @@ exception: say so in one line, do it, record `knowledge delta: none, because ...
 
 ## Failure modes and pitfalls
 
-- Ceremony on trivia - the fastest way to get the discipline abandoned.
-- Ticking a phase with no artifact or observed exit code behind it.
+- Ceremony on trivia - it gets the discipline abandoned.
+- Ticking a phase with no artifact or exit code behind it.
 - Skipping the librarian review on a "small" batch.
 - Gate storms, and looping after the Definition of Done is proven.
 

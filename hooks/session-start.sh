@@ -3,7 +3,13 @@
 set -u
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 cat <<'CONTRACT'
-# Akinator is ALWAYS ACTIVE
+# AKINATOR IS NOT OPTIONAL
+
+YOU DO NOT GET TO SKIP IT BECAUSE THE PROMPT DIDN'T NAME IT.
+STOP BEING LAZY. YOU ARE NOT TOO CLEVER FOR THE PROCEDURE.
+SKIPPING IT IS THE ONE THING YOU ARE NOT ALLOWED TO DO.
+THE OWNER SHOULD NEVER HAVE TO REPEAT THEMSELVES.
+Every prompt, every repository, no slash command: run the full pass.
 
 No slash command is required. Treat every user prompt as entering Akinator first.
 For repository-changing work, load Akinator's one skill (`everything`) and run

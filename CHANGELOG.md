@@ -4,6 +4,39 @@ Semantic versioning. A breaking change to the **behavioral contract** - the loop
 the non-negotiables, the taxonomy homes - is a major version, because target
 repositories depend on it the way they depend on an API.
 
+## [2.2.0] - 2026-10-03
+
+Akinator is now followed on every prompt, not only at session start, and every
+shipped change must bump the version. Still one skill, one command, no command
+file. Minor: a new tool, a new hook and a new rule; nothing removed. Decision
+record: `docs/adr/0012-always-followed-and-version-discipline.md`. Change record:
+`docs/changes/2026-10-03-always-followed-version-discipline.md`.
+
+### Added
+
+- **`UserPromptSubmit` hook** (`hooks/prompt-reminder.sh`, exec form) - a two-line
+  reminder on every prompt so the contract survives long sessions with no slash
+  command. Display-only, exits 0, never returns a permission decision.
+  `SessionStart` keeps no matcher, so it fires on startup, resume, clear and compact.
+  Verified live: `hook_response` events for both hooks; the slash menu still lists
+  only `akinator:everything`.
+- **`skills/everything/scripts/akinator_version.py`** - `show`, `check [--base REF]`,
+  `next [--base REF]`, `bump major|minor|patch --date D`, `set X.Y.Z`. Rewrites only
+  the version strings of every manifest, seeds the changelog heading, reads no clock.
+- **Rule 16** - every shipped change bumps the version; CI runs `check` always and
+  `check --base HEAD~1` on push.
+
+### Changed
+
+- The portable contract, the Cursor rule and every router say 'no command needed' and
+  name the version, trace and sensitive checks to run before done.
+- The skill's Standing rules, `procedure` and `akinator-document-change` carry the
+  version step (`next`, `bump`, `check`).
+
+### Fixed
+
+- The installers' uninstall leaves nothing behind (audited, see the change record).
+
 ## [2.1.0] - 2026-10-03
 
 Traced changes, cheap context, sensitive data known and never exposed, and a

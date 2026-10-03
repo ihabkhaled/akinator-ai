@@ -44,8 +44,8 @@ parallel one.
 | UX | design system, UX decisions, accessibility | [docs/wiki/ux/](ux/) | 1 | 0 |
 | Project | milestones, status, delivery | [docs/wiki/project/](project/) | 1 | 1 |
 | Risks | open risks, owner, mitigation | [docs/wiki/risks/](risks/) | 1 | 1 |
-| Decisions | the decision log - business and technical decisions, the ADR index | [docs/adr/](../adr/) (adopted) | 12 | 0 |
-| Changes | one change record per meaningful change - before, change, now, why | [docs/changes/](../changes/) (adopted); also [CHANGELOG.md](../../CHANGELOG.md) | 5 | 0 |
+| Decisions | the decision log - business and technical decisions, the ADR index | [docs/adr/](../adr/) (adopted) | 13 | 0 |
+| Changes | one change record per meaningful change - before, change, now, why | [docs/changes/](../changes/) (adopted); also [CHANGELOG.md](../../CHANGELOG.md) | 6 | 0 |
 | History | every version and revision, what shipped when | [docs/wiki/history/](history/) | 1 | 0 |
 | Glossary | terms - the domain words a newcomer meets, and what each means here | [docs/wiki/glossary.md](glossary.md) | 1 | 0 |
 | Onboarding | how a newcomer, or a fresh agent, gets productive | [docs/wiki/onboarding.md](onboarding.md) | 1 | 0 |

@@ -29,7 +29,7 @@ Nothing detected.
 
 | Section | Where |
 |---|---|
-| Install - 30 seconds | [README.md:13](README.md#L13) |
+| Install - 30 seconds | [README.md:13](../../../README.md#L13) |
 
 Regenerate with: `python <skill>/scripts/extract_operations.py --write`
 <!-- akinator:generated:end -->

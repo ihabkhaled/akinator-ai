@@ -108,6 +108,45 @@ def test_hooks_json_uses_the_plugin_format(repo: Path) -> None:
     assert script.is_file(), "the hook command must point at a script that exists"
 
 
+def test_both_prompt_hooks_are_wired_in_exec_form(repo: Path) -> None:
+    """SessionStart (no matcher: startup, resume, clear, compact) and
+    UserPromptSubmit both run their script in exec form, and neither can
+    return a permission decision."""
+    data = json.loads((repo / "hooks" / "hooks.json").read_text("utf-8"))
+    scripts = {
+        "SessionStart": "session-start.sh",
+        "UserPromptSubmit": "prompt-reminder.sh",
+    }
+    for event, name in scripts.items():
+        groups = data["hooks"][event]
+        assert len(groups) == 1
+        assert "matcher" not in groups[0], f"{event} must fire on every source"
+        hook = groups[0]["hooks"][0]
+        assert hook["command"] == "sh" and hook["args"] == [
+            "${CLAUDE_PLUGIN_ROOT}/hooks/" + name
+        ]
+        assert (repo / "hooks" / name).is_file()
+
+
+def test_hook_scripts_are_fast_quiet_and_never_decide(repo: Path) -> None:
+    import subprocess
+    import time
+
+    for name, max_lines in (("prompt-reminder.sh", 3), ("session-start.sh", None)):
+        start = time.perf_counter()
+        proc = subprocess.run(
+            ["sh", str(repo / "hooks" / name)], capture_output=True, text=True,
+            cwd=repo, env={**__import__("os").environ, "CLAUDE_PROJECT_DIR": str(repo)},
+        )
+        elapsed = time.perf_counter() - start
+        assert proc.returncode == 0, name
+        assert proc.stdout.strip(), f"{name} must print its context"
+        assert "permissionDecision" not in proc.stdout, name
+        if max_lines:
+            assert len(proc.stdout.strip().splitlines()) <= max_lines
+            assert elapsed < 2.0, "the per-prompt hook must stay cheap"
+
+
 def test_no_hardcoded_paths_in_hooks(repo: Path) -> None:
     text = (repo / "hooks" / "hooks.json").read_text("utf-8")
     for forbidden in ("/Users/", "/home/", "C:\\", "~/"):
@@ -535,3 +574,49 @@ def test_adr_numbers_are_unique(repo: Path) -> None:
     )
     duplicated = sorted(n for n, count in numbers.items() if count > 1)
     assert not duplicated, f"ADR numbers used more than once: {duplicated}"
+
+
+# --------------------------------------------------------------------------
+# The loud marker. Agents skipped the installed plugin until the owner shouted
+# (ledger: agent-skipped-the-installed-plugin). The marker line is the
+# contract's volume knob: if any surface loses it, the agent is quiet again.
+# --------------------------------------------------------------------------
+
+LOUD = "NOT OPTIONAL"
+
+
+def _run_hook(repo: Path, name: str) -> str:
+    import subprocess
+
+    return subprocess.run(
+        ["sh", str(repo / "hooks" / name)], capture_output=True, text=True, cwd=repo,
+    ).stdout
+
+
+@pytest.mark.parametrize("surface", [
+    "session-start", "prompt-reminder", "router-contract", "cursor-rule",
+    "claude-router", "portable-agents-block", "portable-cursor-rule",
+])
+def test_the_loud_marker_is_on_every_surface(repo: Path, surface: str) -> None:
+    text = {
+        "session-start": lambda: _run_hook(repo, "session-start.sh"),
+        "prompt-reminder": lambda: _run_hook(repo, "prompt-reminder.sh"),
+        "router-contract": lambda: (repo / "context/router-contract.md").read_text("utf-8"),
+        "cursor-rule": lambda: (repo / ".cursor/rules/akinator.mdc").read_text("utf-8"),
+        "claude-router": lambda: (repo / "CLAUDE.md").read_text("utf-8"),
+        "portable-agents-block": lambda: (repo / ".agents/AGENTS.md").read_text("utf-8"),
+        "portable-cursor-rule": lambda: (repo / ".agents/cursor/akinator.mdc").read_text("utf-8"),
+    }[surface]()
+    assert LOUD in text, f"{surface} lost the loud marker"
+
+
+def test_the_loud_marker_check_fires_on_a_quiet_surface() -> None:
+    quiet = "# Akinator is always active\nplease run the pass\n"
+    assert LOUD not in quiet
+
+
+def test_the_loud_register_is_aimed_at_the_agent_and_stays_clean(repo: Path) -> None:
+    text = (_run_hook(repo, "session-start.sh") + _run_hook(repo, "prompt-reminder.sh")
+            + (repo / "context/router-contract.md").read_text("utf-8")).lower()
+    for word in ("damn", "shit", "fuck", "idiot", "stupid user", "you humans"):
+        assert word not in text

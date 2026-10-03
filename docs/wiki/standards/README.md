@@ -8,8 +8,8 @@
 
 | Detected | Where |
 |---|---|
-| Python (56 files) | `.agents/skills/akinator/scripts/akinator_context.py`, `.agents/skills/akinator/scripts/akinator_coverage.py`, `.agents/skills/akinator/scripts/akinator_distil.py` (+53 more) |
-| Shell (2 files) | `hooks/session-start.sh`, `install.sh` |
+| Python (59 files) | `.agents/skills/akinator/scripts/akinator_context.py`, `.agents/skills/akinator/scripts/akinator_coverage.py`, `.agents/skills/akinator/scripts/akinator_distil.py` (+56 more) |
+| Shell (3 files) | `hooks/prompt-reminder.sh`, `hooks/session-start.sh`, `install.sh` |
 | PowerShell (1 file) | `install.ps1` |
 
 ### Linters, formatters and type checkers

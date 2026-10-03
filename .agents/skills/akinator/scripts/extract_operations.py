@@ -50,6 +50,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import extract_libraries as el  # noqa: E402
 
 DEFAULT_WIKI = "docs/wiki"
+# Links on a page under <wiki>/infra/ must climb back to the repository root.
+_UP = "../../../"
 BEGIN, END, GAP = el.BEGIN, el.END, el.GAP
 REGENERATE = "python <skill>/scripts/extract_operations.py --write"
 NOTHING = "Nothing detected."
@@ -829,7 +831,7 @@ def install_page(repo: Path, files: list[str]) -> str:
     out += ["", "### Manual already written (adopted, not duplicated)", ""]
     sections = readme_sections(repo, files)
     out += table(["Section", "Where"],
-                 [[_cell(h, 80), f"[{rel}:{n}]({rel}#L{n})"] for rel, n, h in sections])
+                 [[_cell(h, 80), f"[{rel}:{n}]({_UP}{rel}#L{n})"] for rel, n, h in sections])
     return "\n".join(out)
 
 
@@ -869,6 +871,8 @@ def _new_page(title: str, block: str, sections: tuple[str, ...]) -> str:
 
 
 def plan(repo: Path, wiki: str = DEFAULT_WIKI) -> tuple[dict[Path, str], list[str]]:
+    global _UP
+    _UP = "../" * (len(Path(wiki).parts) + 1)
     files = _walk(repo)
     changes: dict[Path, str] = {}
     errors: list[str] = []

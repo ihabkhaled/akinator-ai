@@ -96,6 +96,16 @@ jobs:
         if: github.event_name == 'push'
         run: python skills/everything/scripts/akinator_trace.py check --base HEAD~1
 
+      # Every version manifest agrees; on push, a change to a shipped path in
+      # the pushed commit must carry a strictly greater version and a changelog
+      # heading. See rules/16-every-shipped-change-bumps-the-version.md.
+      - name: Version discipline
+        run: |
+          python skills/everything/scripts/akinator_version.py check
+          if [ "${{ github.event_name }}" = "push" ]; then
+            python skills/everything/scripts/akinator_version.py check --base HEAD~1
+          fi
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift

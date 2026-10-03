@@ -272,6 +272,8 @@ if [ "$UNINSTALL" -eq 1 ]; then
              "$(dirname -- "$CURSOR_RULE")" "$(dirname -- "$(dirname -- "$CURSOR_RULE")")"; do
     rmdir "$dir" 2>/dev/null || true
   done
+  # The Codex home this installer created for AGENTS.md, when it is now empty.
+  if [ -z "$TARGET_REPO" ]; then rmdir "$CODEX_DIR" 2>/dev/null || true; fi
   # The download cache this installer made for Codex and Cursor; the skill
   # itself was copied out of it, so nothing depends on it.
   if [ -d "$USER_HOME/.akinator/src" ]; then

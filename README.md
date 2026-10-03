@@ -34,7 +34,7 @@ why is this service using Redis?
 
 | Platform | Explicit form (rarely needed) | Always-on via |
 |---|---|---|
-| Claude Code | `/akinator:everything` | SessionStart hook |
+| Claude Code | `/akinator:everything` | SessionStart and per-prompt hooks |
 | Codex | `$akinator` | marked block in `AGENTS.md` |
 | Cursor | `/akinator` | always-applied rule |
 
@@ -129,6 +129,7 @@ Read the pack, not the tree. No daemon, no network, no index service:
 ```bash
 python skills/everything/scripts/akinator_context.py pack --for "add refunds"   # ranked reading list, token budget 3000
 python skills/everything/scripts/akinator_trace.py check                         # every changed path accounted for
+python skills/everything/scripts/akinator_version.py check --base HEAD           # a shipped change bumped the version
 python skills/everything/scripts/akinator_sensitive.py scan                      # leaked secrets, fingerprint only
 python skills/everything/scripts/akinator_wiki.py interview                      # open gaps as grouped questions
 python skills/everything/scripts/akinator_distil.py repeats                      # skill, rule, or neither?

@@ -11,6 +11,10 @@ _Budget: standard tier, 12,000 tokens. Anything that did not fit is listed as a 
 
 ## What this system is
 
+**AKINATOR IS NOT OPTIONAL. YOU DO NOT GET TO SKIP IT BECAUSE THE PROMPT DIDN'T NAME IT.**
+STOP BEING LAZY. YOU ARE NOT TOO CLEVER FOR THE PROCEDURE. SKIPPING IT IS THE ONE THING
+YOU ARE NOT ALLOWED TO DO: THE OWNER SHOULD NEVER HAVE TO REPEAT THEMSELVES.
+
 Akinator - the knowledge-layer operating system for AI-maintained codebases.
 **One skill, one command, on every platform**: `/akinator:everything` on Claude
 Code, `$akinator` on Codex, `/akinator` on Cursor - and normally none at all,
@@ -19,6 +23,8 @@ impossible to change code without growing the knowledge around it.
 
 **This repo is maintained under its own discipline.** Every change here carries
 its own docs, skills, rules, context and memory delta.
+
+Current version: `2.2.0`. A shipped change bumps it in every manifest (`akinator_version.py`).
 
 ## Constraints that must not break
 
@@ -52,6 +58,8 @@ its own docs, skills, rules, context and memory delta.
   `rules/14-every-changed-path-is-traced.md`
 - **Rule 15 - Sensitive data is known, documented, and never exposed** - An AI-maintained repository handles credentials, personal data and financial fields constantly, and leaks them in the quietest ways: a real key pasted into a test, a tracked `.env`, an email address in a log line, a token quoted in a ledger...
   `rules/15-sensitive-data-is-known-and-never-exposed.md`
+- **Rule 16 - Every shipped change bumps the version** - A plugin that changes without changing its version cannot be updated, rolled back or reasoned about: installs cache by version, so a fix that keeps the old number never reaches anyone, and a changelog with no matching heading hides what mov...
+  `rules/16-every-shipped-change-bumps-the-version.md`
 
 ## Recurring failures and their fixes
 
@@ -67,6 +75,8 @@ its own docs, skills, rules, context and memory delta.
   `.ai/ledger/failure/skill-edit-dropped-its-contract-4c1e8a92b7d3.md`
 - **an ADR was filed under a number another ADR already held (seen 1x)** - **Symptom:** two files named docs/adr/0006-*.md, and a loose bullet under the ADR index table instead of a row **Fix:** the newer record moved to 0008, the index got a proper row, and tests/test_plugin_structure.py::test_adr_numbers_are_unique now fails on any reused number (mutation-tested)
   `.ai/ledger/failure/adr-number-filed-twice-5c0e93b8a14d.md`
+- **the agent ignored the installed plugin until the owner shouted, then complied (seen 1x)** - **Symptom:** Claude and Codex skipped Akinator on prompts that did not name it, even with the plugin installed and its contract injected **Fix:** an all-caps, firm contract (marker NOT OPTIONAL) on SessionStart, a UserPromptSubmit reminder on every prompt, the routers, the Codex AGENTS block and the Cursor rule; a test fails...
+  `.ai/ledger/failure/agent-skipped-the-installed-plugin.md`
 - **a hand-made logo failed CI after seven minutes of printing a PNG byte diff (seen 1x)** - **Symptom:** every CI run on main failed from the logo commit onward, each taking about seven minutes instead of twenty seconds **Fix:** the generator and that test were retired, as the deviation entry prescribed; test_required_asset_is_a_square_png keeps the part Codex actually requires
   `.ai/ledger/failure/byte-compare-test-hid-a-logo-for-7-minutes-e1b6f3a09d27.md`
 - **a generator emitted a reference to a path the same batch deleted (seen 1x)** - **Symptom:** every rendered router pointed at a command file the rename had just removed **Fix:** after any rename, grep the generators too, then re-run the drift check - which is what caught it
@@ -94,6 +104,8 @@ _nothing recorded yet_
   `.ai/ledger/requirement/stated-revenue-or-pricing-model.md`
 - **A 25-category wiki with generated platform, history and operations pages (current)** - The wiki covers 25 categories including roadmap, history, data, services, observability, standards, security, integrations and risks **Acceptance:** akinator_wiki.py check passes and each new category has a home **Source:** owner request 2026-10-03
   `.ai/ledger/requirement/a-25-category-wiki-with-generated-platform-history-and-opera.md`
+- **Always followed on every prompt, loud and firm (current)** - Akinator must always be followed automatically, even when never called with a slash: the contract is loud, repeated on every prompt, and a test fails if the marker disappears **Source:** owner, 2026-10-03
+  `.ai/ledger/requirement/always-followed-on-every-prompt.md`
 - **Always on, no command normally typed (current)** - Akinator is always on; normal prompts require no command. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/always-on-no-command-normally-typed.md`
 - **Context gained from a ranked pack within a token budget (current)** - The AI gains context fast and cheap by reading a ranked pack of knowledge files within a token budget, not the tree **Acceptance:** akinator_context.py pack returns a ranked list under the budget with no subprocess, from an incremental cache **Source:** owner request 2026-10-03
@@ -102,6 +114,8 @@ _nothing recorded yet_
   `.ai/ledger/requirement/every-changed-path-is-traced-to-its-knowledge.md`
 - **Every prompt documented everywhere it lands (current)** - Every prompt and every change is documented, product to project, so any AI reading the repository knows it. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/every-prompt-documented-everywhere-it-lands.md`
+- **Every shipped change bumps the version (current)** - The version is bumped on every shipped change, in every manifest, with a changelog heading; the tool suggests the level and CI checks it **Source:** owner, 2026-10-03
+  `.ai/ledger/requirement/every-shipped-change-bumps-the-version.md`
 - **Gaps become recorded answers through an interview (current)** - Every wiki gap is asked in a grouped battery with recommended defaults and an answer replaces the marker and is recorded in the ledger **Acceptance:** akinator_wiki.py interview and answer **Source:** owner request 2026-10-03
   `.ai/ledger/requirement/gaps-become-recorded-answers-through-an-interview.md`
 - **Generated facts, curated why, honest gaps (current)** - Facts are generated and cannot rot; why is curated and preserved; unknowns are marked honestly rather than filled with filler. **Source:** owner, 2026-09-18/19 sessions
@@ -110,10 +124,6 @@ _nothing recorded yet_
   `.ai/ledger/requirement/many-questions-with-recommended-defaults.md`
 - **One-line install with no marketplace (current)** - Install in one line, with no marketplace required. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/one-line-install-with-no-marketplace.md`
-- **One skill, one command on every platform (current)** - Exactly one skill and one command surface on every platform - /akinator:everything (Claude Code), $akinator (Codex), /akinator (Cursor). **Source:** owner, 2026-09-18/19 sessions
-  `.ai/ledger/requirement/one-skill-one-command-on-every-platform.md`
-- **Repetition prompts a skill or rule decision (current)** - Co-changing file sets and repeated commit stems prompt the question: turn it into a skill, a rule, or neither **Acceptance:** akinator_distil.py repeats lists candidates **Source:** owner request 2026-10-03
-  `.ai/ledger/requirement/repetition-prompts-a-skill-or-rule-decision.md`
 
 ## Business and product drift
 
@@ -162,6 +172,8 @@ _nothing recorded yet_
 
 _Did not fit the budget. Read on demand - the corpus is complete even when the brief is not._
 
+- One skill, one command on every platform (current) - `.ai/ledger/requirement/one-skill-one-command-on-every-platform.md`
+- Repetition prompts a skill or rule decision (current) - `.ai/ledger/requirement/repetition-prompts-a-skill-or-rule-decision.md`
 - Same tools on Claude Code, Codex and Cursor with one skill and one command (current) - `.ai/ledger/requirement/same-tools-on-claude-code-codex-and-cursor-with-one-skill-an.md`
 - Sensitive data is known and never exposed (current) - `.ai/ledger/requirement/sensitive-data-is-known-and-never-exposed.md`
 - Tools travel with the skill (current) - `.ai/ledger/requirement/tools-travel-with-the-skill.md`

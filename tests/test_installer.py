@@ -271,3 +271,27 @@ def test_ps_uninstall_removes_the_download_cache(world: dict) -> None:
     cache = _seed_download_cache(world)
     assert run_ps(world, "-Codex", "-Cursor", "-Uninstall").returncode == 0
     assert not cache.exists() and not cache.parent.exists()
+
+
+def _empty_home(world: dict) -> None:
+    """A user who had nothing: the installer creates every folder it uses, so
+    uninstall must remove every one of them."""
+    import shutil
+    shutil.rmtree(world["home"])
+    world["home"].mkdir()
+
+
+@needs_sh
+def test_sh_user_install_then_uninstall_leaves_the_home_empty(world: dict) -> None:
+    _empty_home(world)
+    assert run_sh(world, "--codex", "--cursor").returncode == 0
+    assert run_sh(world, "--codex", "--cursor", "--uninstall").returncode == 0
+    assert not any(world["home"].rglob("*")), "uninstall left files or folders behind"
+
+
+@needs_ps
+def test_ps_user_install_then_uninstall_leaves_the_home_empty(world: dict) -> None:
+    _empty_home(world)
+    assert run_ps(world, "-Codex", "-Cursor").returncode == 0
+    assert run_ps(world, "-Codex", "-Cursor", "-Uninstall").returncode == 0
+    assert not any(world["home"].rglob("*")), "uninstall left files or folders behind"

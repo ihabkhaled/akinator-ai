@@ -23,6 +23,7 @@ Numbered, never renumbered. Written with `templates/rule.md`.
 | 13 | [Every prompt is documented everywhere it lands](13-every-prompt-is-documented.md) - the wiki, requirements, drift and library pages update in the same batch as the change, generated facts stay exact and curated sections stay honest about gaps | `tests/test_wiki.py`, `tests/test_libraries.py`, `skills/everything/scripts/akinator_wiki.py check`, `skills/everything/scripts/extract_libraries.py --check`, `agents/akinator-librarian.md` |
 | 14 | [Every changed path is traced](14-every-changed-path-is-traced.md) - each path in a diff is a knowledge artifact, named in a change record in the same diff, or listed under a `knowledge delta: none, because <reason>` line | `skills/everything/scripts/akinator_trace.py check`, `tests/test_trace.py` |
 | 15 | [Sensitive data is known, documented, and never exposed](15-sensitive-data-is-known-and-never-exposed.md) - the register names every secret, secret file and PII field (never a value); `scan` finds no leaked secret and `guard` pre-checks text bound for docs, ledger and memory | `skills/everything/scripts/akinator_sensitive.py`, `tests/test_sensitive.py`, `.github/workflows/ci.yml` |
+| 16 | [Every shipped change bumps the version](16-every-shipped-change-bumps-the-version.md) - every manifest agrees, a shipped path changes only with a strictly greater version, and the changelog has the heading | `skills/everything/scripts/akinator_version.py`, `tests/test_version.py`, `.github/workflows/ci.yml` |
 
 ## Adding a rule
 

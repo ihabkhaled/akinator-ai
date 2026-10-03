@@ -247,6 +247,8 @@ if ($Uninstall) {
     foreach ($dir in @($SkillsRoot, (Split-Path -Parent $SkillsRoot), (Split-Path -Parent $CursorRule), (Split-Path -Parent (Split-Path -Parent $CursorRule)))) {
         if ((Test-Path $dir) -and -not (Get-ChildItem -Force $dir)) { Remove-Item -Force $dir }
     }
+    # The Codex home this installer created for AGENTS.md, when it is now empty.
+    if (-not $Repo -and (Test-Path $CodexDir) -and -not (Get-ChildItem -Force $CodexDir)) { Remove-Item -Force $CodexDir }
     # The download cache this installer made for Codex and Cursor; the skill was
     # copied out of it, so nothing depends on it.
     $cache = Join-Path $UserHome '.akinator\src'

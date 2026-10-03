@@ -252,6 +252,17 @@
     },
     {
       "in_brief": true,
+      "path": "rules/16-every-shipped-change-bumps-the-version.md",
+      "score": 0.81,
+      "section": "constraints",
+      "tags": [
+        "rule"
+      ],
+      "title": "Rule 16 - Every shipped change bumps the version",
+      "tokens": 89
+    },
+    {
+      "in_brief": true,
       "path": ".ai/ledger/drift/generated-logo-replaced-by-hand-designed-artwork.md",
       "score": 0.72,
       "section": "drift",
@@ -438,6 +449,18 @@
     },
     {
       "in_brief": true,
+      "path": ".ai/ledger/requirement/always-followed-on-every-prompt.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Always followed on every prompt, loud and firm (current)",
+      "tokens": 83
+    },
+    {
+      "in_brief": true,
       "path": ".ai/ledger/requirement/always-on-no-command-normally-typed.md",
       "score": 0.512,
       "section": "requirements",
@@ -483,6 +506,18 @@
       ],
       "title": "Every prompt documented everywhere it lands (current)",
       "tokens": 72
+    },
+    {
+      "in_brief": true,
+      "path": ".ai/ledger/requirement/every-shipped-change-bumps-the-version.md",
+      "score": 0.512,
+      "section": "requirements",
+      "tags": [
+        "requirement",
+        "current"
+      ],
+      "title": "Every shipped change bumps the version (current)",
+      "tokens": 74
     },
     {
       "in_brief": true,
@@ -533,7 +568,7 @@
       "tokens": 54
     },
     {
-      "in_brief": true,
+      "in_brief": false,
       "path": ".ai/ledger/requirement/one-skill-one-command-on-every-platform.md",
       "score": 0.512,
       "section": "requirements",
@@ -545,7 +580,7 @@
       "tokens": 77
     },
     {
-      "in_brief": true,
+      "in_brief": false,
       "path": ".ai/ledger/requirement/repetition-prompts-a-skill-or-rule-decision.md",
       "score": 0.512,
       "section": "requirements",
@@ -652,6 +687,18 @@
     },
     {
       "in_brief": true,
+      "path": ".ai/ledger/failure/agent-skipped-the-installed-plugin.md",
+      "score": 0.299,
+      "section": "failures",
+      "tags": [
+        "failure",
+        "x1"
+      ],
+      "title": "the agent ignored the installed plugin until the owner shouted, then complied (seen 1x)",
+      "tokens": 122
+    },
+    {
+      "in_brief": true,
       "path": ".ai/ledger/failure/byte-compare-test-hid-a-logo-for-7-minutes-e1b6f3a09d27.md",
       "score": 0.299,
       "section": "failures",
@@ -712,5 +759,5 @@
     }
   ],
   "tier": "standard",
-  "used": 5185
+  "used": 5541
 }

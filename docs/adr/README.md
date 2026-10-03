@@ -33,6 +33,7 @@ and on what grounds, is knowledge.
 | [0009](0009-one-skill-one-command-one-installer.md) | One skill, one command, one installer - the stations are references inside the one skill | accepted | Codex and Cursor gain a user-facing way to hide a skill, or a station needs its own tool permissions |
 | [0010](0010-every-prompt-documented-living-wiki.md) | Every prompt documented - the repository is its own wiki; generated facts, curated why, honest gaps, many questions with defaults | accepted | owners answer most questions with the defaults, or curated library sections stay gaps for months |
 | [0011](0011-cheap-deterministic-tools-over-prose-or-indexing.md) | Cheap deterministic tools with an enforced trace and guard - not prose discipline, not a heavy index | accepted | keyword ranking measurably misses needed pages, or scan false positives force broad allow lists |
+| [0012](0012-always-followed-and-version-discipline.md) | Always followed by volume and repetition (loud contract, per-prompt hook) and version discipline in one tool - not a new skill or command | accepted | agents follow a calm contract reliably, or the loud register draws complaints from adopting companies |
 
 ## Adding one
 

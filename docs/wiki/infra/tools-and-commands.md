@@ -15,6 +15,7 @@
 | `python .agents/skills/akinator/scripts/akinator_scope.py` | Scope a pass to what actually changed, and budget the questions. | `.agents/skills/akinator/scripts/akinator_scope.py` |
 | `python .agents/skills/akinator/scripts/akinator_sensitive.py` | Sensitive data: know what must not be exposed, document it, never leak it. | `.agents/skills/akinator/scripts/akinator_sensitive.py` |
 | `python .agents/skills/akinator/scripts/akinator_trace.py` | Every changed path is traced - no change lands without its knowledge. | `.agents/skills/akinator/scripts/akinator_trace.py` |
+| `python .agents/skills/akinator/scripts/akinator_version.py` | Version discipline: every shipped change bumps the version, everywhere at once. | `.agents/skills/akinator/scripts/akinator_version.py` |
 | `python .agents/skills/akinator/scripts/akinator_wiki.py` | The living wiki - the repository as its own Confluence. | `.agents/skills/akinator/scripts/akinator_wiki.py` |
 | `python .agents/skills/akinator/scripts/build_brief.py` | Compose the context brief - what a new session actually reads. | `.agents/skills/akinator/scripts/build_brief.py` |
 | `python .agents/skills/akinator/scripts/extract_history.py` | Generate the history wiki page from the records the repository already keeps. | `.agents/skills/akinator/scripts/extract_history.py` |
@@ -35,6 +36,7 @@
 | `python skills/everything/scripts/akinator_scope.py` | Scope a pass to what actually changed, and budget the questions. | `skills/everything/scripts/akinator_scope.py` |
 | `python skills/everything/scripts/akinator_sensitive.py` | Sensitive data: know what must not be exposed, document it, never leak it. | `skills/everything/scripts/akinator_sensitive.py` |
 | `python skills/everything/scripts/akinator_trace.py` | Every changed path is traced - no change lands without its knowledge. | `skills/everything/scripts/akinator_trace.py` |
+| `python skills/everything/scripts/akinator_version.py` | Version discipline: every shipped change bumps the version, everywhere at once. | `skills/everything/scripts/akinator_version.py` |
 | `python skills/everything/scripts/akinator_wiki.py` | The living wiki - the repository as its own Confluence. | `skills/everything/scripts/akinator_wiki.py` |
 | `python skills/everything/scripts/build_brief.py` | Compose the context brief - what a new session actually reads. | `skills/everything/scripts/build_brief.py` |
 | `python skills/everything/scripts/extract_history.py` | Generate the history wiki page from the records the repository already keeps. | `skills/everything/scripts/extract_history.py` |
@@ -49,7 +51,7 @@
 |---|---|
 | `gh` | `.github` |
 | `git` | `.git`, `.github/workflows/ci.yml` |
-| `python` | `.agents/skills/akinator/scripts/akinator_context.py`, `.agents/skills/akinator/scripts/akinator_coverage.py`, `.agents/skills/akinator/scripts/akinator_distil.py` +32 more |
+| `python` | `.agents/skills/akinator/scripts/akinator_context.py`, `.agents/skills/akinator/scripts/akinator_coverage.py`, `.agents/skills/akinator/scripts/akinator_distil.py` +34 more |
 
 Regenerate with: `python <skill>/scripts/extract_operations.py --write`
 <!-- akinator:generated:end -->

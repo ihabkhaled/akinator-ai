@@ -32,6 +32,8 @@ installed files made obvious.
 | Every plugin skill is listed in the `/` menu as `/<plugin>:<skill>` | the skill **is** the command: `/akinator:everything` | skills stop appearing in the menu |
 | `agents/*.md`, frontmatter `name` + `description`, optional `tools` | the 7 boardroom lenses | subagent definition format changes |
 | `hooks/hooks.json` in the **plugin format** - events wrapped in a `hooks` key | the SessionStart contract injection | the wrapper is dropped or renamed |
+| `UserPromptSubmit` hook stdout is added to context on every prompt | `hooks/prompt-reminder.sh`, exec form, three lines, exit 0, no permission decision | stdout handling changes, or the event is removed |
+| `SessionStart` with no matcher fires on startup, resume, clear and compact | the contract survives `/clear` and compaction | a matcher becomes required |
 | `SessionStart` hook stdout is added to session context | the contract reaches the session before the first tool call | stdout handling changes, or SessionStart is removed |
 | `${CLAUDE_PLUGIN_ROOT}` expands in hook commands and args | portable hook invocation | the variable is renamed |
 | Hooks in **exec form** - `command` plus `args` | `"command": "sh"`, `"args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"]` | exec form is dropped |
@@ -260,8 +262,11 @@ them from Codex and Cursor is from docs and source, not run live.
 
 - Claude Code, Codex or Cursor ships a plugin, skill or rules contract change.
 - A new AI tool is added to the router set.
-- Last verified: 2026-09-18, against Claude Code 2.1.154 (CLI) and 2.1.276 (VS
-  Code extension); Codex and Cursor from docs and source only.
+- Last verified: 2026-10-03, against the Claude Code CLI on PATH with `claude
+  --plugin-dir . -p --output-format stream-json --verbose --include-hook-events`:
+  `hook_response` (exit 0, success) for both `SessionStart` and
+  `UserPromptSubmit`, and the slash menu still lists only `akinator:everything`;
+  Codex and Cursor from docs and source only.
 
 ## Related
 

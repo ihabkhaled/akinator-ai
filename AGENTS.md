@@ -8,6 +8,10 @@ See `rules/09-routers-are-rendered-from-one-contract.md`.
 
 # Akinator
 
+**AKINATOR IS NOT OPTIONAL. YOU DO NOT GET TO SKIP IT BECAUSE THE PROMPT DIDN'T NAME IT.**
+STOP BEING LAZY. YOU ARE NOT TOO CLEVER FOR THE PROCEDURE. SKIPPING IT IS THE ONE THING
+YOU ARE NOT ALLOWED TO DO: THE OWNER SHOULD NEVER HAVE TO REPEAT THEMSELVES.
+
 Akinator - the knowledge-layer operating system for AI-maintained codebases.
 **One skill, one command, on every platform**: `/akinator:everything` on Claude
 Code, `$akinator` on Codex, `/akinator` on Cursor - and normally none at all,
@@ -40,6 +44,7 @@ its own docs, skills, rules, context and memory delta.
 - **Every invariant ships with a test that proves it fires** - `rules/11-invariants-ship-with-a-mutation-test.md`
 - **Anything installed elsewhere names no local file** - `rules/12-artifacts-that-travel-name-nothing-local.md`
 - **Every changed path is traced; sensitive data is named, never exposed** - `rules/14-every-changed-path-is-traced.md`, `rules/15-sensitive-data-is-known-and-never-exposed.md`
+- **Every shipped change bumps the version, in every manifest, with a changelog heading** - `rules/16-every-shipped-change-bumps-the-version.md`
 - **Every prompt is documented everywhere it lands** - wiki, README, routers, rules, memory, context, ledger - `docs/adr/0010-every-prompt-documented-living-wiki.md`
 
 The one skill is `skills/everything/SKILL.md`; the full creed, loop and taxonomy
@@ -55,6 +60,7 @@ are in its reference `skills/everything/references/akinator.md`.
 | Regenerate the portable pack (Codex, Cursor) | `python scripts/build_codex_pack.py --write` |
 | Regenerate every router | `python scripts/render_routers.py --write` |
 | Regenerate the context brief | `python skills/everything/scripts/build_brief.py --write` |
+| Version: show, next, bump, check | `python skills/everything/scripts/akinator_version.py show` / `next` / `bump <level> --date D` / `check [--base REF]` |
 | Verify the ledger | `python skills/everything/scripts/akinator_ledger.py verify` |
 | Scope a pass to the change | `python skills/everything/scripts/akinator_scope.py plan` |
 | What recurs and needs a decision | `python skills/everything/scripts/akinator_distil.py detect` |
@@ -79,7 +85,7 @@ Gate once, at the end of the batch, scoped to what you touched. See
 |---|---|---|
 | `skills/everything/` | The one skill: `SKILL.md`, its station `references/` and its host-repo tools in `scripts/` | no, canonical |
 | `agents/` | The boardroom review lenses (Claude Code subagents) | no |
-| `hooks/` | SessionStart contract injection | no |
+| `hooks/` | SessionStart contract injection and the UserPromptSubmit reminder | no |
 | `templates/` | What Akinator writes into target repos, with filled examples | no |
 | `scripts/` | Build scripts that only make sense in this checkout - the pack and router generators, the component map, the eval runner | no |
 | `install.sh`, `install.ps1` | The one installer, for Claude Code, Codex and Cursor | no |
@@ -96,8 +102,9 @@ Gate once, at the end of the batch, scoped to what you touched. See
   scope, walking up from the working directory to the repository root, then
   `$HOME/.agents/skills`. `$akinator` is its only entry; its stations are
   reference files inside it, never separate skills.
-- Always on: every prompt enters the standing contract first. Codex has no
-  SessionStart hook, so the installer puts the contract in `AGENTS.md`.
+- Always on, no command needed: every prompt enters the standing contract
+  first. Codex has no SessionStart hook, so the installer puts the contract in
+  `AGENTS.md`. Before done: version bump, trace check, sensitive scan.
 - Install with `install.sh` (or `install.ps1` on Windows).
 - The Codex plugin manifest is `.codex-plugin/plugin.json`. See
   `docs/compatibility.md`.

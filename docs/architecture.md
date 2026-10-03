@@ -30,7 +30,7 @@ Every platform gets the same contract through the strongest surface it has:
 
 | Platform | Surface | Reads it |
 |---|---|---|
-| Claude Code | `hooks/hooks.json` runs `hooks/session-start.sh` at session start, in exec form; its stdout becomes session context | automatically, every session |
+| Claude Code | `hooks/hooks.json` runs `hooks/session-start.sh` at startup, resume, clear and compact, and `hooks/prompt-reminder.sh` (three loud lines) on every prompt, both in exec form; stdout becomes context | automatically, every session and every prompt |
 | Codex | a marked `akinator:begin`/`akinator:end` block the installer merges into `AGENTS.md` - `~/.codex/AGENTS.md` for a user install, the repository's own for a repo install | at session start, and again at every turn boundary |
 | Cursor | an `alwaysApply: true` rule the installer writes to `~/.cursor/rules/` or the repository's `.cursor/rules/` - and a repository's root `AGENTS.md`, which Cursor also reads | every Agent chat |
 

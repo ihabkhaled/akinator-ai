@@ -350,6 +350,25 @@ def identity(repo: Path) -> str:
     return "_no identity recorded_"
 
 
+def current_version(repo: Path) -> str:
+    """The version the first manifest that declares one carries, or ''."""
+    for rel in (".claude-plugin/plugin.json", ".codex-plugin/plugin.json",
+                "package.json", "VERSION", "pyproject.toml"):
+        path = repo / rel
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if rel.endswith(".json"):
+            match = re.search(r'"version"\s*:\s*"([^"]+)"', text)
+        elif rel == "VERSION":
+            match = re.match(r"\s*(\S+)", text)
+        else:
+            match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+        if match:
+            return match.group(1)
+    return ""
+
+
 # --------------------------------------------------------------------------
 # Composition
 # --------------------------------------------------------------------------
@@ -380,6 +399,7 @@ def compose(repo: Path) -> tuple[str, dict]:
     )
 
     tier, budget = budget_for(repo)
+    version = current_version(repo)
     collectors = {
         "constraints": collect_constraints,
         "failures": collect_failures,
@@ -412,6 +432,9 @@ def compose(repo: Path) -> tuple[str, dict]:
         "",
         head,
         "",
+        *([f"Current version: `{version}`. A shipped change bumps it in every "
+           "manifest (`akinator_version.py`)."] if version else []),
+        *([""] if version else []),
     ]
 
     demoted: list[Item] = []

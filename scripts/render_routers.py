@@ -69,8 +69,9 @@ CODEX_SPECIFICS = (
     "  scope, walking up from the working directory to the repository root, then",
     "  `$HOME/.agents/skills`. `$akinator` is its only entry; its stations are",
     "  reference files inside it, never separate skills.",
-    "- Always on: every prompt enters the standing contract first. Codex has no",
-    "  SessionStart hook, so the installer puts the contract in `AGENTS.md`.",
+    "- Always on, no command needed: every prompt enters the standing contract",
+    "  first. Codex has no SessionStart hook, so the installer puts the contract in",
+    "  `AGENTS.md`. Before done: version bump, trace check, sensitive scan.",
     "- Install with `install.sh` (or `install.ps1` on Windows).",
     "- The Codex plugin manifest is `.codex-plugin/plugin.json`. See",
     "  `docs/compatibility.md`.",
@@ -79,7 +80,10 @@ CODEX_SPECIFICS = (
 CLAUDE_SPECIFICS = (
     "- The one skill loads from `skills/everything/`, the review lenses from",
     "  `agents/`, and the SessionStart hook from `hooks/hooks.json`.",
-    "- Akinator is always-on from SessionStart; normal prompts require no command.",
+    "- Akinator is always-on: SessionStart (startup, resume, clear, compact) injects",
+    "  the contract and UserPromptSubmit reminds on every prompt; no command needed.",
+    "- Before done: `akinator_version.py` bump, `akinator_trace.py check`,",
+    "  `akinator_sensitive.py scan`.",
     "- The skill is also the only command: `/akinator:everything`. There is no",
     "  `commands/` directory, so nothing else appears in the `/` menu.",
     "- Install with `install.sh` / `install.ps1`, or `claude plugin marketplace add`",
@@ -87,7 +91,8 @@ CLAUDE_SPECIFICS = (
 )
 
 GENERIC_SPECIFICS = (
-    "- Akinator is always-on for normal repository prompts; no slash command is required.",
+    "- Akinator is always on, no command needed. Before done: version bump, trace",
+    "  check, sensitive scan (`akinator_version.py`, `akinator_trace.py`, `akinator_sensitive.py`).",
     "- This file is one of several AI entry points in this repository. They are",
     "  all rendered from `context/router-contract.md` and state the same facts.",
     "- If your tool reads skills from a directory, point it at `.agents/skills/`",

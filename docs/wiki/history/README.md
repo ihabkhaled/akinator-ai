@@ -8,13 +8,15 @@
 
 | Manifest | Version |
 |---|---|
-| `.claude-plugin/plugin.json` | `2.1.0` |
-| `.codex-plugin/plugin.json` | `2.1.0` |
+| `.claude-plugin/plugin.json` | `2.2.0` |
+| `.claude-plugin/marketplace.json` | `2.2.0` |
+| `.codex-plugin/plugin.json` | `2.2.0` |
 
 ## Releases
 
 | Version | Date | Summary |
 |---|---|---|
+| `2.2.0` | 2026-10-03 | Akinator is now followed on every prompt, not only at session start, and every |
 | `2.1.0` | 2026-10-03 | Traced changes, cheap context, sensitive data known and never exposed, and a |
 | `2.0.0` | 2026-09-19 | Every prompt documented: the repository becomes its own living wiki. Still one |
 | `1.2.0` | 2026-09-18 | One skill, one command, one installer - and the always-on work from PR #1, which |
@@ -28,6 +30,7 @@
 | Date | Change | Path |
 |---|---|---|
 | 2026-10-03 | Change - 2.1.0: traced changes, fast context, sensitive data, a 25-category wiki | `docs/changes/2026-10-03-trace-fast-context-sensitive.md` |
+| 2026-10-03 | Change - 2.2.0: always followed, version discipline | `docs/changes/2026-10-03-always-followed-version-discipline.md` |
 | 2026-09-19 | Change - Every prompt documented: the living wiki | `docs/changes/2026-09-19-living-wiki.md` |
 | 2026-09-18 | Change - One skill, one command, one installer | `docs/changes/2026-09-18-one-skill-one-installer.md` |
 | 2026-09-18 | Change — Always-on one-command Akinator and living wiki | `docs/changes/2026-09-18-always-on-one-command.md` |
@@ -47,16 +50,17 @@
 | ADR 0009 - One skill, one command, one installer | accepted | `docs/adr/0009-one-skill-one-command-one-installer.md` |
 | ADR 0010 - Every prompt documented: the repository is its own wiki | accepted | `docs/adr/0010-every-prompt-documented-living-wiki.md` |
 | ADR 0011 - Cheap deterministic tools, with an enforced trace and guard | accepted | `docs/adr/0011-cheap-deterministic-tools-over-prose-or-indexing.md` |
+| ADR 0012 - Always followed by volume and repetition, and version discipline | accepted | `docs/adr/0012-always-followed-and-version-discipline.md` |
 
 ## Ledger
 
 | Record type | Records |
 |---|---|
-| decision | 7 |
+| decision | 8 |
 | drift | 7 |
-| failure | 11 |
+| failure | 12 |
 | question | 2 |
-| requirement | 18 |
+| requirement | 20 |
 | surprise | 2 |
 
 ### Requirement records
@@ -64,10 +68,12 @@
 | Title | Status | Path |
 |---|---|---|
 | A 25-category wiki with generated platform, history and operations pages | current | `.ai/ledger/requirement/a-25-category-wiki-with-generated-platform-history-and-opera.md` |
+| Always followed on every prompt, loud and firm | current | `.ai/ledger/requirement/always-followed-on-every-prompt.md` |
 | Always on, no command normally typed | current | `.ai/ledger/requirement/always-on-no-command-normally-typed.md` |
 | Context gained from a ranked pack within a token budget | current | `.ai/ledger/requirement/context-gained-from-a-ranked-pack-within-a-token-budget.md` |
 | Every changed path is traced to its knowledge | current | `.ai/ledger/requirement/every-changed-path-is-traced-to-its-knowledge.md` |
 | Every prompt documented everywhere it lands | current | `.ai/ledger/requirement/every-prompt-documented-everywhere-it-lands.md` |
+| Every shipped change bumps the version | current | `.ai/ledger/requirement/every-shipped-change-bumps-the-version.md` |
 | Gaps become recorded answers through an interview | current | `.ai/ledger/requirement/gaps-become-recorded-answers-through-an-interview.md` |
 | Generated facts, curated why, honest gaps | current | `.ai/ledger/requirement/generated-facts-curated-why-honest-gaps.md` |
 | Listing refreshed for the living-wiki release | missing | `.ai/ledger/requirement/listing-refreshed-for-the-living-wiki-release.md` |

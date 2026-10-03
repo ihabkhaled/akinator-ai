@@ -188,6 +188,19 @@ For **each** batch, in order:
     `trace check` exits 1 on an unaccounted path; `trace record --title T`
     writes the change record that accounts for the diff.
 
+    **Version discipline.** When the diff touches a shipped path, bump the
+    version in the same batch, before the check below:
+
+    ```bash
+    python <skill>/scripts/akinator_version.py next --base HEAD    # why: major, minor or patch
+    python <skill>/scripts/akinator_version.py bump minor --date YYYY-MM-DD
+    python <skill>/scripts/akinator_version.py check --base HEAD   # exit 1 = no bump, or no changelog heading
+    ```
+
+    New or removed tool, reference, rule or hook is minor; a fix under existing
+    files is patch; a removed or renamed public entry point is major. `bump`
+    rewrites every manifest and seeds the changelog heading - fill it in.
+
 20. **Coverage and the newcomer test** (`akinator-coverage`) - both halves. A
     green mechanical run measures presence and consistency, not usefulness. Say
     which one you ran.

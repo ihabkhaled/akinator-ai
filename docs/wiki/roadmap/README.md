@@ -19,6 +19,9 @@ maintainer's current recommendation and is open to the owner.
 | 3 | Fewer false positives in the heuristic detectors (`scan`, platform extractors) | Allow lists are the only escape today | real repositories to test on |
 | 4 | Better ranking in `pack` (headings and path weighting, still no daemon) | Ranking is keyword-only | measured misses |
 | 5 | Narrow the default wiki to the categories a repository actually needs | 25 categories is heavy for a small repository | owner feedback on volume |
-| 6 | Refresh the listing copy for 2.1 | `docs/listing.md` still describes the 2.0 surface | none |
+| 6 | Refresh the listing copy for 2.2 | `docs/listing.md` still describes the 2.0 surface | none |
+| 7 | Measure how often agents follow the contract with and without the per-prompt hook | 2.2 relies on volume and repetition; compliance is still model behavior (ADR 0012) | an eval that counts skipped passes |
+| 8 | Proposal: a release helper that tags and drafts notes from `next` and the changelog | `bump` stops at the files; tagging stays manual | owner decision on release flow |
+| 9 | Proposal: let `akinator_version.py` read more manifests (Cargo, Gradle, Maven) | only the plugin manifests, `package.json`, `pyproject.toml` and `VERSION` are known | real target repositories |
 
 _Unknown - ask the owner and record the answer._

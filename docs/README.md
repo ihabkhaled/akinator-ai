@@ -29,6 +29,7 @@ Every non-obvious choice, with its rejected alternatives and their costs.
 |---|---|
 | [0001](adr/0001-mit-license.md) | MIT license - adoption is the goal, and MIT is what passes corporate legal review without a conversation |
 | [0002](adr/0002-codex-pack-generated-from-claude-skills.md) | The Codex pack is generated from the Claude skills, not maintained by hand or symlinked |
+| [0012](adr/0012-always-followed-and-version-discipline.md) | Always followed by volume and repetition, plus one version tool |
 | [0003](adr/0003-enforcement-outside-git-hooks.md) | Knowledge enforcement lives in session behavior, CI and tests - never in a git hook |
 | [0004](adr/0004-gate-receipts-over-hook-bypass.md) | Tree-bound gate receipts rather than hook bypass, because a receipt is auditable |
 | [0005](adr/0005-single-command-surface.md) | One command, not one per mode - its command-file mechanism superseded by ADR 0009 |
@@ -63,3 +64,4 @@ Meaningful changes are indexed here so their provenance remains reachable instea
 - [2026-09-18 - One skill, one command, one installer](changes/2026-09-18-one-skill-one-installer.md) - records collapsing Akinator into one skill per platform, the one-line installer, the Windows hook fix, and what the always-on change got wrong.
 - [2026-09-19 - Every prompt documented: the living wiki](changes/2026-09-19-living-wiki.md) - records ADR 0010: the wiki home, the library pages, requirements and drift records, and the fifteen-question budget.
 - [2026-10-03 - 2.1.0: traced changes, fast context, sensitive data](changes/2026-10-03-trace-fast-context-sensitive.md) - records the context, trace and sensitive tools, rules 14 and 15, the 25-category wiki and ADR 0011.
+- [2026-10-03 - 2.2.0: always followed, version discipline](changes/2026-10-03-always-followed-version-discipline.md) - records the loud contract, the per-prompt hook, `akinator_version.py`, rule 16 and ADR 0012.

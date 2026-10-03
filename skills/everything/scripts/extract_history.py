@@ -55,7 +55,8 @@ LISTED_TYPES = ("requirement", "drift")
 SUMMARY_MAX = 200
 
 VERSION_MANIFESTS = (
-    ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", "package.json",
+    ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json",
+    ".codex-plugin/plugin.json", "package.json",
     "pyproject.toml", "Cargo.toml", "VERSION",
 )
 RELEASE = re.compile(r"^##[ \t]+\[([^\]\r\n]+)\](?:[ \t]*-[ \t]*(\S+))?", re.MULTILINE)
@@ -106,6 +107,11 @@ def versions(repo: Path) -> list[tuple[str, str]]:
             try:
                 data = json.loads(text)
                 version = str(data.get("version", "")) if isinstance(data, dict) else ""
+                if not version and isinstance(data, dict):
+                    for plugin in data.get("plugins") or []:
+                        if isinstance(plugin, dict) and plugin.get("version"):
+                            version = str(plugin["version"])
+                            break
             except ValueError:
                 version = ""
         elif rel == "VERSION":

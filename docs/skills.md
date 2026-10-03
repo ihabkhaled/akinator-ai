@@ -41,6 +41,7 @@ Run from the repository root; `<skill>` is the skill's own folder
 | `akinator_context.py` | `pack --for "<task>" [--paths p ...] [--budget 3000] [--json]`, `owners --paths p ...`, `stale --today YYYY-MM-DD [--days 90]`, `budget` | The cheapest context: a ranked reading list inside a token budget, from an incremental cache in `.ai/cache/`. No subprocess |
 | `akinator_trace.py` | `plan`, `check [--base REF] [--json]`, `record --title T [--base REF] [--date D]` | Every changed path traces to a change record or ledger record in the same diff, or to `knowledge delta: none, because ...` (rule 14) |
 | `akinator_sensitive.py` | `register [--write or --check]`, `scan [--json]`, `guard FILE...` or `guard --stdin` | Names and locations of secrets and PII, never values; leaked-secret scan with fingerprints; pre-write guard (rule 15) |
+| `akinator_version.py` | `show`, `check [--base REF]`, `next [--base REF]`, `bump major\|minor\|patch --date D`, `set X.Y.Z` | Every shipped change bumps the version in every manifest, with a changelog heading (rule 16) |
 | `akinator_wiki.py` | `init`, `index`, `gaps`, `check`, `interview [--limit N]`, `answer --page P --line L --text T [--source S]` | The wiki home, its gaps, the grouped question battery with ids `Q<n>`, and recording an answer |
 | `akinator_coverage.py` | `<root> [--strict]` | The mechanically verifiable knowledge invariants |
 | `akinator_ledger.py` | `add <kind> ...`, `verify` | What happened: failures, questions, decisions, surprises, requirements, drift |

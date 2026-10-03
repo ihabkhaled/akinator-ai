@@ -38,6 +38,9 @@ record of the same diff, or the batch says `knowledge delta: none, because
 python <skill>/scripts/akinator_trace.py plan [--base REF]    # what still lacks a record
 python <skill>/scripts/akinator_trace.py record --title "..." # write the record
 python <skill>/scripts/akinator_trace.py check                # exit 1 = unaccounted paths
+python <skill>/scripts/akinator_version.py next --base HEAD   # shipped change? which bump
+python <skill>/scripts/akinator_version.py bump <level> --date YYYY-MM-DD
+python <skill>/scripts/akinator_version.py check --base HEAD  # exit 1 = not bumped, no changelog heading
 ```
 
 A release or version bump is a history event (`docs/wiki/history`, regenerated
@@ -173,6 +176,7 @@ This verification is what separates documentation from fiction.
 
 - [ ] A change-provenance record exists for every meaningful change, or a mechanical-only `knowledge delta: none — <reason>` is recorded.
 - [ ] `akinator_trace.py check` exits 0: every changed path is accounted for.
+- [ ] A shipped change bumped the version everywhere and `akinator_version.py check --base HEAD` exits 0.
 - [ ] The four questions were asked for this change, and answered or explicitly
       dismissed.
 - [ ] Every answer is written into exactly one canonical home.

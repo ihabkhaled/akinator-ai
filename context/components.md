@@ -72,7 +72,7 @@ subagent surface; the skill applies the same review lenses inline there.
 | `akinator-pm` | Use at plan and verify stations to check batch discipline and completion honesty. |
 | `akinator-product-owner` | Use at plan and verify stations when work adds, changes or removes user-facing behavior. |
 
-## Hooks - 1
+## Hooks - 2
 
 Read by Claude Code from `hooks/hooks.json`, in exec form. Codex and
 Cursor have no SessionStart equivalent, so the installer gives them the
@@ -81,8 +81,9 @@ same contract as an `AGENTS.md` block and an always-applied rule.
 | Event | Command |
 |---|---|
 | `SessionStart` | `sh ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh` |
+| `UserPromptSubmit` | `sh ${CLAUDE_PLUGIN_ROOT}/hooks/prompt-reminder.sh` |
 
-## Tools - 15
+## Tools - 16
 
 Inside the skill, so they travel with it to every platform and run in
 whatever repository it is installed into.
@@ -97,6 +98,7 @@ whatever repository it is installed into.
 | `skills/everything/scripts/akinator_scope.py` | Scope a pass to what actually changed, and budget the questions. |
 | `skills/everything/scripts/akinator_sensitive.py` | Sensitive data: know what must not be exposed, document it, never leak it. |
 | `skills/everything/scripts/akinator_trace.py` | Every changed path is traced - no change lands without its knowledge. |
+| `skills/everything/scripts/akinator_version.py` | Version discipline: every shipped change bumps the version, everywhere at once. |
 | `skills/everything/scripts/akinator_wiki.py` | The living wiki - the repository as its own Confluence. |
 | `skills/everything/scripts/build_brief.py` | Compose the context brief - what a new session actually reads. |
 | `skills/everything/scripts/extract_history.py` | Generate the history wiki page from the records the repository already keeps. |

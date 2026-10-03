@@ -22,6 +22,7 @@ agent would otherwise rediscover.
 | 2026-09-18 | ["One command" is decided by the menu, not by the commands folder](2026-09-18-one-command-is-decided-by-the-menu.md) | surprise |
 | 2026-09-19 | [Owner wants exhaustive, corporate-scale documentation and many questions](2026-09-19-document-every-prompt.md) | preference |
 | 2026-10-03 | [Gain context from a ranked pack, never from the tree](2026-10-03-read-the-pack-not-the-tree.md) | preference |
+| 2026-10-03 | [The agent skips a polite contract; a loud, repeated one it follows](2026-10-03-the-agent-skips-what-is-not-shouted.md) | surprise |
 
 ## Pruning
 
