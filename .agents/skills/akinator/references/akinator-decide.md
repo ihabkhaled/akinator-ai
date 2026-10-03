@@ -45,6 +45,10 @@ at the owner as a short, costed, recommended choice they can answer in a word.
 
 ### 1. Load the context, and cite it
 
+**You own reversible decisions.** Decide, record, name the owner and the
+revisit-when; do not hand them back. Find who or what already decided with
+`python <skill>/scripts/akinator_context.py owners --paths <path> ...`.
+
 Read, in this order, only what bears on the decision:
 
 1. The brief - the composed picture of the repository.

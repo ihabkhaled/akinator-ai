@@ -9,6 +9,18 @@ containers and their other work running on it.
 Two rules: **reduce your own load, never theirs. Leave the machine as you found
 it.**
 
+## Cost doctrine - tokens and processes are resources too
+
+- **Context pack before reading**: `python <skill>/scripts/akinator_context.py
+  pack --for "<task>" [--budget 3000]` returns a ranked reading list with zero
+  subprocesses, cached in `.ai/cache`. `budget` shows the numbers.
+- **Never glob-read the tree.** Read what the pack, `owners` and the brief name.
+- Use the caches; do not recompute what a generated page already holds.
+- No heavy processes for a question a tool answers from files.
+- Default: about 3000 tokens of reading before the first edit; exceed it only
+  for a stated reason.
+- The tools are the cheap path: stdlib, no network, no daemons.
+
 ## When to use
 
 - Before starting any build, test suite, container rebuild or long-running

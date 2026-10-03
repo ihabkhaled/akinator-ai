@@ -19,6 +19,9 @@ wiki (product, business, market, requirements, drift, architecture, libraries,
 stack, infra, testing, UX, project, decisions, changes), README and install docs,
 every agent router, rules, memory, context and the ledger. Ask a grouped battery
 of questions with recommended defaults; honest gaps only, never invented facts.
+Gain context cheaply with akinator_context.py pack, trace every changed path
+(akinator_trace.py), keep sensitive data named and never exposed
+(akinator_sensitive.py), and own the reversible decisions.
 
 Code + knowledge is the change. Preserve WHAT, WHY, WHO/agent when knowable,
 WHEN, BEFORE, NOW, NEXT, business/product intent, technical reasoning, decisions,

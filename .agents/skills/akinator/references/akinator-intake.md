@@ -149,6 +149,21 @@ checklist for finding questions, not a script to recite.
   run in parallel?
 - Does it change running cost?
 
+**Business and product**
+- What does the business do, for whom, and how does it earn? Which product
+  rules are settled?
+
+**Tools, environment, integrations, repositories, providers**
+- Which tools and commands, environment variables, third-party integrations,
+  repositories and providers does this use, and who owns each?
+
+**Sensitive data classification**
+- Which fields, files or variables are secret or personal, how are they
+  classified, who rotates them? Names and locations only, never values.
+
+**Install manual**
+- How is this installed and set up from zero, on which platforms?
+
 **Project and market**
 - Which milestone does this serve? What does it unblock, and what is now at risk?
 - Does it change how the product is positioned or sold?

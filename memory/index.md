@@ -21,6 +21,7 @@ agent would otherwise rediscover.
 | 2026-08-30 | [A test that reads git history can pass locally and fail only in CI](2026-08-30-ci-checkouts-are-shallow-by-default.md) | surprise |
 | 2026-09-18 | ["One command" is decided by the menu, not by the commands folder](2026-09-18-one-command-is-decided-by-the-menu.md) | surprise |
 | 2026-09-19 | [Owner wants exhaustive, corporate-scale documentation and many questions](2026-09-19-document-every-prompt.md) | preference |
+| 2026-10-03 | [Gain context from a ranked pack, never from the tree](2026-10-03-read-the-pack-not-the-tree.md) | preference |
 
 ## Pruning
 

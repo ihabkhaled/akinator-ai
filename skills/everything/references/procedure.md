@@ -12,6 +12,13 @@ condition that lets you leave it.
 
 ### Phase 1 - Establish the ground
 
+0. **Cheapest context first** - before opening anything big, get a ranked
+   reading list under a token budget instead of reading the tree:
+
+    ```bash
+    python <skill>/scripts/akinator_context.py pack --for "<task>" [--paths p ...] [--budget 3000]
+    ```
+
 1. **RESOLVE** (`akinator`) - read the layer: routers, rules, skills, context,
    memory, generated manifests, docs, and **the ledger**
    (`python <skill>/scripts/akinator_ledger.py list --recurring`). Cite what you
@@ -39,7 +46,13 @@ condition that lets you leave it.
     budgeted questions - up to 15, plus every gap from
     `python <skill>/scripts/akinator_wiki.py gaps` - in **one grouped message**,
     ranked, each with a recommended default so "go with recommendations" is a
-    complete answer. Write every answer into its home immediately.
+    complete answer. Write every answer into its home immediately. For wiki gaps
+    use the grouped battery, then file each answer into its gap marker:
+
+    ```bash
+    python <skill>/scripts/akinator_wiki.py interview [--limit N]
+    python <skill>/scripts/akinator_wiki.py answer --page P --line L --text T --source S
+    ```
 
 **Exit when:** the layer has been read, the conventions are named, the open
 questions are asked or explicitly assumed, and every claim has a status.
@@ -48,7 +61,13 @@ questions are asked or explicitly assumed, and every claim has a status.
 
 5. **PLAN** (`akinator-plan`) - batches cut on real seams, blast radius per
    batch, and the **knowledge delta declared by path**. Empty categories are
-   stated with their reason.
+   stated with their reason. Find who or what already governs the paths, and
+   see which changed paths still lack a record:
+
+    ```bash
+    python <skill>/scripts/akinator_context.py owners --paths <path> ...
+    python <skill>/scripts/akinator_trace.py plan
+    ```
 6. **Boardroom review, at plan time** - apply every lens the work touches. On
    Claude Code these are subagents shipped with the plugin; elsewhere apply the
    same questions inline:
@@ -75,7 +94,12 @@ For **each** batch, in order:
 9. **DOCUMENT** (`akinator-document-change`) - the why, the when-not-to, the
    business meaning, the operational consequence. Route each to its home.
 10. **SKILLIFY** (`akinator-skillify`) - any procedure that will happen twice,
-    written as the host repository's own skill, in its own conventions.
+    written as the host repository's own skill, in its own conventions. Let the
+    history say what repeats:
+
+    ```bash
+    python <skill>/scripts/akinator_distil.py repeats [--since 90.days] [--min 3]
+    ```
 11. **RULE** (`akinator-rule-forge`) - any new constraint, with a mechanism that
     exists in the tree. Then check what the existing ones are doing:
 
@@ -97,6 +121,10 @@ For **each** batch, in order:
     ```bash
     python <skill>/scripts/extract_stack.py --write   # dependencies and modules
     ```
+
+    Before writing any doc, ledger or memory text that quotes config or logs,
+    pre-check it: `python <skill>/scripts/akinator_sensitive.py guard FILE`
+    (or `--stdin`).
 13. **MEMOIZE** (`akinator-memoize`) - decisions, surprises, dead ends, with
     dates and reversal conditions. Prune while you are there.
 
@@ -126,7 +154,16 @@ For **each** batch, in order:
     `akinator-product-map`, `akinator-ops-map`) wherever the batch touched
     money, user-visible behavior, or how the system is run.
 16. **INDEX and SYNC** (`akinator-index-sync`, `akinator-router-sync`) - every
-    artifact reachable; every router updated together.
+    artifact reachable; every router updated together. Regenerate the derived
+    pages the change touched:
+
+    ```bash
+    python <skill>/scripts/extract_platform.py --write     # data, services, observability, standards, security, integrations
+    python <skill>/scripts/extract_history.py --write      # history
+    python <skill>/scripts/extract_operations.py --write   # tools, env vars, repositories, installation
+    python <skill>/scripts/akinator_sensitive.py register --write
+    python <skill>/scripts/akinator_wiki.py index
+    ```
 17. **Librarian review** - on every batch, without exception: is the declared
     delta present, routed to its home, reachable and true? On Claude Code this is
     the librarian subagent. Do not call a batch done over a `BLOCKED`.
@@ -144,7 +181,12 @@ For **each** batch, in order:
     python <skill>/scripts/akinator_coverage.py . --strict
     python <skill>/scripts/akinator_ledger.py verify
     python <skill>/scripts/akinator_rules.py conflicts
+    python <skill>/scripts/akinator_trace.py check      # every changed path accounted for
+    python <skill>/scripts/akinator_sensitive.py scan   # no leaked secret in tracked files
     ```
+
+    `trace check` exits 1 on an unaccounted path; `trace record --title T`
+    writes the change record that accounts for the diff.
 
 20. **Coverage and the newcomer test** (`akinator-coverage`) - both halves. A
     green mechanical run measures presence and consistency, not usefulness. Say

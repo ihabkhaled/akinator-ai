@@ -29,6 +29,36 @@ platform, for a plugin whose owner asked for exactly one. The stations became
 reference files inside the one skill - loaded on demand, never listed. See
 `docs/adr/0009-one-skill-one-command-one-installer.md`.
 
+## Its tools
+
+The host-repository tools in `skills/everything/scripts/` travel with the skill
+and run unchanged under Claude Code, Codex and Cursor. Standard library only.
+Run from the repository root; `<skill>` is the skill's own folder
+(`skills/everything` here, `.agents/skills/akinator` on Codex and Cursor).
+
+| Tool | CLI | Does |
+|---|---|---|
+| `akinator_context.py` | `pack --for "<task>" [--paths p ...] [--budget 3000] [--json]`, `owners --paths p ...`, `stale --today YYYY-MM-DD [--days 90]`, `budget` | The cheapest context: a ranked reading list inside a token budget, from an incremental cache in `.ai/cache/`. No subprocess |
+| `akinator_trace.py` | `plan`, `check [--base REF] [--json]`, `record --title T [--base REF] [--date D]` | Every changed path traces to a change record or ledger record in the same diff, or to `knowledge delta: none, because ...` (rule 14) |
+| `akinator_sensitive.py` | `register [--write or --check]`, `scan [--json]`, `guard FILE...` or `guard --stdin` | Names and locations of secrets and PII, never values; leaked-secret scan with fingerprints; pre-write guard (rule 15) |
+| `akinator_wiki.py` | `init`, `index`, `gaps`, `check`, `interview [--limit N]`, `answer --page P --line L --text T [--source S]` | The wiki home, its gaps, the grouped question battery with ids `Q<n>`, and recording an answer |
+| `akinator_coverage.py` | `<root> [--strict]` | The mechanically verifiable knowledge invariants |
+| `akinator_ledger.py` | `add <kind> ...`, `verify` | What happened: failures, questions, decisions, surprises, requirements, drift |
+| `akinator_distil.py` | `mine`, `detect`, `repeats [--since S] [--min N]`, `propose`, `decide` | What recurs, and what history keeps repeating, turned into a skill, rule or neither decision |
+| `akinator_rules.py` | `conflicts` | Rule evolution and conflict detection |
+| `akinator_scope.py` | `plan` | Scope a pass to what changed; the question budget |
+| `build_brief.py` | `--write`, `--check` | The context brief at `.ai/BRIEF.md` |
+| `extract_stack.py` | `--write` | The stack map |
+| `extract_libraries.py` | `--write`, `--check` | One page per dependency under `docs/wiki/libraries/` |
+| `extract_platform.py` | `--write` | Data, services, observability, standards, security and integrations pages |
+| `extract_history.py` | `--write` | The history page: versions, releases, change records, decisions, ledger counts |
+| `extract_operations.py` | `--write` | `infra/` pages: tools and commands, environment variable names, repositories, installation |
+
+**Cost doctrine.** Read the pack, not the tree: start with
+`akinator_context.py pack --for "<task>"`, read what it ranks, and open more
+only when a gap forces it. See
+`docs/adr/0011-cheap-deterministic-tools-over-prose-or-indexing.md`.
+
 ## Its station references
 
 Each is opened when the work reaches that station. They carry the full
@@ -74,6 +104,8 @@ procedure of what used to be separate skills, and keep their old names as
 | [akinator-resource-guard](../skills/everything/references/akinator-resource-guard.md) | Before anything heavy, and at the end of every task |
 
 ### Templates these stations write
+
+2.1 added `business-decision`, `roadmap-item`, `data-store`, `integration` and `risk`, and rewrote `change-record` - 19 templates in all, see [templates/README.md](../templates/README.md).
 
 `akinator-wiki` and `akinator-decide` write against three templates added for
 the living wiki, each with a filled example in `templates/examples/`:

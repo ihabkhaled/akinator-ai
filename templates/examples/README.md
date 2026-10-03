@@ -36,6 +36,11 @@ about Akinator itself.
 | [library-page.md](library-page.md) | `templates/library-page.md` | A library's generated facts beside its curated why, pitfalls and an honest gap |
 | [requirement.md](requirement.md) | `templates/requirement.md` | A changed requirement with its source, append-only history and a missing sibling |
 | [business-drift.md](business-drift.md) | `templates/business-drift.md` | A change of direction, the requirements it moved and the pages it corrected |
+| [business-decision.md](business-decision.md) | `templates/business-decision.md` | A pricing decision with rejected options and their costs |
+| [roadmap-item.md](roadmap-item.md) | `templates/roadmap-item.md` | A shipped item with its evidence of done |
+| [data-store.md](data-store.md) | `templates/data-store.md` | A database with retention and an honest untimed restore |
+| [integration.md](integration.md) | `templates/integration.md` | A vendor with auth handled by name, never by value, and an exit plan |
+| [risk.md](risk.md) | `templates/risk.md` | A mitigated risk with likelihood, signal and what is not yet done |
 
 ## How to read them
 

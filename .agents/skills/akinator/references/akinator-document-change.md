@@ -37,7 +37,20 @@ documented too, through [akinator-wiki](akinator-wiki.md).
 
 Every meaningful change must leave a durable change record in the repository's
 existing history/changelog convention. If none exists, use the change-record
-template and establish one during onboarding.
+template (its current layout) and establish one during onboarding.
+**Every changed path is traced**: it is named in a change record or ledger
+record of the same diff, or the batch says `knowledge delta: none, because
+<reason, 10+ characters>`.
+
+```bash
+python <skill>/scripts/akinator_trace.py plan [--base REF]    # what still lacks a record
+python <skill>/scripts/akinator_trace.py record --title "..." # write the record
+python <skill>/scripts/akinator_trace.py check                # exit 1 = unaccounted paths
+```
+
+A release or version bump is a history event (`docs/wiki/history`, regenerated
+by `extract_history.py --write`). A business decision and a gap-fill answer each
+get their own record too - no diff does not mean no record.
 
 Record, when applicable:
 
@@ -167,6 +180,7 @@ This verification is what separates documentation from fiction.
 ## Definition of done
 
 - [ ] A change-provenance record exists for every meaningful change, or a mechanical-only `knowledge delta: none — <reason>` is recorded.
+- [ ] `akinator_trace.py check` exits 0: every changed path is accounted for.
 - [ ] The four questions were asked for this change, and answered or explicitly
       dismissed.
 - [ ] Every answer is written into exactly one canonical home.

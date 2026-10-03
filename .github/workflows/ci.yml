@@ -78,6 +78,24 @@ jobs:
       - name: Wiki index drift
         run: python skills/everything/scripts/akinator_wiki.py check
 
+      # Generated wiki pages (platform, history, operations) must match the tree.
+      - name: Platform, history and operations pages drift
+        run: |
+          python skills/everything/scripts/extract_platform.py --check
+          python skills/everything/scripts/extract_history.py --check
+          python skills/everything/scripts/extract_operations.py --check
+
+      # Sensitive data: the register is current and no secret is tracked.
+      - name: Sensitive data register and scan
+        run: |
+          python skills/everything/scripts/akinator_sensitive.py register --check
+          python skills/everything/scripts/akinator_sensitive.py scan
+
+      # Every changed path in the pushed commit is traced to a record.
+      - name: Every changed path is traced
+        if: github.event_name == 'push'
+        run: python skills/everything/scripts/akinator_trace.py check --base HEAD~1
+
       # Eleven routers, one contract. Hand-editing any of them, or changing the
       # contract without re-rendering, fails here.
       - name: Router drift

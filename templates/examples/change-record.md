@@ -1,55 +1,74 @@
-# Change — Payment retry gets bounded backoff
+# Change - Payment retry gets bounded backoff
+
+> Filled example of `templates/change-record.md`, written for the fictional
+> Nimbus product described in `templates/examples/README.md`. Paths here are
+> illustrative and do not exist in this repository.
 
 - **When:** 2026-09-18
-- **Actor / agent:** coding agent on behalf of repository owner
-- **Request / source:** incident follow-up
+- **Who / agent:** Ihab (owner), via a coding agent
+- **Source:** the incident follow-up of 2026-09-16; REQ-031
 - **Status:** implemented
-
-## Affected
-
-- Code/components: `src/payments/retry.ts`, payment worker
-- Product/business surfaces: failed-payment recovery
 
 ## Before
 
-Retries used a fixed delay and could continue beyond the provider recovery window.
+Failed charges retried every 30 seconds with no cap, for as long as the provider
+returned a retryable error. During the provider's 2026-09-16 outage one team's
+charge was retried about 2,900 times.
 
 ## Change
 
-Retries now use bounded exponential backoff and stop at the documented attempt cap.
+Retries now back off exponentially from 30 seconds to a 6-hour ceiling and stop
+after 8 attempts. The charge then moves to `failed_terminal` and the admin is
+emailed.
 
 ## Now
 
-The worker follows the payment recovery policy and exposes terminal failure.
+A charge makes at most 8 attempts over roughly 24 hours. A terminal failure is
+visible in the billing page instead of retrying silently.
 
 ## Why
 
-Reduce provider pressure while keeping recovery behavior aligned with the business policy.
+Unbounded retries hid real failures and pushed the provider into rate-limiting
+us. The 8-attempt cap matches the provider's documented recovery window.
 
-## Technical reasoning
+## Files touched
 
-Bounded exponential backoff was chosen over fixed delay. Unbounded retry was rejected because it hides terminal failures and creates uncontrolled load.
+- `src/payments/retry.ts` - backoff schedule and attempt cap
+- `src/payments/worker.ts` - terminal state and admin email
+- `tests/payments/retry.test.ts` - schedule, cap, terminal failure
 
-## Compatibility / migration / rollback
+## Business meaning
 
-No schema migration. Rollback restores the previous retry strategy.
+A customer whose card fails for more than a day now sees a failed payment and an
+email, instead of a workspace that looks fine until it is suspended. Dunning
+copy changes with it.
 
-## Knowledge delta
+## Operational consequence
 
-- Rules: retry cap invariant
-- Skills: payment-retry diagnosis
-- Failures/lessons: original retry storm
+Worker restart only; no migration. The `failed_terminal` status is new, so any
+dashboard that counts charges by status needs the extra value.
+
+## Rollback
+
+Revert the commit and restart the worker. Charges already in `failed_terminal`
+stay there; moving them back needs a manual requeue.
+
+## Knowledge delta by path
+
+- Rules: `rules/04-retry-cap-invariant.md`
+- Skills: `skills/payment-retry-diagnosis/SKILL.md`
 - ADRs: none
-- Product/business/architecture/ops/context/memory: payment recovery policy updated
+- Docs, context, memory: `docs/business/payment-recovery.md`
 
 ## Verification
 
-Unit tests cover backoff, cap and terminal failure; worker integration test passed.
+Unit tests cover the schedule, the cap and the terminal state. The worker
+integration test ran against the provider sandbox and passed.
 
-## Future
+## Follow-ups
 
-None currently committed.
+Not done: alert when more than 20 charges reach `failed_terminal` in an hour.
 
 ## Stale when
 
-The payment provider retry contract or business recovery policy changes.
+The provider's retry contract or the payment recovery policy changes.

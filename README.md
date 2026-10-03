@@ -288,6 +288,37 @@ users do not need to learn or call them.
 - **Gate once, late and scoped.**
 - **Evidence beats claims.**
 
+## What is new in 2.1
+
+Still one skill, one command, always on - on Claude Code, Codex and Cursor.
+2.1 makes the discipline cheap to load and impossible to skip, using
+deterministic tools that need no daemon, index service or network:
+
+```bash
+python skills/everything/scripts/akinator_context.py pack --for "add refunds"   # ranked reading list inside a token budget
+python skills/everything/scripts/akinator_trace.py check                         # every changed path traced to a record
+python skills/everything/scripts/akinator_sensitive.py scan                      # leaked secrets, fingerprint only
+python skills/everything/scripts/akinator_wiki.py interview                      # grouped questions with defaults
+python skills/everything/scripts/akinator_distil.py repeats                      # skill, rule, or neither?
+```
+
+- **Context, fast and cheap.** `pack` ranks knowledge files for the task and
+  stays inside a token budget (default 3000). Read the pack, not the tree.
+- **Every change traced** (rule 14). A path is a knowledge artifact, is named
+  in a change record in the same diff, or sits under
+  `knowledge delta: none, because <reason>`. CI runs `trace check`.
+- **Sensitive data known, never exposed** (rule 15). A register of names and
+  locations, never values; `scan` and `guard` find and prevent leaks.
+- **A 25-category wiki.** New: roadmap, history, data, services,
+  observability, standards, security, integrations, risks - generated where
+  facts can be generated, an honest gap marker where they cannot.
+- **Gaps become answers.** `interview` asks, `answer` writes the answer into
+  the page and records it in the ledger.
+- **Repetition becomes a skill or a rule** - `repeats` asks the owner.
+
+Install is unchanged. See [ADR 0011](docs/adr/0011-cheap-deterministic-tools-over-prose-or-indexing.md)
+and the [tools table](docs/skills.md).
+
 ## Repository development
 
 ```bash
@@ -300,6 +331,8 @@ python scripts/render_routers.py --check
 python skills/everything/scripts/build_brief.py --check
 python skills/everything/scripts/extract_libraries.py --check
 python skills/everything/scripts/akinator_wiki.py check
+python skills/everything/scripts/akinator_trace.py check
+python skills/everything/scripts/akinator_sensitive.py scan
 ```
 
 The one canonical skill lives in `skills/everything/` (its host-repo tools in

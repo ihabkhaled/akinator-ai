@@ -84,11 +84,37 @@ replaces it - and never let a tool write outside them.
 | **infra** | Environments, deployment, CI/CD, observability, secret *handling* (never secrets), running cost | Where does it run and how does it ship? |
 | **testing** | Test strategy, what each suite proves, UAT scripts and sign-off state | How do we know it works, and who accepted it? |
 | **ux** | Flows, design system, accessibility, copy and tone, design decisions | What does the user see and why does it look like that? |
+| **roadmap** | What is planned, in what order, and what is deferred | What is next, and what are we not doing yet? |
+| **history** | Versions, releases and the timeline of the repository (generated) | What happened, and in which version? |
+| **data** | Stores, schemas, retention, data flow; PII fields by name | Where does data live, and for how long? |
+| **services** | Deployable services, their owners and dependencies | What runs, and who owns it? |
+| **observability** | Logs, metrics, alerts, dashboards, on-call | How do we know it is healthy? |
+| **standards** | Coding, naming, review and release conventions | What is the house style, and who enforces it? |
+| **security** | Threat model, auth, and the register of what is sensitive - by name and location, never value | What must never leak, and where does it live? |
+| **integrations** | Third-party providers and APIs: purpose, owner, failure behavior | What do we depend on outside, and what if it is down? |
+| **risks** | Open risks with likelihood, impact, owner and mitigation | What could hurt us, and who watches it? |
 | **project** | Status, milestones, owners, risks, blockers, what is next | Where are we, and what is in the way? |
 | **decisions** | The index of ADRs and recorded decisions | What was chosen, over what, and when to revisit? |
 | **changes** | One change record per meaningful change | What changed, when, why, and by whom? |
 | **glossary** | Every domain term, defined once | What does this word mean *here*? |
 | **onboarding** | Reading order, setup, first tasks, who to ask | Where does a newcomer - human or agent - start? |
+
+That is 25 categories. Tools own the generated pages: `extract_platform.py`
+writes data, services, observability, standards, security and integrations;
+`extract_history.py` writes history; `extract_operations.py` writes
+`infra/{tools-and-commands,environment-variables,repositories,installation}.md`;
+`akinator_sensitive.py register` writes the sensitive-data page in the wiki's security home. Each takes
+`--write` or `--check` and rewrites only inside its markers.
+
+**Everything that changes is documented - including the 0.01%-impact fact**: a
+flag default, a timeout, a one-line pitfall. Cheap to write now, expensive to
+rediscover. The delete-the-derivable test still applies; what the code cannot
+say is what goes in.
+
+**Security: document what is sensitive by name and location, never value** - the
+variable, the column, the vault path, who rotates it. Pre-check text first with
+`python <skill>/scripts/akinator_sensitive.py guard FILE`; find leaks with
+`akinator_sensitive.py scan`.
 
 One home per fact. When the repository already has a home for a category - a
 business folder, an ADR folder - the wiki page for that category is an **index
@@ -206,7 +232,10 @@ paragraph on one. Akinator's library-page template has the shape.
 ### 8. Honest gaps become questions
 
 `python <skill>/scripts/akinator_wiki.py gaps` lists every gap marker, by page.
-Those are the questions the next intake battery asks
+`interview [--limit N]` turns them into a grouped battery (ids `Q<n>`, each with
+a recommended default); `answer --page P --line L --text T [--source S]`
+replaces one marker and records a ledger `question` - the interview -> answer
+loop that turns gaps into recorded answers. Those are the questions the next intake battery asks
 ([akinator-intake](akinator-intake.md)). When an answer arrives:
 
 1. Replace the marker with the answer **and its source** (who, when) in the same

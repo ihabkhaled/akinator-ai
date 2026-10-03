@@ -229,6 +229,7 @@ Verified from cursor.com docs and changelog on 2026-09-18; **not run**.
 | Session hook | `hooks/hooks.json`, `SessionStart`, exec form | none - manifest rejects `hooks` | none | always-on via the `AGENTS.md` block (Codex) and an `alwaysApply` rule (Cursor) |
 | Subagents | `agents/*.md` | no equivalent | no equivalent | the lenses are applied inline |
 | Commands | none - skills are the `/` entries | none - skills fill the `$` picker and cannot be hidden | command files exist; skills are listed in `/` | no command files; one skill |
+| New tools (2.1) | `scripts/` in the skill, plain Python | identical, from `.agents/skills/akinator/scripts/` | identical | the same CLI on every platform; nothing platform-specific, no command file, no hook |
 | One entry | `/akinator:everything` | `$akinator` | `/akinator` | normally nobody types it: Akinator is always on |
 
 ## When a contract moves
@@ -243,6 +244,17 @@ The failure is designed to be **loud**:
 3. If a component becomes unavailable on one platform, the response is the same
    one used for Codex hooks: move the content to a surface that platform does
    read, and say so here - never let the two platforms carry different contracts.
+
+## 2.1 tools across platforms
+
+The 2.1 tools (`akinator_context.py`, `akinator_trace.py`, `akinator_sensitive.py`
+and the generators) are plain Python on the standard library, copied with the
+skill. They rely on no platform contract beyond the ones above: Claude Code
+reads them from the plugin's `skills/everything/scripts/`, Codex from
+`.agents/skills/akinator/scripts/` (explicit `SKILL.md` capped at 8,000 bytes, so
+the tool detail lives in references), Cursor from the same `.agents/skills`
+folder. The repository's tests exercise them on the local platform; invoking
+them from Codex and Cursor is from docs and source, not run live.
 
 ## Review when
 

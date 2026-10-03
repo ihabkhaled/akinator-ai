@@ -1,6 +1,6 @@
 ---
 name: akinator
-description: Use for every prompt in a repository - Akinator is always on and this is its only skill. For any intent that can change the repository (feature, fix, refactor, upgrade, deletion, migration, docs, onboarding, audit, release), run the complete Akinator pass so code, product intent, business logic, decisions, history, skills, rules, context and verification evolve together in one change. Also the one explicit command. Loads its station references on demand.
+description: Use for every prompt in a repository - Akinator is always on and this is its only skill. For any intent that can change the repository (feature, fix, refactor, upgrade, deletion, migration, docs, audit, release), run the complete Akinator pass so code, product intent, business logic, decisions, history, skills, rules, context and verification evolve together in one change. Also the one explicit command. Loads its station references on demand.
 ---
 <!--
 DO NOT EDIT BY HAND.
@@ -18,12 +18,16 @@ A change is the code **plus** the knowledge that lets the next agent act on it
 in seconds. Half a change is no change.
 
 **Every prompt is documented.** Whatever a prompt changes or decides lands in
-the repository's living wiki in the same batch - product, business, market,
-requirements, drift, architecture, libraries, stack, infra, testing, UX, project,
-decisions, changes - plus README, install docs, every agent router, rules,
-memory, context and the ledger. Any AI that reads the repo then knows it from
-the needle to the rocket, and can decide or recommend with evidence. See
-[akinator-wiki](references/akinator-wiki.md).
+the living wiki (25 categories: product, business, market, requirements, drift,
+roadmap, architecture, data, services, libraries, stack, standards, infra,
+observability, security, integrations, testing, UX, project, risks, decisions,
+changes, history, glossary, onboarding) plus README, install docs, every router,
+rules, memory, context and the ledger - same batch. Every changed path is
+traced, sensitive data is known by name and never exposed, and the agent owns
+its reversible decisions. See [akinator-wiki](references/akinator-wiki.md).
+
+**Be cheap.** Gain context with `python <skill>/scripts/akinator_context.py pack
+--for "<task>"` (no subprocess, cached), never by reading the tree.
 
 **This is Akinator's only skill and its only command.** Normal prompts enter it
 automatically. The explicit form is a fallback: `/akinator:everything` on Claude
@@ -43,8 +47,7 @@ stations; `<skill>/scripts/` holds the tools. Both travel with the skill.
 
 ## When NOT to use
 
-- To manufacture changes during pure conversation.
-- Inside a narrow subagent whose parent owns the pass.
+- Pure conversation, or inside a narrow subagent whose parent owns the pass.
 - As a substitute for thinking: it guarantees nothing is skipped, not that every
   judgment is right.
 
@@ -90,6 +93,8 @@ behavior [akinator-product-map](references/akinator-product-map.md) · operation
 - Adopt the repository's conventions; one canonical home per fact.
 - Never guess on money, permissions, deletion, security or public contracts.
 - Never weaken a check to pass it. Never put knowledge checks in git hooks.
+- Before writing text that quotes config or logs: `akinator_sensitive.py guard`.
+  A repeat (`akinator_distil.py repeats`) is a question: skill, rule or neither.
 - Gate once, late and scoped. Report failures and evidence truthfully.
 - A meaningful change records its provenance: before, change, now, why, who or
   which agent, intent, alternatives, verification, what would make it stale.
@@ -101,7 +106,7 @@ The complete pass, with every tool command, is in
 
 1. **Establish the ground** - RESOLVE the layer and the ledger, adopt the
    conventions, ASK once in a group, AUDIT claim versus code, scope the pass.
-2. **Plan** - batches on real seams, knowledge delta by path, every relevant
+2. **Plan** - `akinator_trace.py plan`, batches on real seams, knowledge delta by path, every relevant
    review lens (business, CTO, product, ops, analyst, PM) at plan time.
 3. **Build batch by batch** - implement, then DOCUMENT, SKILLIFY, RULE,
    CONTEXTIFY, MEMOIZE, the ledger (requirements and drift too), decisions,
@@ -109,7 +114,8 @@ The complete pass, with every tool command, is in
    `python <skill>/scripts/extract_libraries.py --write`), INDEX+SYNC; librarian
    review on every batch.
 4. **Prove it** - gate once, run every check the repository has plus
-   `python <skill>/scripts/akinator_coverage.py . --strict`, anti-gaming on your
+   `python <skill>/scripts/akinator_coverage.py . --strict`, `akinator_trace.py
+   check` and `akinator_sensitive.py scan`, anti-gaming on your
    own output, clean up, regenerate the brief.
 5. **Loop until the Definition of Done is proven, then stop.**
 
@@ -122,8 +128,6 @@ exception: say so in one line, do it, record `knowledge delta: none, because ...
 - Ticking a phase with no artifact or observed exit code behind it.
 - Skipping the librarian review on a "small" batch.
 - Gate storms, and looping after the Definition of Done is proven.
-- Quiet sampling in a pass that promised not to - say three of twenty.
-- Running a tool by a path that exists only in Akinator's own repository.
 
 ## Definition of done
 

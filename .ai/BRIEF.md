@@ -48,6 +48,10 @@ its own docs, skills, rules, context and memory delta.
   `rules/12-artifacts-that-travel-name-nothing-local.md`
 - **Rule 13 - Every prompt is documented everywhere it lands** - A repository that is "exhaustively documented" as of the last audit and silent about the last ten prompts is not exhaustively documented - it is a snapshot with a caption that lied the moment work resumed. The owner's requirement is corpora...
   `rules/13-every-prompt-is-documented.md`
+- **Rule 14 - Every changed path is traced** - A diff that changes a source file and nothing that explains it leaves the next reader to reverse-engineer the change. Rule 01 declares a knowledge delta per batch; this rule makes the declaration checkable per path. Every changed path must...
+  `rules/14-every-changed-path-is-traced.md`
+- **Rule 15 - Sensitive data is known, documented, and never exposed** - An AI-maintained repository handles credentials, personal data and financial fields constantly, and leaks them in the quietest ways: a real key pasted into a test, a tracked `.env`, an email address in a log line, a token quoted in a ledger...
+  `rules/15-sensitive-data-is-known-and-never-exposed.md`
 
 ## Recurring failures and their fixes
 
@@ -88,10 +92,18 @@ _nothing recorded yet_
   `.ai/ledger/requirement/quantified-ai-cost-reduction-figure.md`
 - **Stated revenue or pricing model (missing)** - A revenue or pricing model beyond free/MIT is stated. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/stated-revenue-or-pricing-model.md`
+- **A 25-category wiki with generated platform, history and operations pages (current)** - The wiki covers 25 categories including roadmap, history, data, services, observability, standards, security, integrations and risks **Acceptance:** akinator_wiki.py check passes and each new category has a home **Source:** owner request 2026-10-03
+  `.ai/ledger/requirement/a-25-category-wiki-with-generated-platform-history-and-opera.md`
 - **Always on, no command normally typed (current)** - Akinator is always on; normal prompts require no command. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/always-on-no-command-normally-typed.md`
+- **Context gained from a ranked pack within a token budget (current)** - The AI gains context fast and cheap by reading a ranked pack of knowledge files within a token budget, not the tree **Acceptance:** akinator_context.py pack returns a ranked list under the budget with no subprocess, from an incremental cache **Source:** owner request 2026-10-03
+  `.ai/ledger/requirement/context-gained-from-a-ranked-pack-within-a-token-budget.md`
+- **Every changed path is traced to its knowledge (current)** - Every changed path is traced to a change record or ledger record in the same diff, or to an explicit knowledge delta: none line with a reason **Acceptance:** akinator_trace.py check exits 1 on an unaccounted path; CI runs it **Source:** owner request 2026-10-03
+  `.ai/ledger/requirement/every-changed-path-is-traced-to-its-knowledge.md`
 - **Every prompt documented everywhere it lands (current)** - Every prompt and every change is documented, product to project, so any AI reading the repository knows it. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/every-prompt-documented-everywhere-it-lands.md`
+- **Gaps become recorded answers through an interview (current)** - Every wiki gap is asked in a grouped battery with recommended defaults and an answer replaces the marker and is recorded in the ledger **Acceptance:** akinator_wiki.py interview and answer **Source:** owner request 2026-10-03
+  `.ai/ledger/requirement/gaps-become-recorded-answers-through-an-interview.md`
 - **Generated facts, curated why, honest gaps (current)** - Facts are generated and cannot rot; why is curated and preserved; unknowns are marked honestly rather than filled with filler. **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/generated-facts-curated-why-honest-gaps.md`
 - **Many questions with recommended defaults (current)** - Many questions per prompt, grouped and ranked in one message, each with a recommended default. **Source:** owner, 2026-09-18/19 sessions
@@ -100,8 +112,8 @@ _nothing recorded yet_
   `.ai/ledger/requirement/one-line-install-with-no-marketplace.md`
 - **One skill, one command on every platform (current)** - Exactly one skill and one command surface on every platform - /akinator:everything (Claude Code), $akinator (Codex), /akinator (Cursor). **Source:** owner, 2026-09-18/19 sessions
   `.ai/ledger/requirement/one-skill-one-command-on-every-platform.md`
-- **Tools travel with the skill (current)** - Host-repo tools travel with the skill; nothing installed elsewhere names a path that exists only in this checkout. **Source:** owner, 2026-09-18/19 sessions
-  `.ai/ledger/requirement/tools-travel-with-the-skill.md`
+- **Repetition prompts a skill or rule decision (current)** - Co-changing file sets and repeated commit stems prompt the question: turn it into a skill, a rule, or neither **Acceptance:** akinator_distil.py repeats lists candidates **Source:** owner request 2026-10-03
+  `.ai/ledger/requirement/repetition-prompts-a-skill-or-rule-decision.md`
 
 ## Business and product drift
 
@@ -113,8 +125,12 @@ _nothing recorded yet_
   `.ai/ledger/drift/question-budget-raised-from-five-to-fifteen.md`
 - **Six commands collapsed to one command (scope)** - **Before:** Six planned commands: onboard, audit, status, sync, question, decide (build brief Part 9) **After:** One command, /akinator:everything, with mode dispatch by argument **Why:** Owner stated directly: only one command should do everything.
   `.ai/ledger/drift/six-commands-collapsed-to-one-command.md`
+- **Wiki grew from 16 to 25 categories (product)** - **Before:** 16 wiki categories, no platform, history or operations pages **After:** 25 categories: roadmap, history, data, services, observability, standards, security, integrations, risks added **Why:** The owner wants the AI to know everything a company team would; the new pages are generated where facts can be, gap markers where not
+  `.ai/ledger/drift/wiki-grew-from-16-to-25-categories.md`
 - **Command file replaced by one skill as the command (architecture)** - **Before:** One command file plus twenty separate station skills still listed individually in the menu **After:** One skill (skills/everything/) whose stations are references, opened on demand; the skill is the command **Why:** A live Claude Code session showed 22 entries in the / menu, not one; Codex and Cursor cannot hide a skill from their pickers at all.
   `.ai/ledger/drift/command-file-replaced-by-one-skill-as-the-command.md`
+- **Knowledge delta by prose becomes a traced diff (process)** - **Before:** Rule 01 delta declared in the plan and checked by the librarian lens **After:** Every changed path is traced in the same diff (rule 14) and checked in CI **Why:** Prose discipline cannot be audited; the owner wants a guarantee
+  `.ai/ledger/drift/knowledge-delta-by-prose-becomes-a-traced-diff.md`
 
 ## Open questions blocking work
 
@@ -141,4 +157,12 @@ _nothing recorded yet_
   `docs/agents.md`
 - **What gets written into target repos** - 
   `templates/README.md`
+
+## Everything else, by pointer
+
+_Did not fit the budget. Read on demand - the corpus is complete even when the brief is not._
+
+- Same tools on Claude Code, Codex and Cursor with one skill and one command (current) - `.ai/ledger/requirement/same-tools-on-claude-code-codex-and-cursor-with-one-skill-an.md`
+- Sensitive data is known and never exposed (current) - `.ai/ledger/requirement/sensitive-data-is-known-and-never-exposed.md`
+- Tools travel with the skill (current) - `.ai/ledger/requirement/tools-travel-with-the-skill.md`
 

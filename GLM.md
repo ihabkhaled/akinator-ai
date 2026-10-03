@@ -39,6 +39,7 @@ its own docs, skills, rules, context and memory delta.
 - **Ledger records are redacted before write** - `rules/10-ledger-records-are-redacted-before-write.md`
 - **Every invariant ships with a test that proves it fires** - `rules/11-invariants-ship-with-a-mutation-test.md`
 - **Anything installed elsewhere names no local file** - `rules/12-artifacts-that-travel-name-nothing-local.md`
+- **Every changed path is traced; sensitive data is named, never exposed** - `rules/14-every-changed-path-is-traced.md`, `rules/15-sensitive-data-is-known-and-never-exposed.md`
 - **Every prompt is documented everywhere it lands** - wiki, README, routers, rules, memory, context, ledger - `docs/adr/0010-every-prompt-documented-living-wiki.md`
 
 The one skill is `skills/everything/SKILL.md`; the full creed, loop and taxonomy
@@ -61,6 +62,12 @@ are in its reference `skills/everything/references/akinator.md`.
 | Regenerate the stack map | `python skills/everything/scripts/extract_stack.py --write` |
 | Regenerate the library pages | `python skills/everything/scripts/extract_libraries.py --write` |
 | Rebuild the wiki index / list its gaps | `python skills/everything/scripts/akinator_wiki.py index` / `gaps` |
+| Cheap context pack for a task | `python skills/everything/scripts/akinator_context.py pack --for "<task>"` |
+| Trace every changed path to a record | `python skills/everything/scripts/akinator_trace.py plan` / `check` |
+| Sensitive data: register, scan, guard | `python skills/everything/scripts/akinator_sensitive.py register --write` / `scan` / `guard` |
+| Regenerate platform, history, operations pages | `python skills/everything/scripts/extract_platform.py --write`, `extract_history.py --write`, `extract_operations.py --write` |
+| Gaps to questions, answers to records | `python skills/everything/scripts/akinator_wiki.py interview` / `answer` |
+| Repeats worth a skill or rule | `python skills/everything/scripts/akinator_distil.py repeats` |
 | Install from this checkout (all platforms) | `sh install.sh` - or `.\install.ps1` on Windows |
 
 Gate once, at the end of the batch, scoped to what you touched. See

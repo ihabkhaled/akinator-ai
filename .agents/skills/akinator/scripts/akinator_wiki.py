@@ -44,17 +44,39 @@ Usage (from the repository root; `<skill>` is this skill's own folder):
     python <skill>/scripts/akinator_wiki.py index    # rewrite the generated block
     python <skill>/scripts/akinator_wiki.py gaps     # every unknown, as a question
     python <skill>/scripts/akinator_wiki.py check    # exit 1 if the index is stale
+    python <skill>/scripts/akinator_wiki.py interview [--limit N] [--json]
+    python <skill>/scripts/akinator_wiki.py answer --page P --line L --text T [--source S]
     python <skill>/scripts/akinator_wiki.py --root path/to/repo gaps --json
 
 Exit codes:
     0  success (`gaps` always exits 0 - an unknown is a question, not a failure)
     1  `check` found the generated block stale or missing
-    2  the tool could not run (not a directory, malformed markers)
+    2  the tool could not run (not a directory, malformed markers), or `answer`
+       refused (the line is not exactly the gap marker, the page is outside the
+       repository, or the text is empty or carries a generated/gap marker)
+
+`interview` turns the gaps into one ranked, grouped battery of questions - each
+with a stable id (Q1, Q2, ... in the order shown), its target page and line, and
+a RECOMMENDED DEFAULT the owner can accept with one word. The battery is capped
+at `--limit` (default: `interrupt_budget` in `.ai/config.json`, else 15), so the
+owner is interrupted once, within budget. `answer` then writes one answer over
+one marker line and touches nothing else (line endings are kept byte for byte;
+no clock data is written).
+
+Ledger choice for `answer`: akinator_ledger.py sits in the same folder, so it is
+imported and a `question` record (asked = the gap question, answer = the text,
+answered by = --source or "owner") is written through `Ledger.write`, which
+redacts. The page text is redacted with the same `redact()` before it is
+written, so a pasted credential lands in neither place. If the import or the
+write fails the answer still lands on the page, and the exact
+`akinator_ledger.py add question ...` command is printed to run - the record is
+never silently skipped.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -134,6 +156,13 @@ CATEGORIES: tuple[Category, ...] = (
         ("docs/drift/", "docs/drift.md"),
     ),
     Category(
+        "roadmap", "Roadmap", f"{WIKI_DIR}/roadmap", "dir",
+        "what is planned, in what order, and why",
+        "what is planned next, in what order, and why that order?",
+        ("docs/roadmap/", "docs/roadmap.md", "ROADMAP.md",),
+        ("roadmap",),
+    ),
+    Category(
         "architecture", "Architecture", f"{WIKI_DIR}/architecture", "dir",
         "the system, its modules, data and integrations",
         "what are the main components, how does data flow between them, and "
@@ -141,6 +170,27 @@ CATEGORIES: tuple[Category, ...] = (
         ("docs/architecture/", "docs/architecture.md", "ARCHITECTURE.md",
          "architecture/"),
         ("architecture",),
+    ),
+    Category(
+        "services", "Services", f"{WIKI_DIR}/services", "dir",
+        "frontend and backend services, entrypoints, modules",
+        "which services and modules exist, what are their entrypoints, and who owns each?",
+        ("docs/services/", "docs/services.md", "docs/modules/", "docs/modules.md", "docs/components.md",),
+        ("services", "modules", "components"),
+    ),
+    Category(
+        "data", "Data", f"{WIKI_DIR}/data", "dir",
+        "databases, caches, queues",
+        "which databases, caches and queues exist, what lives in each, and how is it migrated and backed up?",
+        ("docs/data/", "docs/database/", "docs/db/", "docs/data.md", "docs/data-model.md", "docs/schema.md",),
+        ("database", "data model"),
+    ),
+    Category(
+        "integrations", "Integrations", f"{WIKI_DIR}/integrations", "dir",
+        "external systems and vendors",
+        "which external systems and vendors does this depend on, and what happens when each is down?",
+        ("docs/integrations/", "docs/integrations.md", "docs/vendors.md", "docs/external-systems.md",),
+        ("integrations",),
     ),
     Category(
         "libraries", "Libraries", f"{WIKI_DIR}/libraries", "dir",
@@ -160,6 +210,13 @@ CATEGORIES: tuple[Category, ...] = (
         ("stack", "tech stack", "built with"),
     ),
     Category(
+        "standards", "Standards", f"{WIKI_DIR}/standards", "dir",
+        "languages, code standards, lint, hooks, imports, QA gates",
+        "which code standards, lint rules, hooks, import rules and QA gates apply, and which are enforced by a tool?",
+        ("docs/standards/", "docs/standards.md", "docs/coding-standards.md", "docs/conventions.md", "docs/style-guide.md", "STYLE.md", "CODE_STYLE.md",),
+        ("coding standards", "code style", "conventions", "standards"),
+    ),
+    Category(
         "infra", "Infra", f"{WIKI_DIR}/infra", "dir",
         "environments, deploy, install, runbooks",
         "which environments exist, how is it deployed and rolled back, and "
@@ -169,6 +226,20 @@ CATEGORIES: tuple[Category, ...] = (
          "docs/install.md", "INSTALL.md", "ops/", "infra/", "runbooks/"),
         ("deployment", "deploy", "installation", "install", "operations",
          "runbooks"),
+    ),
+    Category(
+        "observability", "Observability", f"{WIKI_DIR}/observability", "dir",
+        "logs, metrics, traces, alerts",
+        "what is logged, measured, traced and alerted on, and where does someone look first in an incident?",
+        ("docs/observability/", "docs/monitoring/", "docs/logging/", "docs/observability.md", "docs/monitoring.md",),
+        ("observability", "monitoring", "logging"),
+    ),
+    Category(
+        "security", "Security", f"{WIKI_DIR}/security", "dir",
+        "secret handling, auth, threat model",
+        "how are secrets handled, how do users and services authenticate, and what is the threat model?",
+        ("docs/security/", "docs/security.md", "SECURITY.md", "docs/threat-model.md",),
+        ("security",),
     ),
     Category(
         "testing", "Testing", f"{WIKI_DIR}/testing", "dir",
@@ -189,18 +260,24 @@ CATEGORIES: tuple[Category, ...] = (
     ),
     Category(
         "project", "Project", f"{WIKI_DIR}/project", "dir",
-        "roadmap, milestones, status, risks",
-        "what is on the roadmap, which milestone is next, and what are the top "
-        "delivery risks?",
-        ("docs/project/", "docs/roadmap/", "docs/roadmap.md", "ROADMAP.md",
-         "docs/planning/"),
-        ("roadmap", "status"),
+        "milestones, status, delivery",
+        "which milestone is next, what is the current status, and what is "
+        "blocking delivery?",
+        ("docs/project/", "docs/planning/"),
+        ("status",),
+    ),
+    Category(
+        "risks", "Risks", f"{WIKI_DIR}/risks", "dir",
+        "open risks, owner, mitigation",
+        "which risks are open, who owns each, and what is the mitigation?",
+        ("docs/risks/", "docs/risks.md", "RISKS.md", "docs/risk-register.md",),
+        ("risks",),
     ),
     Category(
         "decisions", "Decisions", f"{WIKI_DIR}/decisions", "dir",
-        "the decision log - the ADR index",
-        "which significant decisions have been made, which alternatives were "
-        "rejected, and when should each be revisited?",
+        "the decision log - business and technical decisions, the ADR index",
+        "which significant business and technical decisions have been made, "
+        "which alternatives were rejected, and when should each be revisited?",
         ("docs/adr/", "docs/adrs/", "docs/decisions/",
          "docs/architecture/decisions/", "adr/", "decisions/"),
     ),
@@ -211,6 +288,13 @@ CATEGORIES: tuple[Category, ...] = (
         ("docs/changes/", "docs/changelog/", "CHANGELOG.md", "docs/CHANGELOG.md",
          "CHANGES.md", "HISTORY.md"),
         ("changelog", "changes", "release notes"),
+    ),
+    Category(
+        "history", "History", f"{WIKI_DIR}/history", "dir",
+        "every version and revision, what shipped when",
+        "which versions and revisions exist, and what shipped in each?",
+        ("docs/history/", "docs/history.md", "docs/releases/", "docs/releases.md", "RELEASES.md",),
+        ("history", "releases", "version history"),
     ),
     Category(
         "glossary", "Glossary", f"{WIKI_DIR}/glossary.md", "file",
@@ -669,8 +753,10 @@ INDEX_HEADER = (
     "# Project wiki\n"
     "\n"
     "This repository is its own wiki. Every kind of knowledge - product,\n"
-    "business, market, requirements, drift, architecture, libraries, stack,\n"
-    "infra, testing, UX, project, decisions, changes, glossary, onboarding - has\n"
+    "business, market, requirements, drift, roadmap, architecture, services,\n"
+    "data, integrations, libraries, stack, standards, infra, observability,\n"
+    "security, testing, UX, project, risks, decisions, changes, history,\n"
+    "glossary, onboarding - has\n"
     "one canonical home, listed below. Where the repository already had a home,\n"
     "the wiki links to it; it never keeps a parallel copy.\n"
     "\n"
@@ -826,6 +912,262 @@ def check(root: Path) -> tuple[int, str]:
     return 0, f"{rel} matches the tree."
 
 
+# --------------------------------------------------------------------------
+# interview - the grouped question battery
+# --------------------------------------------------------------------------
+
+DEFAULT_LIMIT = 15
+
+RECOMMENDED_DEFAULT = (
+    "Recommended: draft from the README and the code, and mark every line you "
+    "cannot verify with the gap marker.")
+
+# One recommended default per category: what to do when the owner has no time.
+# Data, not logic - a default is a suggestion the owner accepts or overrides.
+RECOMMENDED: dict[str, str] = {
+    "product": "Recommended: draft the users and the problem from the README, "
+               "and mark unverified lines with the gap marker.",
+    "business": "Recommended: list only the rules the code enforces today "
+                "(limits, prices, entitlements), each with the file that "
+                "enforces it, and mark the owner unknown.",
+    "market": "Recommended: write 'not applicable - internal tool' if nothing "
+              "is sold; otherwise leave the gap marker rather than guess.",
+    "requirements": "Recommended: derive the current requirements from the "
+                    "tests and the README, status 'current'; record anything "
+                    "unclear as 'missing'.",
+    "drift": "Recommended: start empty - record a drift only when a fact is "
+             "seen to move, with before, after and why.",
+    "roadmap": "Recommended: take the open issues and the changelog's "
+               "unreleased section as the order; mark dates unknown.",
+    "architecture": "Recommended: draft from the generated component map and "
+                    "the directory layout; mark the data flow unverified.",
+    "services": "Recommended: list each entrypoint found in the manifests and "
+                "the source tree, one line each.",
+    "data": "Recommended: draft from the migrations and the schema files; "
+            "mark backups and retention unknown.",
+    "integrations": "Recommended: list every external host or SDK the code "
+                    "calls, and mark the outage behaviour unknown.",
+    "libraries": "Recommended: run the libraries extractor, then fill the "
+                 "'why' only for the dependencies you chose deliberately.",
+    "stack": "Recommended: run the stack extractor; it reads the manifests.",
+    "standards": "Recommended: describe what the linter, formatter and hooks "
+                 "already enforce; add nothing aspirational.",
+    "infra": "Recommended: draft from the CI files and the install scripts; "
+             "mark rollback unknown.",
+    "observability": "Recommended: list the logging and metrics calls the "
+                     "code makes today; mark alerting unknown.",
+    "security": "Recommended: describe how secrets are loaded (never their "
+                "values) and how auth works today; mark the threat model "
+                "unknown.",
+    "testing": "Recommended: draft from the test folder and the CI test step; "
+               "mark the coverage target unknown.",
+    "ux": "Recommended: write 'no design system' if none exists, rather than "
+          "inventing one.",
+    "project": "Recommended: state the current status in one line and mark "
+               "blockers unknown.",
+    "risks": "Recommended: list the risks already noted in the ledger and "
+             "memory, each with an owner of 'unassigned'.",
+    "decisions": "Recommended: index the existing ADRs; record business "
+                 "decisions that live only in code as new records.",
+    "changes": "Recommended: adopt the changelog; write change records from "
+               "now on only.",
+    "history": "Recommended: derive versions from the tags and the "
+               "changelog; mark undated releases unknown.",
+    "glossary": "Recommended: collect the capitalised domain terms from the "
+                "README and the tests, one line each.",
+    "onboarding": "Recommended: write the shortest path from clone to a "
+                  "passing test run, and verify it by running it.",
+}
+
+# Business knowledge is the most expensive to get wrong, so it is asked first.
+_FIRST = ("requirements", "business")
+
+
+def recommended_for(category: str | None) -> str:
+    return RECOMMENDED.get(category or "", RECOMMENDED_DEFAULT)
+
+
+def interrupt_budget(root: Path) -> int:
+    """`interrupt_budget` from .ai/config.json, else DEFAULT_LIMIT."""
+    try:
+        data = json.loads((root / ".ai" / "config.json").read_text("utf-8"))
+        value = data.get("interrupt_budget")
+    except (OSError, ValueError, AttributeError):
+        return DEFAULT_LIMIT
+    if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+        return value
+    return DEFAULT_LIMIT
+
+
+def _default_page(category: Category) -> str:
+    return (f"{category.home}/README.md" if category.kind == "dir"
+            else category.home)
+
+
+def build_interview(root: Path, limit: int) -> dict:
+    """The ranked, grouped, capped battery. Deterministic: no clock."""
+    order = {c.id: i for i, c in enumerate(CATEGORIES)}
+    by_id = {c.id: c for c in CATEGORIES}
+    gaps = collect_gaps(root)
+
+    def rank(gap: Gap) -> tuple:
+        if gap.category in _FIRST:
+            tier = 0
+        elif gap.kind in ("no-home", "empty-home"):
+            tier = 1
+        elif gap.category is not None:
+            tier = 2
+        else:
+            tier = 3
+        return (tier, order.get(gap.category or "", len(order)),
+                0 if gap.kind != "page" else 1, gap.path or "", gap.line or 0)
+
+    chosen = sorted(gaps, key=rank)[:max(limit, 0)]
+    # Group: categories appear in the order of their best-ranked question.
+    seen: list[str] = []
+    for gap in chosen:
+        key = gap.category or ""
+        if key not in seen:
+            seen.append(key)
+    chosen = sorted(chosen, key=lambda g: (seen.index(g.category or ""), rank(g)))
+
+    questions = []
+    for number, gap in enumerate(chosen, start=1):
+        category = by_id.get(gap.category or "")
+        path = gap.path
+        if gap.kind == "no-home" and category is not None:
+            path = _default_page(category)
+        questions.append({
+            "id": f"Q{number}",
+            "category": gap.category,
+            "title": category.title if category else "Other wiki pages",
+            "kind": gap.kind,
+            "question": gap.question,
+            "path": path,
+            "line": gap.line,
+            "needs_init": gap.kind == "no-home",
+            "recommended": recommended_for(gap.category),
+        })
+    return {"total": len(gaps), "shown": len(questions), "limit": limit,
+            "questions": questions}
+
+
+def render_interview(battery: dict) -> str:
+    lines = ["# Owner interview", ""]
+    if not battery["questions"]:
+        return "\n".join(lines + ["No open gaps - nothing to ask."])
+    lines += [
+        f"{battery['shown']} of {battery['total']} open question(s), most "
+        "important first. Answer by id; reply `default` to accept every "
+        "recommendation.", ""]
+    current = object()
+    for q in battery["questions"]:
+        if q["category"] != current:
+            current = q["category"]
+            if lines[-1] != "":
+                lines.append("")
+            lines += [f"## {q['title']}", ""]
+        if q["line"]:
+            target = f"`{q['path']}` line {q['line']}"
+        elif q["needs_init"]:
+            target = f"`{q['path']}` (create it first: `python {TOOL} init`)"
+        else:
+            target = f"`{q['path']}` (the folder holds no page yet)"
+        lines += [f"- **{q['id']}** {q['question']}",
+                  f"  - Target: {target}",
+                  f"  - {q['recommended']}"]
+    hidden = battery["total"] - battery["shown"]
+    lines += [
+        "",
+        (f"{hidden} more not shown (limit {battery['limit']}); re-run after "
+         "these are answered.") if hidden else "That is every open question.",
+        "",
+        f"Record an answer with: `python {TOOL} answer --page <page> "
+        "--line <line> --text \"<answer>\"`",
+    ]
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------
+# answer - one answer over one marker line
+# --------------------------------------------------------------------------
+
+def _slug_id(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower())[:50].strip("-") or "question"
+
+
+def answer(root: Path, page: str, line: int, text: str,
+           source: str = "") -> tuple[int, str]:
+    """Replace the gap marker on `page`:`line` with `text`. (exit code, message).
+
+    Refuses (2) unless that line is exactly the gap marker outside a fence.
+    Everything else in the file - every other byte, every line ending - is
+    untouched.
+    """
+    rel = page.replace("\\", "/").strip("/")
+    path = (root / rel).resolve()
+    try:
+        path.relative_to(root.resolve())
+    except ValueError:
+        return 2, f"{page}: outside the repository"
+    if not path.is_file():
+        return 2, f"{page}: no such page"
+    if not text.strip():
+        return 2, "refused: the answer is empty"
+    if BEGIN in text or END in text:
+        return 2, "refused: an answer may not contain the generated markers"
+    if GAP_MARKER in text:
+        return 2, "refused: an answer may not be, or contain, the gap marker"
+
+    raw = _read(path)
+    parts = raw.splitlines(keepends=True)
+    scanned = _scan(raw)
+    if line < 1 or line > len(parts):
+        return 2, f"{rel}:{line}: no such line"
+    here = scanned[line - 1]
+    if here.in_fence or here.text.strip() != GAP_MARKER:
+        return 2, f"{rel}:{line}: that line is not exactly the gap marker"
+
+    question = next((g.question for g in collect_gaps(root)
+                     if g.path == rel and g.line == line),
+                    f"{rel}: line {line}")
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import akinator_ledger as led
+    except Exception:  # noqa: BLE001 - reported below, never silent
+        led = None
+    clean = led.redact(text, led.env_values(root)) if led else text
+
+    ending = parts[line - 1][len(here.text):]
+    newline = ending or ("\r\n" if "\r\n" in raw else "\n")
+    body = clean.strip().replace("\r\n", "\n").replace("\n", newline)
+    indent = here.text[: len(here.text) - len(here.text.lstrip())]
+    parts[line - 1] = indent + body + ending
+    path.write_bytes("".join(parts).encode("utf-8", errors="surrogateescape"))
+
+    owner = source.strip() or "owner"
+    command = (f"python <skill>/scripts/akinator_ledger.py add question "
+               f"--title {json.dumps(question)} "
+               f"--field asked={json.dumps(question)} "
+               f"--field answer={json.dumps(clean)} "
+               f"--field answered_by={json.dumps(owner)}")
+    if led is None:
+        note = f"ledger tool not importable; run this to record it:\n  {command}"
+    else:
+        try:
+            digest = hashlib.sha1(
+                f"{rel}:{line}:{question}".encode("utf-8")).hexdigest()[:8]
+            led.Ledger(root).write(led.Record(
+                kind="question", id=f"{_slug_id(question)}-{digest}",
+                title=question,
+                fields={"asked": question, "answer": clean,
+                        "answered_by": owner}))
+            note = "recorded a question in the ledger"
+        except Exception as exc:  # noqa: BLE001
+            note = f"ledger write failed ({exc}); run this to record it:\n  {command}"
+    return 0, f"answered {rel}:{line}; {note}"
+
+
 def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         try:
@@ -848,6 +1190,16 @@ def main(argv: list[str] | None = None) -> int:
                    help="every unknown, turned into a question for the owner")
     sub.add_parser("check", parents=[common],
                    help="exit 1 if the wiki index is stale or missing")
+    itv = sub.add_parser("interview", parents=[common],
+                         help="the grouped, ranked, capped question battery")
+    itv.add_argument("--limit", type=int, default=None,
+                     help="max questions (default: interrupt_budget, else 15)")
+    ans = sub.add_parser("answer", parents=[common],
+                         help="replace one gap marker line with an answer")
+    ans.add_argument("--page", required=True)
+    ans.add_argument("--line", type=int, required=True)
+    ans.add_argument("--text", required=True)
+    ans.add_argument("--source", default="")
     args = parser.parse_args(argv)
 
     root = Path(getattr(args, "root", ".")).resolve()
@@ -885,6 +1237,20 @@ def main(argv: list[str] | None = None) -> int:
                              sort_keys=True))
         else:
             print(message)
+        return code
+
+    if args.command == "interview":
+        limit = args.limit if args.limit is not None else interrupt_budget(root)
+        battery = build_interview(root, limit)
+        if as_json:
+            print(json.dumps(battery, indent=2, sort_keys=True))
+        else:
+            print(render_interview(battery))
+        return 0
+
+    if args.command == "answer":
+        code, message = answer(root, args.page, args.line, args.text, args.source)
+        print(message, file=sys.stderr if code else sys.stdout)
         return code
 
     # gaps

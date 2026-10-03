@@ -47,10 +47,17 @@ def _run(capsys: pytest.CaptureFixture[str], *argv: str) -> tuple[int, str]:
 def test_the_taxonomy_covers_every_kind_of_knowledge() -> None:
     ids = [c.id for c in wiki.CATEGORIES]
     assert ids == [
-        "product", "business", "market", "requirements", "drift",
-        "architecture", "libraries", "stack", "infra", "testing", "ux",
-        "project", "decisions", "changes", "glossary", "onboarding",
+        "product", "business", "market", "requirements", "drift", "roadmap",
+        "architecture", "services", "data", "integrations", "libraries",
+        "stack", "standards", "infra", "observability", "security", "testing",
+        "ux", "project", "risks", "decisions", "changes", "history",
+        "glossary", "onboarding",
     ]
+    # The original sixteen keep their relative order - ids are stable.
+    original = ["product", "business", "market", "requirements", "drift",
+                "architecture", "libraries", "stack", "infra", "testing", "ux",
+                "project", "decisions", "changes", "glossary", "onboarding"]
+    assert [i for i in ids if i in original] == original
     assert len(set(ids)) == len(ids)
     for category in wiki.CATEGORIES:
         assert category.home.startswith(wiki.WIKI_DIR + "/"), category.id
@@ -146,7 +153,18 @@ def test_an_existing_product_folder_is_linked_not_duplicated(tmp_path: Path) -> 
     ("business", "docs/business/pricing.md", "docs/business"),
     ("stack", "context/stack.md", "context/stack.md"),
     ("glossary", "GLOSSARY.md", "GLOSSARY.md"),
-    ("project", "ROADMAP.md", "ROADMAP.md"),
+    ("roadmap", "ROADMAP.md", "ROADMAP.md"),
+    ("roadmap", "docs/roadmap/2026.md", "docs/roadmap"),
+    ("project", "docs/planning/q1.md", "docs/planning"),
+    ("history", "docs/releases/1.0.md", "docs/releases"),
+    ("data", "docs/database/schema.md", "docs/database"),
+    ("services", "docs/services.md", "docs/services.md"),
+    ("integrations", "docs/vendors.md", "docs/vendors.md"),
+    ("standards", "docs/coding-standards.md", "docs/coding-standards.md"),
+    ("observability", "docs/monitoring/alerts.md", "docs/monitoring"),
+    ("security", "SECURITY.md", "SECURITY.md"),
+    ("security", "docs/security.md", "docs/security.md"),
+    ("risks", "docs/risk-register.md", "docs/risk-register.md"),
     ("testing", "docs/testing.md", "docs/testing.md"),
 ])
 def test_existing_homes_are_detected(tmp_path: Path, category: str,
@@ -282,11 +300,11 @@ def test_a_marker_in_a_readme_section_is_scoped_to_that_section(tmp_path: Path) 
 
 def test_an_uncategorised_wiki_page_is_indexed_and_scanned(tmp_path: Path) -> None:
     wiki.init(tmp_path)
-    _write(tmp_path, "docs/wiki/security.md", f"# Security\n\n## Threat model\n\n{MARKER}\n")
+    _write(tmp_path, "docs/wiki/extra.md", f"# Extra\n\n## Threat model\n\n{MARKER}\n")
     gaps = [g for g in wiki.collect_gaps(tmp_path) if g.category is None]
     assert [g.question for g in gaps] == [
-        "docs/wiki/security.md: Threat model is unknown - what is it?"]
-    assert "- [docs/wiki/security.md](security.md)" in wiki.render_block(tmp_path)
+        "docs/wiki/extra.md: Threat model is unknown - what is it?"]
+    assert "- [docs/wiki/extra.md](extra.md)" in wiki.render_block(tmp_path)
 
 
 def test_a_healthy_wiki_has_no_gaps(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
@@ -494,3 +512,210 @@ def test_the_cli_accepts_root_before_or_after_the_command(
     code, out = _run(capsys, "--root", str(tmp_path), "init", "--json")
     assert code == 0 and json.loads(out) == {"adopted": {}, "created": []}
     assert wiki.main(["--root", str(tmp_path / "nope"), "gaps"]) == 2
+
+
+# --------------------------------------------------------------------------
+# The nine added categories flow through init / index / gaps / check
+# --------------------------------------------------------------------------
+
+NEW_IDS = ["roadmap", "history", "data", "services", "observability",
+           "standards", "security", "integrations", "risks"]
+
+
+def test_new_categories_get_stubs_rows_and_gaps(tmp_path: Path) -> None:
+    created = wiki.init(tmp_path)["created"]
+    block = wiki.render_block(tmp_path)
+    ids = {g.category for g in wiki.collect_gaps(tmp_path)}
+    for cid in NEW_IDS:
+        assert f"docs/wiki/{cid}/README.md" in created, cid
+        assert cid in ids, cid
+    assert "| Security |" in block and "| Risks |" in block
+    assert wiki.check(tmp_path)[0] == 0
+
+
+def test_a_new_category_home_is_adopted_not_duplicated(tmp_path: Path) -> None:
+    _write(tmp_path, "SECURITY.md", "# Security policy\n")
+    result = wiki.init(tmp_path)
+    assert result["adopted"]["security"] == "SECURITY.md"
+    assert not (tmp_path / "docs/wiki/security").exists()
+
+
+def test_roadmap_and_project_do_not_share_a_home(tmp_path: Path) -> None:
+    _write(tmp_path, "ROADMAP.md", "# Roadmap\n")
+    resolved = _resolved(tmp_path)
+    assert resolved["roadmap"].home.path == "ROADMAP.md"
+    assert resolved["project"].locations == []
+
+
+def test_decisions_cover_business_and_technical() -> None:
+    decisions = next(c for c in wiki.CATEGORIES if c.id == "decisions")
+    assert "business and technical" in decisions.answers
+    assert "business and technical" in decisions.question
+
+
+# --------------------------------------------------------------------------
+# interview
+# --------------------------------------------------------------------------
+
+def test_interview_ranks_business_first_groups_and_numbers(tmp_path: Path) -> None:
+    qs = wiki.build_interview(tmp_path, 50)["questions"]
+    assert [q["id"] for q in qs] == [f"Q{i}" for i in range(1, len(qs) + 1)]
+    cats = [q["category"] for q in qs]
+    assert cats.index("requirements") < cats.index("product")
+    assert cats.index("business") < cats.index("product")
+    seen: list = []
+    for c in cats:
+        if not seen or seen[-1] != c:
+            assert c not in seen, f"{c} is split across groups"
+            seen.append(c)
+    for q in qs:
+        assert q["recommended"].startswith("Recommended:")
+        assert q["path"], q["id"]
+
+
+def test_interview_is_capped_by_limit_and_the_config_budget(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    assert len(wiki.build_interview(tmp_path, 3)["questions"]) == 3
+    assert wiki.interrupt_budget(tmp_path) == wiki.DEFAULT_LIMIT == 15
+    _write(tmp_path, ".ai/config.json", '{"interrupt_budget": 4}')
+    assert wiki.interrupt_budget(tmp_path) == 4
+    code, out = _run(capsys, "--root", str(tmp_path), "interview", "--json")
+    data = json.loads(out)
+    assert code == 0 and data["shown"] == 4 and data["total"] == len(wiki.CATEGORIES)
+    code, out = _run(capsys, "--root", str(tmp_path), "interview", "--limit", "2")
+    assert out.count("- **Q") == 2 and "more not shown" in out
+    _write(tmp_path, ".ai/config.json", '{"interrupt_budget": "lots"}')
+    assert wiki.interrupt_budget(tmp_path) == 15, "a bad budget falls back"
+
+
+def test_interview_targets_the_page_and_line_of_a_marker(tmp_path: Path) -> None:
+    _write(tmp_path, "docs/product/a.md", f"# A\n\n## Personas\n\n{MARKER}\n")
+    qs = wiki.build_interview(tmp_path, 100)["questions"]
+    [q] = [q for q in qs if q["kind"] == "page"]
+    assert (q["path"], q["line"]) == ("docs/product/a.md", 5)
+    homeless = [q for q in qs if q["kind"] == "no-home"]
+    assert homeless and all(q["needs_init"] and q["line"] is None for q in homeless)
+
+
+def test_interview_is_empty_when_nothing_is_open(tmp_path: Path) -> None:
+    for category in wiki.CATEGORIES:
+        page = f"{category.home}/README.md" if category.kind == "dir" else category.home
+        _write(tmp_path, page, f"# {category.title}\n\nKnown.\n")
+    battery = wiki.build_interview(tmp_path, 15)
+    assert battery["questions"] == []
+    assert "nothing to ask" in wiki.render_interview(battery)
+
+
+def test_interview_is_deterministic_and_names_no_absolute_path(tmp_path: Path) -> None:
+    first = wiki.render_interview(wiki.build_interview(tmp_path, 15))
+    assert first == wiki.render_interview(wiki.build_interview(tmp_path, 15))
+    assert str(tmp_path) not in first and tmp_path.as_posix() not in first
+
+
+# --------------------------------------------------------------------------
+# answer
+# --------------------------------------------------------------------------
+
+def _gap_page(tmp_path: Path, newline: str = "\n") -> str:
+    page = "docs/product/a.md"
+    text = newline.join(["# A", "", "## One", "", MARKER, "", "## Two", "", MARKER, ""])
+    (tmp_path / page).parent.mkdir(parents=True, exist_ok=True)
+    (tmp_path / page).write_bytes(text.encode("utf-8"))
+    return page
+
+
+def _page_gap_count(root: Path) -> int:
+    return len([g for g in wiki.collect_gaps(root) if g.kind == "page"])
+
+
+def test_answer_replaces_exactly_one_marker(tmp_path: Path) -> None:
+    page = _gap_page(tmp_path)
+    before = _page_gap_count(tmp_path)
+    code, message = wiki.answer(tmp_path, page, 5, "Dental clinics.", "alice")
+    assert code == 0, message
+    assert _page_gap_count(tmp_path) == before - 1
+    lines = (tmp_path / page).read_text("utf-8").split("\n")
+    assert lines[4] == "Dental clinics." and lines[8] == MARKER
+    assert lines[:4] == ["# A", "", "## One", ""] and lines[5:8] == ["", "## Two", ""]
+
+
+def test_answer_on_a_wrong_line_exits_2_and_changes_nothing(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    page = _gap_page(tmp_path)
+    raw = (tmp_path / page).read_bytes()
+    for line in (1, 3, 6, 99, 0):
+        assert wiki.answer(tmp_path, page, line, "x")[0] == 2, line
+    code = wiki.main(["--root", str(tmp_path), "answer", "--page", page,
+                      "--line", "3", "--text", "x"])
+    assert code == 2 and "not exactly the gap marker" in capsys.readouterr().err
+    assert (tmp_path / page).read_bytes() == raw
+
+
+def test_answer_refuses_a_fenced_marker_and_a_bad_page(tmp_path: Path) -> None:
+    _write(tmp_path, "a.md", f"```\n{MARKER}\n```\n")
+    assert wiki.answer(tmp_path, "a.md", 2, "x")[0] == 2
+    assert wiki.answer(tmp_path, "../outside.md", 1, "x")[0] == 2
+    assert wiki.answer(tmp_path, "missing.md", 1, "x")[0] == 2
+
+
+@pytest.mark.parametrize("text", [
+    "", "   ", wiki.BEGIN, f"ok {wiki.END}", MARKER, f"see {MARKER}"])
+def test_answer_refuses_empty_or_generated_marker_text(tmp_path: Path, text: str) -> None:
+    page = _gap_page(tmp_path)
+    raw = (tmp_path / page).read_bytes()
+    assert wiki.answer(tmp_path, page, 5, text)[0] == 2
+    assert (tmp_path / page).read_bytes() == raw
+
+
+def test_answer_preserves_crlf_byte_for_byte(tmp_path: Path) -> None:
+    page = _gap_page(tmp_path, "\r\n")
+    raw = (tmp_path / page).read_bytes()
+    assert wiki.answer(tmp_path, page, 5, "Known.")[0] == 0
+    after = (tmp_path / page).read_bytes()
+    assert after == raw.replace(MARKER.encode(), b"Known.", 1)
+    assert b"\n" not in after.replace(b"\r\n", b"")
+
+
+def test_answer_records_a_ledger_question_and_redacts_secrets(tmp_path: Path) -> None:
+    import akinator_ledger as led
+
+    page = _gap_page(tmp_path)
+    secret = "ghp_" + "a1B2c3D4e5F6g7H8i9J0"
+    code, message = wiki.answer(tmp_path, page, 5, f"Use token {secret} to call", "bob")
+    assert code == 0 and "ledger" in message
+    [record] = led.Ledger(tmp_path).all("question")
+    assert record.fields["answered_by"] == "bob"
+    assert secret not in record.fields["answer"]
+    assert "[redacted:github-token]" in record.fields["answer"]
+    assert secret not in (tmp_path / page).read_text("utf-8"), "the page is redacted too"
+    assert led.Ledger(tmp_path).verify() == []
+
+
+def test_answer_defaults_the_source_to_owner(tmp_path: Path) -> None:
+    import akinator_ledger as led
+
+    page = _gap_page(tmp_path)
+    wiki.answer(tmp_path, page, 9, "Fine.")
+    [record] = led.Ledger(tmp_path).all("question")
+    assert record.fields["answered_by"] == "owner"
+
+
+def test_answer_prints_the_ledger_command_when_the_ledger_write_fails(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import akinator_ledger as led
+
+    def boom(self, record):  # noqa: ANN001
+        raise OSError("disk full")
+
+    monkeypatch.setattr(led.Ledger, "write", boom)
+    page = _gap_page(tmp_path)
+    code, message = wiki.answer(tmp_path, page, 5, "Known.")
+    assert code == 0 and "akinator_ledger.py add question" in message
+    assert (tmp_path / page).read_text("utf-8").splitlines()[4] == "Known."
+
+
+def test_answering_makes_the_index_stale(tmp_path: Path) -> None:
+    wiki.init(tmp_path)
+    line = next(g.line for g in wiki.collect_gaps(tmp_path) if g.category == "market")
+    assert wiki.answer(tmp_path, "docs/wiki/market/README.md", line, "EU dental.")[0] == 0
+    assert wiki.check(tmp_path)[0] == 1

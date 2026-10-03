@@ -355,7 +355,8 @@ EXPECTED_TEMPLATES = (
     "rule.md", "skill.md", "context-map.md", "memory.md", "adr.md",
     "business-logic.md", "product-feature.md", "ops-runbook.md", "router.md",
     "onboarding-mapping.md", "library-page.md", "requirement.md",
-    "business-drift.md",
+    "business-drift.md", "change-record.md", "business-decision.md",
+    "roadmap-item.md", "data-store.md", "integration.md", "risk.md",
 )
 
 

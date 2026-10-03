@@ -10,6 +10,13 @@ still like that.
 Write the skill the **first** time. Creating skills is the default, not the
 exception.
 
+Repetition is caught two ways: `python <skill>/scripts/akinator_distil.py repeats
+[--since 90.days] [--min 3]` lists co-changing file sets and repeated
+commit-subject stems; and you notice the **second occurrence** yourself. Either
+way, **ASK the owner**: skill, rule, or neither? Record the answer with
+`akinator_distil.py decide <fingerprint> --as rule --note "..."` (`neither` is
+valid and stops the re-ask).
+
 ## When to use
 
 Something in this batch involved a sequence of steps that was not obvious, where

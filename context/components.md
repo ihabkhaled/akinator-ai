@@ -82,21 +82,27 @@ same contract as an `AGENTS.md` block and an always-applied rule.
 |---|---|
 | `SessionStart` | `sh ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh` |
 
-## Tools - 9
+## Tools - 15
 
 Inside the skill, so they travel with it to every platform and run in
 whatever repository it is installed into.
 
 | Tool | Purpose |
 |---|---|
+| `skills/everything/scripts/akinator_context.py` | The cheapest way to gain context - a ranked reading list under a token budget. |
 | `skills/everything/scripts/akinator_coverage.py` | Akinator coverage checker - the mechanically verifiable knowledge invariants. |
 | `skills/everything/scripts/akinator_distil.py` | Distil - turn what recurs into a rule proposal. |
 | `skills/everything/scripts/akinator_ledger.py` | The Akinator ledger - what happened, so the next session does not rediscover it. |
 | `skills/everything/scripts/akinator_rules.py` | Harden - rule evolution and conflict detection. |
 | `skills/everything/scripts/akinator_scope.py` | Scope a pass to what actually changed, and budget the questions. |
+| `skills/everything/scripts/akinator_sensitive.py` | Sensitive data: know what must not be exposed, document it, never leak it. |
+| `skills/everything/scripts/akinator_trace.py` | Every changed path is traced - no change lands without its knowledge. |
 | `skills/everything/scripts/akinator_wiki.py` | The living wiki - the repository as its own Confluence. |
 | `skills/everything/scripts/build_brief.py` | Compose the context brief - what a new session actually reads. |
+| `skills/everything/scripts/extract_history.py` | Generate the history wiki page from the records the repository already keeps. |
 | `skills/everything/scripts/extract_libraries.py` | Generate the library wiki - one page per declared dependency. |
+| `skills/everything/scripts/extract_operations.py` | Generate the operations wiki - the runnable surface of a repository. |
+| `skills/everything/scripts/extract_platform.py` | Generate the platform wiki pages from what the tree actually contains. |
 | `skills/everything/scripts/extract_stack.py` | Generate the stack map - dependencies and modules, extracted from the tree. |
 
 ## Build scripts - 4
@@ -119,7 +125,7 @@ One installer for Claude Code, Codex and Cursor, in both shells.
 | `install.sh` | Akinator installer - Claude Code, Codex and Cursor, straight from GitHub. |
 | `install.ps1` | Akinator installer for Windows - Claude Code, Codex and Cursor, from GitHub. |
 
-## Templates - 14
+## Templates - 19
 
 What Akinator writes into target repositories. Every template ships a
 filled example.
@@ -127,16 +133,21 @@ filled example.
 | Template | Filled example |
 |---|---|
 | `templates/adr.md` | `templates/examples/adr.md` |
+| `templates/business-decision.md` | `templates/examples/business-decision.md` |
 | `templates/business-drift.md` | `templates/examples/business-drift.md` |
 | `templates/business-logic.md` | `templates/examples/business-logic.md` |
 | `templates/change-record.md` | `templates/examples/change-record.md` |
 | `templates/context-map.md` | `templates/examples/context-map.md` |
+| `templates/data-store.md` | `templates/examples/data-store.md` |
+| `templates/integration.md` | `templates/examples/integration.md` |
 | `templates/library-page.md` | `templates/examples/library-page.md` |
 | `templates/memory.md` | `templates/examples/memory.md` |
 | `templates/onboarding-mapping.md` | `templates/examples/onboarding-mapping.md` |
 | `templates/ops-runbook.md` | `templates/examples/ops-runbook.md` |
 | `templates/product-feature.md` | `templates/examples/product-feature.md` |
 | `templates/requirement.md` | `templates/examples/requirement.md` |
+| `templates/risk.md` | `templates/examples/risk.md` |
+| `templates/roadmap-item.md` | `templates/examples/roadmap-item.md` |
 | `templates/router.md` | `templates/examples/router.md` |
 | `templates/rule.md` | `templates/examples/rule.md` |
 | `templates/skill.md` | `templates/examples/skill.md` |
