@@ -272,6 +272,12 @@ if [ "$UNINSTALL" -eq 1 ]; then
              "$(dirname -- "$CURSOR_RULE")" "$(dirname -- "$(dirname -- "$CURSOR_RULE")")"; do
     rmdir "$dir" 2>/dev/null || true
   done
+  # The download cache this installer made for Codex and Cursor; the skill
+  # itself was copied out of it, so nothing depends on it.
+  if [ -d "$USER_HOME/.akinator/src" ]; then
+    rm -rf "$USER_HOME/.akinator/src"; rmdir "$USER_HOME/.akinator" 2>/dev/null || true
+    say "removed $USER_HOME/.akinator/src (the download cache)"
+  fi
   say "Akinator uninstalled."
   exit 0
 fi

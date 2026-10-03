@@ -110,3 +110,4 @@ cache format version changes.
 - `tests/test_platform.py` - a test proves the cache never reaches a page.
 - `skills/everything/scripts/extract_operations.py`, `tests/test_operations.py` - the repositories page no longer generates remotes or the default branch: they live in `.git`, which differs between a clone, a fork and CI, so a generated page could never be current everywhere. They are recorded in the curated section.
 - `README.md` - rewritten shorter and install-first: a 30-second install, one explicit form per platform, the other install routes folded away, the per-prompt behavior as bullets.
+- `install.sh`, `install.ps1`, `tests/test_installer.py` - uninstall also removes the `~/.akinator/src` download cache the installer created for Codex and Cursor (trying the one-line install found about 360 files left behind); two tests prove it.

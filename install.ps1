@@ -247,6 +247,15 @@ if ($Uninstall) {
     foreach ($dir in @($SkillsRoot, (Split-Path -Parent $SkillsRoot), (Split-Path -Parent $CursorRule), (Split-Path -Parent (Split-Path -Parent $CursorRule)))) {
         if ((Test-Path $dir) -and -not (Get-ChildItem -Force $dir)) { Remove-Item -Force $dir }
     }
+    # The download cache this installer made for Codex and Cursor; the skill was
+    # copied out of it, so nothing depends on it.
+    $cache = Join-Path $UserHome '.akinator\src'
+    if (Test-Path $cache) {
+        Remove-Item -Recurse -Force $cache
+        $parent = Split-Path -Parent $cache
+        if ((Test-Path $parent) -and -not (Get-ChildItem -Force $parent)) { Remove-Item -Force $parent }
+        Say "removed $cache (the download cache)"
+    }
     Say 'Akinator uninstalled.'
     return
 }

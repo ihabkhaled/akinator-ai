@@ -250,3 +250,24 @@ def test_both_installers_write_the_same_block(world: dict, tmp_path: Path) -> No
     assert run_sh(world, "--repo", _posix(a), "--codex").returncode == 0
     assert run_ps(world, "-Repo", str(b), "-Codex").returncode == 0
     assert (a / "AGENTS.md").read_bytes() == (b / "AGENTS.md").read_bytes()
+
+
+def _seed_download_cache(world: dict) -> Path:
+    cache = world["home"] / ".akinator" / "src"
+    (cache / ".git").mkdir(parents=True)
+    (cache / "x.txt").write_text("cached download\n", encoding="utf-8")
+    return cache
+
+
+@needs_sh
+def test_sh_uninstall_removes_the_download_cache(world: dict) -> None:
+    cache = _seed_download_cache(world)
+    assert run_sh(world, "--codex", "--cursor", "--uninstall").returncode == 0
+    assert not cache.exists() and not cache.parent.exists()
+
+
+@needs_ps
+def test_ps_uninstall_removes_the_download_cache(world: dict) -> None:
+    cache = _seed_download_cache(world)
+    assert run_ps(world, "-Codex", "-Cursor", "-Uninstall").returncode == 0
+    assert not cache.exists() and not cache.parent.exists()
