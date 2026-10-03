@@ -65,6 +65,7 @@ NOTHING = "Nothing detected."
 SKIP_DIRS = frozenset(es.SKIP_DIRS) | {
     ".git", ".tox", ".mypy_cache", ".ruff_cache", ".idea", "coverage",
 }
+LOCAL_ONLY = (".ai/cache/",)
 MAX_READ_BYTES = 1_000_000
 MAX_EVIDENCE = 3
 
@@ -393,7 +394,12 @@ def walk(repo: Path) -> list[str]:
     for dirpath, dirnames, filenames in os.walk(repo):
         dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
         for name in sorted(filenames):
-            out.append((Path(dirpath) / name).relative_to(repo).as_posix())
+            rel = (Path(dirpath) / name).relative_to(repo).as_posix()
+            # Machine-local caches exist on one machine only: listing them
+            # would make the generated page differ between a clone and CI.
+            if rel.startswith(LOCAL_ONLY):
+                continue
+            out.append(rel)
     return sorted(out)
 
 

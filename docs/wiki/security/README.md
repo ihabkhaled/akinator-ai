@@ -8,7 +8,7 @@
 
 | Detected | Where |
 |---|---|
-| No `.gitignore` rule covers `.env` | `.ai/cache/.gitignore`, `.gitignore` |
+| `.env` is gitignored | `.gitignore` |
 
 ### Environment variable names
 

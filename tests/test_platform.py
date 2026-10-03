@@ -184,3 +184,12 @@ def test_output_deterministic(tmp_path: Path) -> None:
     _w(tmp_path, "package.json", _pkg({"pg": "1", "redis": "1"}))
     first = _page(tmp_path, "data")
     assert _page(tmp_path, "data") == first
+
+
+def test_machine_local_cache_never_reaches_a_page(tmp_path):
+    """.ai/cache exists on one machine only; listing it makes CI disagree with a clone."""
+    (tmp_path / ".gitignore").write_text(".env\n", encoding="utf-8")
+    cache = tmp_path / ".ai" / "cache"
+    cache.mkdir(parents=True)
+    (cache / ".gitignore").write_text("*\n", encoding="utf-8")
+    assert not [r for r in ep.walk(tmp_path) if r.startswith(".ai/cache/")]

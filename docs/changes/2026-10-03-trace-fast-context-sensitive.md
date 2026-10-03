@@ -102,3 +102,9 @@ Codex and Cursor verification of the new tools.
 
 A tool's CLI changes, a category is added to or removed from the wiki, or the
 cache format version changes.
+
+## Follow-up (same release, found by CI)
+
+- `.gitignore` - ignores `.env`, `.env.*` (except `.env.example`) and `.ai/cache/`; the generated security page had correctly reported that no rule covered `.env`.
+- `skills/everything/scripts/extract_platform.py` - the tree walk skips `.ai/cache/`, a machine-local folder that made the generated pages differ between a clone and CI.
+- `tests/test_platform.py` - a test proves the cache never reaches a page.

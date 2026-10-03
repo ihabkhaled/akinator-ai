@@ -42,6 +42,6 @@ kept apart and labelled.
 No database, cache server or queue. State is plain files in the repository:
 the ledger under `.ai/ledger/` (one markdown record per entry, committed and
 append-only), the generated brief `.ai/BRIEF.md` and `.ai/index.json`, the
-disposable context cache `.ai/cache/context-index.json` (ignored by its own
+disposable context cache (an index file in a cache folder under `.ai`) (ignored by its own
 `.gitignore`, safe to delete), and the wiki under `docs/wiki/`. "Migration" is
 regenerating a generated file; backup is git history.

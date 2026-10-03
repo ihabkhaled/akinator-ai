@@ -16,13 +16,13 @@ Names and locations only - this page never holds a value.
 
 ### PII-ish and credential fields in schemas
 
-- `.agents/skills/akinator/scripts/akinator_sensitive.py:356` `secret_files` - credential
-- `skills/everything/scripts/akinator_sensitive.py:353` `secret_files` - credential
 - `.agents/skills/akinator/scripts/akinator_coverage.py:336` `token` - credential
 - `.agents/skills/akinator/scripts/akinator_scope.py:20` `token` - credential
+- `.agents/skills/akinator/scripts/akinator_sensitive.py:356` `secret_files` - credential
 - `.agents/skills/akinator/scripts/akinator_wiki.py:239` `secret` - credential
 - `skills/everything/scripts/akinator_coverage.py:333` `token` - credential
 - `skills/everything/scripts/akinator_scope.py:17` `token` - credential
+- `skills/everything/scripts/akinator_sensitive.py:353` `secret_files` - credential
 - `skills/everything/scripts/akinator_wiki.py:236` `secret` - credential
 
 ### Logging that mentions those fields

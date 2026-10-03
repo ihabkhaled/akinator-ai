@@ -7,3 +7,10 @@ dist/
 # Disposable per-run copies of the eval fixtures. Results are kept;
 # the workspaces they were produced in are not.
 evals/results/workspaces/
+
+# Secrets never enter the tree; the example file is the contract.
+.env
+.env.*
+!.env.example
+# Machine-local caches
+.ai/cache/
