@@ -109,3 +109,4 @@ cache format version changes.
 - `skills/everything/scripts/extract_platform.py` - the tree walk skips `.ai/cache/`, a machine-local folder that made the generated pages differ between a clone and CI.
 - `tests/test_platform.py` - a test proves the cache never reaches a page.
 - `skills/everything/scripts/extract_operations.py`, `tests/test_operations.py` - the repositories page no longer generates remotes or the default branch: they live in `.git`, which differs between a clone, a fork and CI, so a generated page could never be current everywhere. They are recorded in the curated section.
+- `README.md` - rewritten shorter and install-first: a 30-second install, one explicit form per platform, the other install routes folded away, the per-prompt behavior as bullets.
