@@ -3,13 +3,9 @@
 <!-- akinator:generated:begin -->
 <!-- Facts extracted from the tree. This block is rewritten on every run;
      write outside it. -->
-### Remotes and default branch
+### Hosting
 
-| Remote | URL (credentials stripped) | Provider | Where |
-|---|---|---|---|
-| `origin` | `github.com:ihabkhaled/akinator-ai.git` | github | `.git/config` |
-
-**Default branch:** `main` - from `.git/refs/remotes/origin/HEAD`
+Remote URL and default branch are machine-local and are not generated; they are recorded in the curated section.
 
 ### CI provider
 

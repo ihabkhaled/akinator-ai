@@ -5,7 +5,7 @@ Four pages under `<wiki>/infra/`, each a generated block plus a curated stub:
 
     tools-and-commands.md      every runnable task and the CLI tools they need
     environment-variables.md   every variable NAME the tree references
-    repositories.md            remotes, provider, default branch, owners, CI
+    repositories.md            CI provider, owners, .github, submodules, workspaces
     installation.md            detected install/run/test steps, runtimes, and
                                the README sections that already hold the manual
 
@@ -597,18 +597,13 @@ def repos_page(repo: Path, files: list[str]) -> str:
     fileset = set(files)
     out: list[str] = []
 
-    out += ["### Remotes and default branch", ""]
-    git = _git_dir(repo)
-    rows: list[list[str]] = []
-    branch = ("", "")
-    if git is not None:
-        for name, url in _remotes(git):
-            host = host_of(url)
-            rows.append([f"`{name}`", _c(url), provider_of(host), "`.git/config`"])
-        branch = _default_branch(git)
-    out += table(["Remote", "URL (credentials stripped)", "Provider", "Where"], rows)
-    out += ["", "**Default branch:** " + (f"`{branch[0]}` - from `{branch[1]}`" if branch[0]
-                                           else NOTHING)]
+    # Remotes and the default branch live in `.git`, which differs between a
+    # clone, a fork and CI. A page generated from them would disagree with
+    # itself on every machine, so they are never generated - the curated
+    # section records them once.
+    out += ["### Hosting", "",
+            "Remote URL and default branch are machine-local and are not "
+            "generated; they are recorded in the curated section."]
 
     out += ["", "### CI provider", ""]
     ci: list[list[str]] = []

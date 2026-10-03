@@ -58,7 +58,7 @@ def test_positive_each_page(tmp_path: Path) -> None:
     mode_row = next(l for l in env.splitlines() if "PLANTED_MODE" in l)
     assert "| yes | no |" in mode_row
     repos = pages["repositories.md"]
-    assert "github.com/o/r.git" in repos and "github" in repos and "`trunk`" in repos
+    assert "github.com/o/r.git" not in repos and "trunk" not in repos  # machine-local git state is never generated
     assert "packages/*" in repos
     inst = pages["installation.md"]
     assert "npm ci" in inst and "package-lock.json" in inst and "README.md:3" in inst
